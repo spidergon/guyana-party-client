@@ -68,5 +68,8 @@ yarn-error.log
 # Yarn Integrity file
 .yarn-integrity
 
-# Formating
+# Visual Studio Code
+.vscode
+
+# Eslint
 eslint_result.html
