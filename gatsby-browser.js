@@ -4,4 +4,11 @@
  * See: https://www.gatsbyjs.org/docs/browser-apis/
  */
 
-// You can delete this file if you're not using it
+const onServiceWorkerUpdateReady = () => {
+  const answer = window.confirm(
+    'Cette application a été mise à jour. Voulez-vous recharger la page ?'
+  )
+  if (answer === true) window.location.reload()
+}
+
+export default onServiceWorkerUpdateReady
