@@ -4,4 +4,13 @@
  * See: https://www.gatsbyjs.org/docs/ssr-apis/
  */
 
-// You can delete this file if you're not using it
+/* eslint-disable react/prop-types */
+
+import React from 'react'
+import Layout from './src/components/Layout'
+
+const wrapPageElement = ({ element, props }) => {
+  return <Layout {...props}>{element}</Layout>
+}
+
+export default wrapPageElement
