@@ -50,7 +50,7 @@ function ListItem ({ item, selected }) {
         <div className='content'>
           <h2>{item.title}</h2>
           <h3>Group name</h3>
-          <p>Start date</p>
+          <p>Le 13/11/2019 à 18:03</p>
         </div>
       </Link>
     </Wrapper>
@@ -62,4 +62,4 @@ ListItem.propTypes = {
   selected: PropTypes.bool
 }
 
-export default ListItem
+export default React.memo(ListItem)

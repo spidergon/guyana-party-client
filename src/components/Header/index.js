@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import Logo from './Logo'
 import LinkMenu from './LinkMenu'
 import Link from '../addons/Link'
+import If from '../addons/If'
 
 const Wrapper = styled.header`
   position: sticky;
@@ -30,6 +31,21 @@ const Wrapper = styled.header`
         }
       }
     }
+    &.navs {
+      justify-self: end;
+      input {
+        width: 120px;
+        margin-right: 16px;
+        padding-left: 40px;
+        border-color: transparent;
+        border-radius: 4px;
+        background-color: rgb(239, 239, 239);
+        transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+        &:focus {
+          width: 200px;
+        }
+      }
+    }
   }
 `
 
@@ -51,11 +67,15 @@ function Header ({ pathname }) {
           <Logo />
         </Link>
       </nav>
-      <nav className='navs' />
+      <nav className='navs'>
+        <If condition={pathname.match(/^\/+$/)}>
+          <input aria-label='filtrer' placeholder='Filtrer...' type='search' />
+        </If>
+      </nav>
       <nav className='profile flex'>
-        {!pathname.match('connexion') && (
+        <If condition={!pathname.match('connexion')}>
           <LinkMenu name='Connexion' to='/connexion' />
-        )}
+        </If>
       </nav>
     </Wrapper>
   )

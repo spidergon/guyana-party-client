@@ -8,6 +8,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.navs input {
+  background-image: url(../images/search.svg);
+  background-position: 5px;
+  background-repeat: no-repeat;
+  background-size: 20px;
+}
+
 article,
 aside,
 details,

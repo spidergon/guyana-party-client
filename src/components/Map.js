@@ -4,7 +4,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import { MarkerClusterGroup } from 'leaflet.markercluster'
 
 class Map {
-  constructor(center, zoom) {
+  constructor (center, zoom) {
     this.map = null
     this.markerClusterGroup = new MarkerClusterGroup()
     this.center = center || [4.93, -52.3]
@@ -56,7 +56,14 @@ class Map {
         delete marker.position
         const newMarker = L.marker(latlng, {
           title: marker.title
-        }).bindPopup(`<strong>${marker.title}</strong><br>Content`)
+        }).bindPopup(`
+          <p>
+            <strong>${marker.title}</strong><br />
+            Organisateur: <i>group name</i><br />
+            <i>Le 13/11/2019 à 18:03</i><br />
+            <code style="font-size:12px;">45° 51′ 08″ N 1° 15′ 53″ E</code>
+          </p>
+        `)
         newMarker.on('click', () => {
           if (typeof onClickFn === 'function') {
             onClickFn({ ...marker, position: latlng })
