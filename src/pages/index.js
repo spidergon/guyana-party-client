@@ -1,5 +1,5 @@
 import React from 'react'
-import Seo from '../components/Seo'
+import Seo from '../components/addons/Seo'
 import Home from '../components/Home'
 
 export default () => (

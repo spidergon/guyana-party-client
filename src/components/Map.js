@@ -4,7 +4,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import { MarkerClusterGroup } from 'leaflet.markercluster'
 
 class Map {
-  constructor (center, zoom) {
+  constructor(center, zoom) {
     this.map = null
     this.markerClusterGroup = new MarkerClusterGroup()
     this.center = center || [4.93, -52.3]

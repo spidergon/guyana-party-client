@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import Logo from './Logo'
 import LinkMenu from './LinkMenu'
-import Link from '../Link'
+import Link from '../addons/Link'
 
 const Wrapper = styled.header`
   position: sticky;
@@ -16,9 +16,9 @@ const Wrapper = styled.header`
   background-color: rgba(255, 255, 255, 0.3);
   transition: background-color 0.4s ease !important;
   z-index: 10;
+  border-bottom: 1px solid rgba(151, 151, 151, 0.2) !important;
   &.opaque {
     background-color: #fff;
-    border-bottom: 1px solid rgba(151, 151, 151, 0.2) !important;
   }
   nav {
     &.logo {

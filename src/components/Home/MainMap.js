@@ -1,13 +1,19 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import Map from '../Map'
 
 const MainMap = ({ markers, onMarkerClick }) => {
-  useEffect(() => {
-    new Map().addMarkers(markers, onMarkerClick)
-  }, [markers, onMarkerClick])
+  const [map, setMap] = useState(null)
 
-  return <div id='map' style={{ height: 'calc(100vh - 54px)' }} />
+  useEffect(() => {
+    if (!map) {
+      const newMap = new Map()
+      newMap.addMarkers(markers, onMarkerClick)
+      setMap(newMap)
+    }
+  }, [map, markers, onMarkerClick])
+
+  return <div id='map' />
 }
 
 MainMap.propTypes = {
