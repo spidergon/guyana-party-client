@@ -1,12 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import Link from '../addons/Link'
-import Image from '../addons/Image'
+import { Image, Link } from '../addons'
 
 const Wrapper = styled.div`
   padding: 5px;
   border: 1px solid rgb(239, 239, 239);
+  background-color: #fff;
   &.selected {
     box-shadow: 1px 1px 5px blue;
   }
@@ -19,7 +19,7 @@ const Wrapper = styled.div`
     color: ${props => props.theme.black};
     img {
       object-fit: cover;
-      width: 80px;
+      width: 65px;
       margin: 0;
     }
     .content {

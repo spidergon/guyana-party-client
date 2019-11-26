@@ -1,7 +1,7 @@
 import React from 'react'
 import { expect, render } from '../lib/test-utils'
 
-import Page from '../components/Page'
+import Page from '../components/addons/Page'
 
 describe('<Page />', () => {
   it('should match its reference snapshot', () => {

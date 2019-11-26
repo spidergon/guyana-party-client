@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import Logo from './Logo'
 import LinkMenu from './LinkMenu'
-import Link from '../addons/Link'
-import If from '../addons/If'
+import { If, Link } from '../addons'
 
 const Wrapper = styled.header`
   position: sticky;

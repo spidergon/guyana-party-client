@@ -1,7 +1,7 @@
 import React from 'react'
 import { expect, shallow } from '../lib/test-utils'
 
-import Link from '../components/Link'
+import Link from '../components/addons/Link'
 
 describe('<Links/>', () => {
   it('should render "internal" links correctly', () => {

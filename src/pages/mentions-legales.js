@@ -1,6 +1,5 @@
 import React from 'react'
-import Page from '../components/addons/Page'
-import Seo from '../components/addons/Seo'
+import { Page, Seo } from '../components/addons'
 
 export default () => (
   <Page>

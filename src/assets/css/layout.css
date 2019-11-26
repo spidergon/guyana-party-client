@@ -7,12 +7,7 @@ body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-.navs input {
-  background-image: url(../images/search.svg);
-  background-position: 5px;
-  background-repeat: no-repeat;
-  background-size: 20px;
+  background-color: rgb(250, 250, 250);
 }
 
 article,
@@ -627,4 +622,11 @@ pre tt:after {
   html {
     font-size: 100%;
   }
+}
+
+.navs input {
+  background-image: url(../images/search.svg);
+  background-position: 5px;
+  background-repeat: no-repeat;
+  background-size: 20px;
 }

@@ -1,11 +1,10 @@
 import React from 'react'
-import Page from '../components/addons/Page'
-import Seo from '../components/addons/Seo'
+import { Page, Seo } from '../components/addons'
+import Login from '../components/Login'
 
 export default () => (
   <Page>
     <Seo title='Connexion' />
-    <h1>Connexion</h1>
-    <p>Content</p>
+    <Login />
   </Page>
 )

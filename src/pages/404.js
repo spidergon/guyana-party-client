@@ -1,7 +1,5 @@
 import React from 'react'
-import Link from '../components/addons/Link'
-import Page from '../components/addons/Page'
-import Seo from '../components/addons/Seo'
+import { Link, Page, Seo } from '../components/addons'
 
 const NotFoundPage = () => (
   <Page>
