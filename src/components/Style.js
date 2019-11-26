@@ -16,12 +16,12 @@ export const theme = {
 /** Global style for components */
 export const Style = createGlobalStyle`
 
-* {
-  margin: 0;
-  padding: 0;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-}
+  /* * {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+  } */
 
   /* Layout */
   .grid {

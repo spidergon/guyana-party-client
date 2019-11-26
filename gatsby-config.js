@@ -21,6 +21,7 @@ module.exports = {
     'gatsby-transformer-sharp',
     'gatsby-plugin-sharp',
     'gatsby-plugin-styled-components',
+    'gatsby-plugin-react-leaflet',
     {
       resolve: 'gatsby-plugin-manifest',
       options: {
