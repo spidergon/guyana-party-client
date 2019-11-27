@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { navigate } from 'gatsby'
 import styled from 'styled-components'
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
+import GoogleLogin from 'react-google-login'
 import isEmail from 'validator/lib/isEmail'
 import Button from './Button'
 import { If, Link } from './addons'
-import { loginEmail, useAuth } from '../lib/services/authService'
+import {
+  loginFacebook,
+  loginGoogle,
+  loginEmail,
+  useAuth
+} from '../lib/services/authService'
 import { showSnack } from '../lib/state'
 
 const Wrapper = styled.div`
@@ -19,6 +26,9 @@ const Wrapper = styled.div`
     background-color: #fff;
     color: ${props => props.theme.black};
     font-size: 15px;
+    button.facebook {
+      margin-bottom: 15px;
+    }
     .or-div {
       display: flex;
       -webkit-box-align: center;
@@ -106,8 +116,17 @@ function Login () {
     }
   }, [initializing, user])
 
-  const onClickFb = e => {
-    console.log('FB Click')
+  const loginGoogleHandle = response => {
+    setLoading(true)
+    loginGoogle(
+      response,
+      () => navigate('/app'),
+      error => {
+        setLoading(false)
+        showSnack('La connexion a echoué !', 'error')
+        console.log(error)
+      }
+    )
   }
 
   const checkEmail = value => {
@@ -144,11 +163,33 @@ function Login () {
       <h1>Connexion</h1>
       <If condition={!initializing && !user}>
         <div className='content'>
-          <Button
-            disabled={loading}
-            onClickHandle={onClickFb}
-            provider='facebook'
-            text='Connexion avec Facebook'
+          <FacebookLogin
+            appId={process.env.FACEBOOK_APP_ID}
+            autoLoad
+            callback={loginFacebook}
+            fields='name,email,picture'
+            render={({ onClick, disabled }) => (
+              <Button
+                disabled={loading || disabled}
+                onClick={onClick}
+                provider='facebook'
+                text='Connexion avec Facebook'
+              />
+            )}
+          />
+          <GoogleLogin
+            clientId={process.env.GOOGLE_APP_ID}
+            cookiePolicy='single_host_origin'
+            onFailure={loginGoogleHandle}
+            onSuccess={loginGoogleHandle}
+            render={({ onClick, disabled }) => (
+              <Button
+                disabled={loading || disabled}
+                onClick={onClick}
+                provider='google'
+                text='Connexion avec Google'
+              />
+            )}
           />
           <div className='or-div'>
             <div />
@@ -184,7 +225,7 @@ function Login () {
             </If>
             <Button
               disabled={loading}
-              onClickHandle={validate}
+              onClick={validate}
               text={
                 emailOk
                   ? loading

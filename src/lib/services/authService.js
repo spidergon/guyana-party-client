@@ -4,6 +4,31 @@ import qs from 'qs'
 import Cookies from 'js-cookie'
 import gravatar from '../utils'
 
+export const loginFacebook = obj => {
+  console.log(obj)
+}
+
+export const loginGoogle = ({ tokenId }, next, fallback) => {
+  if (tokenId) {
+    axios({
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      data: qs.stringify({ tokenId, provider: 'google' }),
+      url: `${process.env.API}/auth/tokensignin`
+    })
+      .then(({ data }) => {
+        const { status, token, userId } = data
+        if (status === 200 && token && userId) {
+          const config = { secure: process.env.NODE_ENV === 'production' }
+          Cookies.set('gp_jwt', token, config)
+          Cookies.set('gp_userId', userId, config)
+        }
+        next()
+      })
+      .catch(fallback)
+  } else fallback('Token id missing')
+}
+
 export const loginEmail = (email, password, next, fallback) => {
   axios({
     method: 'POST',

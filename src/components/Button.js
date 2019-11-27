@@ -37,10 +37,19 @@ const Wrapper = styled.button`
       background-color: rgb(66, 99, 169);
     }
   }
+  &.google {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #000;
+    &:hover,
+    &:focus {
+      background-color: rgb(245, 245, 245);
+    }
+  }
 `
 
-const Button = ({ provider, text, onClickHandle, disabled }) => (
-  <Wrapper className={provider} disabled={disabled} onClick={onClickHandle}>
+const Button = ({ provider, text, onClick, disabled }) => (
+  <Wrapper className={provider} disabled={disabled} onClick={onClick}>
     <span>{text}</span>
   </Wrapper>
 )
@@ -48,7 +57,7 @@ const Button = ({ provider, text, onClickHandle, disabled }) => (
 Button.propTypes = {
   provider: PropTypes.string,
   text: PropTypes.string,
-  onClickHandle: PropTypes.func,
+  onClick: PropTypes.func,
   disabled: PropTypes.bool
 }
 
