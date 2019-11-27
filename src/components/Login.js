@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import isEmail from 'validator/lib/isEmail'
 import Button from './Button'
 import { If, Link } from './addons'
-import loginEmail from '../lib/services/loginService'
+import { loginEmail } from '../lib/services/authService'
 import { showSnack } from '../lib/state'
 
 const Wrapper = styled.div`

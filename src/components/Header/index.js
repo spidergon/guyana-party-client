@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Logo from './Logo'
 import LinkMenu from './LinkMenu'
-import { If, Link } from '../addons'
+import { If, Link, Image } from '../addons'
+import { useAuth } from '../../lib/services/authService'
+import UserMenu from './UserMenu'
 
 const Wrapper = styled.header`
   position: sticky;
@@ -45,12 +48,22 @@ const Wrapper = styled.header`
         }
       }
     }
+    &.profile {
+      img {
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+      }
+    }
   }
 `
 
 function Header ({ pathname }) {
   const [mainClass, setMainClass] = useState('')
   const [scrollDown, setScrollDown] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+
+  const { loading, error, user } = useAuth()
 
   useEffect(() => scrollEffect(pathname, setScrollDown), [pathname])
 
@@ -58,6 +71,10 @@ function Header ({ pathname }) {
     pathname,
     scrollDown
   ])
+
+  useEffect(() => {
+    console.log(loading, error, user)
+  }, [error, loading, user])
 
   return (
     <Wrapper className={`grid ${mainClass}`}>
@@ -72,8 +89,23 @@ function Header ({ pathname }) {
         </If>
       </nav>
       <nav className='profile flex'>
-        <If condition={!pathname.match('connexion')}>
+        <If condition={!pathname.match('connexion') && !loading && !user}>
           <LinkMenu name='Connexion' to='/connexion' />
+        </If>
+        {loading && !user && <CircularProgress size={36} />}
+        <If condition={user}>
+          <Image
+            alt='Profile'
+            onClick={() => setUserMenuOpen(!userMenuOpen)}
+            src='photo'
+          />
+          <UserMenu
+            anchor={document.querySelector('.profile img')}
+            hide={() => setUserMenuOpen(false)}
+            isOpen={userMenuOpen}
+            pathname={pathname}
+            user={user}
+          />
         </If>
       </nav>
     </Wrapper>
