@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import qs from 'qs'
 import Cookies from 'js-cookie'
+import gravatar from '../utils'
 
 export const loginEmail = (email, password, next, fallback) => {
   axios({
@@ -22,12 +23,6 @@ export const loginEmail = (email, password, next, fallback) => {
     .catch(fallback)
 }
 
-export const getCredentials = () => {
-  const jwt = Cookies.get('gp_jwt')
-  const userId = Cookies.get('gp_userId')
-  return { jwt, userId }
-}
-
 export const MISSING_TOKEN_ERR = 'Token de connexion requis'
 
 export const useAuth = () => {
@@ -36,36 +31,38 @@ export const useAuth = () => {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    const { jwt, userId } = getCredentials()
-    if (jwt && userId) {
-      axios({
-        method: 'GET',
-        headers: { authorization: `bearer ${jwt}` },
-        url: `${process.env.API}/users/${userId}`
-      })
-        .then(({ data }) => {
-          if (data.status === 200 && data.data) {
-            delete data.data.password
-            console.log(data.data)
-            data.data.logout = logout
-            setUser(data.data)
-          }
+    if (!user) {
+      const jwt = Cookies.get('gp_jwt')
+      const userId = Cookies.get('gp_userId')
+      if (jwt && userId) {
+        axios({
+          method: 'GET',
+          headers: { authorization: `bearer ${jwt}` },
+          url: `${process.env.API}/users/${userId}`
         })
-        .catch(error => {
-          console.log('Err:', error)
-          setError(error)
-        })
-        .finally(() => setLoading(false))
-    } else {
-      setError(MISSING_TOKEN_ERR)
-      setLoading(false)
+          .then(({ data: res }) => {
+            if (res.status === 200 && res.data) {
+              delete res.data.password
+              res.data.photo = res.data.photo || gravatar(res.data.email)
+              res.data.logout = () => {
+                Cookies.remove('gp_jwt')
+                Cookies.remove('gp_userId')
+                setUser(null)
+              }
+              setUser(res.data)
+            }
+          })
+          .catch(error => {
+            console.log('Err:', error)
+            setError(error)
+          })
+          .finally(() => setLoading(false))
+      } else {
+        setError(MISSING_TOKEN_ERR)
+        setLoading(false)
+      }
     }
-  }, [])
+  }, [user])
 
   return { loading, error, user }
-}
-
-export const logout = () => {
-  Cookies.remove('gp_jwt')
-  Cookies.remove('gp_userId')
 }

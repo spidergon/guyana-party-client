@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { navigate } from 'gatsby'
 import styled from 'styled-components'
 import isEmail from 'validator/lib/isEmail'
 import Button from './Button'
 import { If, Link } from './addons'
-import { loginEmail } from '../lib/services/authService'
+import { loginEmail, useAuth } from '../lib/services/authService'
 import { showSnack } from '../lib/state'
 
 const Wrapper = styled.div`
@@ -97,6 +97,15 @@ function Login () {
   const [passwordError, setPasswordError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const { loading: initializing, user } = useAuth()
+
+  useEffect(() => {
+    if (!initializing && user) {
+      showSnack('Vous êtes déjà connecté(e) !', 'info')
+      navigate('/')
+    }
+  }, [initializing, user])
+
   const onClickFb = e => {
     console.log('FB Click')
   }
@@ -133,58 +142,64 @@ function Login () {
   return (
     <Wrapper>
       <h1>Connexion</h1>
-      <div className='content'>
-        <Button
-          disabled={loading}
-          onClickHandle={onClickFb}
-          provider='facebook'
-          text='Connexion avec Facebook'
-        />
-        <div className='or-div'>
-          <div />
-          <span>ou</span>
-          <div />
-        </div>
-        <form autoComplete='off'>
-          <div className={emailError ? 'error' : ''}>
-            <label htmlFor='email'>{emailError || 'Email'}</label>
-            <input
-              disabled={loading}
-              id='email'
-              onBlur={e => checkEmail(e.target.value)}
-              onChange={e => setEmail(e.target.value)}
-              placeholder='exemple@email.com'
-              type='email'
-              value={email}
-            />
-          </div>
-          <If condition={emailOk}>
-            <div className={`pass-section ${passwordError ? 'error' : ''}`}>
-              <label htmlFor='password'>
-                {passwordError || 'Mot de passe'}
-              </label>
-              <input
-                disabled={loading}
-                id='password'
-                onChange={e => setPassword(e.target.value)}
-                type='password'
-                value={password}
-              />
-            </div>
-          </If>
+      <If condition={!initializing && !user}>
+        <div className='content'>
           <Button
             disabled={loading}
-            onClickHandle={validate}
-            text={
-              emailOk ? (loading ? 'Connexion...' : 'Se connecter') : 'Suivant'
-            }
+            onClickHandle={onClickFb}
+            provider='facebook'
+            text='Connexion avec Facebook'
           />
-        </form>
-      </div>
-      <p className='signup-link center'>
-        <Link to='/signup'>Vous n&rsquo;avez pas de compte ?</Link>
-      </p>
-      <div className='copy center'>© GuyanaParty</div>
+          <div className='or-div'>
+            <div />
+            <span>ou</span>
+            <div />
+          </div>
+          <form autoComplete='off'>
+            <div className={emailError ? 'error' : ''}>
+              <label htmlFor='email'>{emailError || 'Email'}</label>
+              <input
+                disabled={loading}
+                id='email'
+                onBlur={e => checkEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
+                placeholder='exemple@email.com'
+                type='email'
+                value={email}
+              />
+            </div>
+            <If condition={emailOk}>
+              <div className={`pass-section ${passwordError ? 'error' : ''}`}>
+                <label htmlFor='password'>
+                  {passwordError || 'Mot de passe'}
+                </label>
+                <input
+                  disabled={loading}
+                  id='password'
+                  onChange={e => setPassword(e.target.value)}
+                  type='password'
+                  value={password}
+                />
+              </div>
+            </If>
+            <Button
+              disabled={loading}
+              onClickHandle={validate}
+              text={
+                emailOk
+                  ? loading
+                    ? 'Connexion...'
+                    : 'Se connecter'
+                  : 'Suivant'
+              }
+            />
+          </form>
+        </div>
+        <p className='signup-link center'>
+          <Link to='/signup'>Vous n&rsquo;avez pas de compte ?</Link>
+        </p>
+        <div className='copy center'>© GuyanaParty</div>
+      </If>
     </Wrapper>
   )
 }

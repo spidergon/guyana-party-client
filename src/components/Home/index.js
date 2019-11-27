@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { navigate } from 'gatsby'
 import styled from 'styled-components'
 import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
@@ -18,18 +19,15 @@ const Wrapper = styled.div`
     height: 100%;
   }
   #list-section {
-    grid-template-rows: 1fr auto;
     overflow: auto;
-    .items {
-      overflow: auto;
-      padding: 5px;
-      grid-auto-rows: max-content;
-      grid-gap: 0.5rem;
-    }
+    padding: 5px;
+    grid-auto-rows: max-content;
+    grid-gap: 0.5rem;
     .actions {
       padding: 10px;
-      align-self: end;
-      justify-self: end;
+      position: absolute;
+      bottom: 0;
+      right: 0;
     }
   }
   @media (max-width: ${props => props.theme.md}) {
@@ -86,20 +84,19 @@ function Home () {
         </If>
       </section>
       <section className='grid' id='list-section'>
-        <div className='grid items'>
-          {markers &&
-            markers.map((marker, index) => (
-              <ListItem
-                item={marker}
-                key={marker.slug + index}
-                selected={marker.slug === current}
-              />
-            ))}
-        </div>
+        {markers &&
+          markers.map((marker, index) => (
+            <ListItem
+              item={marker}
+              key={marker.slug + index}
+              selected={marker.slug === current}
+            />
+          ))}
         <div className='actions'>
           <Fab
             aria-label='Créer un évènement'
             color='primary'
+            onClick={() => navigate('/event/new')}
             title='Créer un évènement'
           >
             <AddIcon />

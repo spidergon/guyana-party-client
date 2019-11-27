@@ -4,9 +4,9 @@ import styled from 'styled-components'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Logo from './Logo'
 import LinkMenu from './LinkMenu'
+import UserMenu from './UserMenu'
 import { If, Link, Image } from '../addons'
 import { useAuth } from '../../lib/services/authService'
-import UserMenu from './UserMenu'
 
 const Wrapper = styled.header`
   position: sticky;
@@ -53,6 +53,7 @@ const Wrapper = styled.header`
         width: 36px;
         height: 36px;
         cursor: pointer;
+        border-radius: 50%;
       }
     }
   }
@@ -63,7 +64,7 @@ function Header ({ pathname }) {
   const [scrollDown, setScrollDown] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
-  const { loading, error, user } = useAuth()
+  const { loading, user } = useAuth()
 
   useEffect(() => scrollEffect(pathname, setScrollDown), [pathname])
 
@@ -71,10 +72,6 @@ function Header ({ pathname }) {
     pathname,
     scrollDown
   ])
-
-  useEffect(() => {
-    console.log(loading, error, user)
-  }, [error, loading, user])
 
   return (
     <Wrapper className={`grid ${mainClass}`}>
@@ -97,7 +94,7 @@ function Header ({ pathname }) {
           <Image
             alt='Profile'
             onClick={() => setUserMenuOpen(!userMenuOpen)}
-            src='photo'
+            src={user && user.photo}
           />
           <UserMenu
             anchor={document.querySelector('.profile img')}
