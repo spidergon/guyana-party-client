@@ -10,12 +10,11 @@ const loginEmail = (email, password, next, fallback) => {
     url: `${process.env.API}/auth/login`
   })
     .then(({ data }) => {
-      const { status, token } = data
-      if (status === 200 && token) {
-        Cookies.set('gp_jwt', token, {
-          expires: 1,
-          secure: process.env.NODE_ENV === 'production'
-        })
+      const { status, token, userId } = data
+      if (status === 200 && token && userId) {
+        const config = { secure: process.env.NODE_ENV === 'production' }
+        Cookies.set('gp_jwt', token, config)
+        Cookies.set('gp_userId', userId, config)
       }
       next()
     })
