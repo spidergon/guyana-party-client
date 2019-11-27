@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { ThemeProvider } from 'styled-components'
 import { theme, Style } from './Style'
 import Header from './Header'
+import Snack from './Snack'
 import '../assets/css/layout.css'
 import '../lib/cookieconsent'
 
@@ -10,6 +11,7 @@ const Layout = ({ children, location: { pathname } }) => (
   <ThemeProvider theme={theme}>
     <>
       <Style />
+      <Snack />
       <Header pathname={pathname} />
       <main>{children}</main>
     </>

@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
+import { navigate } from 'gatsby'
 import styled from 'styled-components'
 import isEmail from 'validator/lib/isEmail'
 import Button from './Button'
 import { If, Link } from './addons'
+import loginEmail from '../lib/services/loginService'
+import { showSnack } from '../lib/state'
 
 const Wrapper = styled.div`
   font-family: Montserrat, Helvetica, sans-serif;
@@ -87,11 +90,12 @@ const Wrapper = styled.div`
 `
 
 function Login () {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('spidergon@gmail.com')
+  const [password, setPassword] = useState('azer1234')
   const [emailOk, setEmailOk] = useState(false)
   const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const onClickFb = e => {
     console.log('FB Click')
@@ -111,7 +115,18 @@ function Login () {
     } else if (emailOk) {
       if (!password) return setPasswordError('Le mot de passe est requis')
       if (passwordError) setPasswordError('')
-      console.log('LOGIN!')
+      setLoading(true)
+      loginEmail(
+        email,
+        password,
+        () => navigate('/app'),
+        error => {
+          setLoading(false)
+          setPassword('')
+          showSnack('La connexion a echoué !', 'error')
+          console.log(error)
+        }
+      )
     }
   }
 
@@ -120,6 +135,7 @@ function Login () {
       <h1>Connexion</h1>
       <div className='content'>
         <Button
+          disabled={loading}
           onClickHandle={onClickFb}
           provider='facebook'
           text='Connexion avec Facebook'
@@ -133,6 +149,7 @@ function Login () {
           <div className={emailError ? 'error' : ''}>
             <label htmlFor='email'>{emailError || 'Email'}</label>
             <input
+              disabled={loading}
               id='email'
               onBlur={e => checkEmail(e.target.value)}
               onChange={e => setEmail(e.target.value)}
@@ -147,6 +164,7 @@ function Login () {
                 {passwordError || 'Mot de passe'}
               </label>
               <input
+                disabled={loading}
                 id='password'
                 onChange={e => setPassword(e.target.value)}
                 type='password'
@@ -155,8 +173,11 @@ function Login () {
             </div>
           </If>
           <Button
+            disabled={loading}
             onClickHandle={validate}
-            text={emailOk ? 'Se connecter' : 'Suivant'}
+            text={
+              emailOk ? (loading ? 'Connexion...' : 'Se connecter') : 'Suivant'
+            }
           />
         </form>
       </div>
