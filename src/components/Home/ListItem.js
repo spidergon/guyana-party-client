@@ -15,14 +15,14 @@ const Wrapper = styled.div`
   }
   a.grid {
     grid-template-columns: auto 1fr;
-    text-decoration: none;
-    color: ${props => props.theme.black};
+    grid-gap: 5px;
+    height: 82px;
     img {
-      object-fit: cover;
-      width: 65px;
-      margin: 0;
+      width: 82px;
+      height: 100%;
     }
     .content {
+      overflow: hidden;
       padding: 5px;
       h2,
       h3 {
@@ -40,16 +40,44 @@ const Wrapper = styled.div`
       }
     }
   }
+  @media (min-width: ${props => props.theme.md}) and (max-width: ${props =>
+      props.theme.lg}),
+    (max-height: ${props => props.theme.sm}) {
+    a.grid {
+      height: 75px;
+      img {
+        width: 75px;
+      }
+      .content {
+        h2 {
+          font-size: 1rem;
+        }
+        h3 {
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+  @media (max-width: ${props => props.theme.xs}) {
+    a.grid {
+      height: 75px;
+      img {
+        width: 75px;
+      }
+    }
+  }
 `
 
 function ListItem ({ item, selected }) {
   return (
     <Wrapper className={selected ? 'selected' : ''}>
       <Link className='grid' to={`/event/${item.slug}`}>
-        <Image alt={item.title} src={item.img} />
+        <Image alt={item.title} className='cover' src={item.img} />
         <div className='content'>
-          <h2>{item.title}</h2>
-          <h3>Group name</h3>
+          <h2 className='text-wrap'>{item.title}</h2>
+          <h3 className='text-wrap'>
+            Group name: un nom de group super long !
+          </h3>
           <p>Le 13/11/2019 à 18:03</p>
         </div>
       </Link>

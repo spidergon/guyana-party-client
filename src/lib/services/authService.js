@@ -50,7 +50,7 @@ function useProvideAuth () {
         setError(MISSING_TOKEN_ERR)
         setLoading(false)
       }
-    }
+    } else setLoading(false)
   }, [user])
 
   const setNewUser = (newUser, token) => {

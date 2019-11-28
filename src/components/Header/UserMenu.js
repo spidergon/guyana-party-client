@@ -6,9 +6,10 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Divider from '@material-ui/core/Divider'
 import { If } from '../addons'
 
-const LogoutMenuItem = ({ signout }) => (
+const LogoutMenuItem = ({ signout, hide }) => (
   <MenuItem
     onClick={() => {
+      hide()
       signout()
       navigate('/')
     }}
@@ -18,7 +19,8 @@ const LogoutMenuItem = ({ signout }) => (
 )
 
 LogoutMenuItem.propTypes = {
-  signout: PropTypes.func.isRequired
+  signout: PropTypes.func.isRequired,
+  hide: PropTypes.func.isRequired
 }
 
 function UserMenu ({ anchor, hide, isOpen, pathname, user, signout }) {
@@ -34,7 +36,7 @@ function UserMenu ({ anchor, hide, isOpen, pathname, user, signout }) {
         <Menu anchorEl={anchor} id='user-menu' onClose={hide} open={isOpen}>
           <MenuItem onClick={() => goTo('/')}>Accueil</MenuItem>
           <Divider />
-          <LogoutMenuItem signout={signout} />
+          <LogoutMenuItem hide={hide} signout={signout} />
         </Menu>
       }
     >
@@ -48,7 +50,7 @@ function UserMenu ({ anchor, hide, isOpen, pathname, user, signout }) {
           <MenuItem onClick={() => goTo('/')}>Accueil</MenuItem>
         </If>
         <Divider />
-        <LogoutMenuItem signout={signout} />
+        <LogoutMenuItem hide={hide} signout={signout} />
       </Menu>
     </If>
   )
@@ -66,4 +68,4 @@ UserMenu.propTypes = {
   signout: PropTypes.func.isRequired
 }
 
-export default UserMenu
+export default React.memo(UserMenu)

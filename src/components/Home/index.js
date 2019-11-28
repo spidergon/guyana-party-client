@@ -49,8 +49,8 @@ const Wrapper = styled.div`
       }
     }
   }
-  @media (max-height: ${props => props.theme.xs}) and (max-width: ${props =>
-      props.theme.md}) {
+  /* @media (max-height: ${props => props.theme.xs}) and (max-width: ${props =>
+  props.theme.md}) {
     grid-template-columns: 55% auto;
     grid-template-rows: auto;
     #map-section #map {
@@ -59,14 +59,19 @@ const Wrapper = styled.div`
     #list-section img {
       max-width: 55px;
     }
-  }
+  } */
 `
 
 function Home () {
   const [current, setCurrent] = useState('')
 
   const markers = [
-    { position: [4.93, -52.3], title: 'Event 1', slug: 'event1', img: '' },
+    {
+      position: [4.93, -52.3],
+      title: "Event 1: un nom d'évènement super long !",
+      slug: 'event1',
+      img: ''
+    },
     { position: [51.51, -0.1], title: 'Event 2', slug: 'event2', img },
     { position: [51.49, -0.05], title: 'Event 3', slug: 'event3', img: img2 }
   ]

@@ -7,8 +7,6 @@ const Wrapper = styled.div`
   a.nav {
     display: inline-block;
     padding: 0 8px;
-    color: ${props => props.theme.black};
-    text-decoration: none;
   }
   .sub {
     height: ${props => props.theme.headerHeight};

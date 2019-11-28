@@ -15,8 +15,10 @@ export const theme = {
 
 /** Global style for components */
 export const Style = createGlobalStyle`
-
-  /* Layout */
+  a {
+    text-decoration: none;
+    color: ${props => props.theme.black};
+  }
   .grid {
     display: -ms-grid;
     display: grid;
@@ -26,5 +28,13 @@ export const Style = createGlobalStyle`
   }
   .center {
     text-align: center;
+  }
+  img.cover {
+    object-fit: cover;
+  }
+  .text-wrap {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 `
