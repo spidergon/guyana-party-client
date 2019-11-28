@@ -64,7 +64,7 @@ function Header ({ pathname }) {
   const [scrollDown, setScrollDown] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
-  const { loading, user } = useAuth()
+  const { loading, user, signout } = useAuth()
 
   useEffect(() => scrollEffect(pathname, setScrollDown), [pathname])
 
@@ -101,6 +101,7 @@ function Header ({ pathname }) {
             hide={() => setUserMenuOpen(false)}
             isOpen={userMenuOpen}
             pathname={pathname}
+            signout={signout}
             user={user}
           />
         </If>

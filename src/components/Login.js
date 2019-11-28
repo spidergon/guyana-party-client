@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { navigate } from 'gatsby'
 import styled from 'styled-components'
 import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props'
@@ -6,12 +6,7 @@ import GoogleLogin from 'react-google-login'
 import isEmail from 'validator/lib/isEmail'
 import Button from './Button'
 import { If, Link } from './addons'
-import {
-  loginFacebook,
-  loginGoogle,
-  loginEmail,
-  useAuth
-} from '../lib/services/authService'
+import { useAuth } from '../lib/services/authService'
 import { showSnack } from '../lib/state'
 
 const Wrapper = styled.div`
@@ -107,14 +102,13 @@ function Login () {
   const [passwordError, setPasswordError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const { loading: initializing, user } = useAuth()
-
-  useEffect(() => {
-    if (!initializing && user) {
-      showSnack('Vous êtes déjà connecté(e) !', 'info')
-      navigate('/')
-    }
-  }, [initializing, user])
+  const {
+    loading: initializing,
+    user,
+    loginFacebook,
+    loginGoogle,
+    loginEmail
+  } = useAuth()
 
   const loginGoogleHandle = response => {
     setLoading(true)
@@ -161,7 +155,10 @@ function Login () {
   return (
     <Wrapper>
       <h1>Connexion</h1>
-      <If condition={!initializing && !user}>
+      <If
+        condition={!initializing && !user}
+        otherwise={<p className='center'>Vous êtes déjà connecté(e).</p>}
+      >
         <div className='content'>
           <FacebookLogin
             appId={process.env.FACEBOOK_APP_ID}

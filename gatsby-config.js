@@ -23,6 +23,10 @@ module.exports = {
     'gatsby-plugin-styled-components',
     'gatsby-plugin-react-leaflet',
     {
+      resolve: 'gatsby-plugin-create-client-paths',
+      options: { prefixes: ['/app/*'] }
+    },
+    {
       resolve: 'gatsby-plugin-manifest',
       options: {
         name: title,

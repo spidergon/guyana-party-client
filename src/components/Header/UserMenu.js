@@ -6,10 +6,10 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Divider from '@material-ui/core/Divider'
 import { If } from '../addons'
 
-const LogoutMenuItem = ({ logout }) => (
+const LogoutMenuItem = ({ signout }) => (
   <MenuItem
     onClick={() => {
-      logout()
+      signout()
       navigate('/')
     }}
   >
@@ -18,10 +18,10 @@ const LogoutMenuItem = ({ logout }) => (
 )
 
 LogoutMenuItem.propTypes = {
-  logout: PropTypes.func.isRequired
+  signout: PropTypes.func.isRequired
 }
 
-function UserMenu ({ anchor, hide, isOpen, pathname, user }) {
+function UserMenu ({ anchor, hide, isOpen, pathname, user, signout }) {
   const goTo = to => {
     if (typeof hide === 'function') hide()
     navigate(to)
@@ -34,7 +34,7 @@ function UserMenu ({ anchor, hide, isOpen, pathname, user }) {
         <Menu anchorEl={anchor} id='user-menu' onClose={hide} open={isOpen}>
           <MenuItem onClick={() => goTo('/')}>Accueil</MenuItem>
           <Divider />
-          <LogoutMenuItem logout={user.logout} />
+          <LogoutMenuItem signout={signout} />
         </Menu>
       }
     >
@@ -48,7 +48,7 @@ function UserMenu ({ anchor, hide, isOpen, pathname, user }) {
           <MenuItem onClick={() => goTo('/')}>Accueil</MenuItem>
         </If>
         <Divider />
-        <LogoutMenuItem logout={user.logout} />
+        <LogoutMenuItem signout={signout} />
       </Menu>
     </If>
   )
@@ -61,9 +61,9 @@ UserMenu.propTypes = {
   pathname: PropTypes.string.isRequired,
   user: PropTypes.shape({
     name: PropTypes.string,
-    email: PropTypes.string.isRequired,
-    logout: PropTypes.func.isRequired
-  })
+    email: PropTypes.string.isRequired
+  }),
+  signout: PropTypes.func.isRequired
 }
 
 export default UserMenu
