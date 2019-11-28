@@ -48,14 +48,19 @@ const Wrapper = styled.button`
   }
 `
 
-const Button = ({ provider, text, onClick, disabled }) => (
-  <Wrapper className={provider} disabled={disabled} onClick={onClick}>
+const Button = ({ className, text, onClick, disabled }) => (
+  <Wrapper
+    aria-label={text}
+    className={className || ''}
+    disabled={disabled}
+    onClick={onClick}
+  >
     <span>{text}</span>
   </Wrapper>
 )
 
 Button.propTypes = {
-  provider: PropTypes.string,
+  className: PropTypes.string,
   text: PropTypes.string,
   onClick: PropTypes.func,
   disabled: PropTypes.bool

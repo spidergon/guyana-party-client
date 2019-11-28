@@ -1,13 +1,16 @@
 import React, { useEffect } from 'react'
 import { navigate } from 'gatsby'
 import styled from 'styled-components'
+import Button from '@material-ui/core/Button'
+import Fab from '@material-ui/core/Fab'
+import AddIcon from '@material-ui/icons/Add'
 import CardList from '../CardList'
 import { Image, Link } from '../addons'
 import { useAuth } from '../../lib/services/authService'
 import { showSnack } from '../../lib/state'
 
 const Wrapper = styled.div`
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 225px 1fr;
   height: calc(100vh - ${props => props.theme.headerHeight});
   .menu {
     overflow: auto;
@@ -22,6 +25,13 @@ const Wrapper = styled.div`
       width: 100px;
       border-radius: 50%;
       margin-bottom: 1rem;
+    }
+    .new,
+    .compte {
+      text-transform: none;
+    }
+    .new {
+      padding-right: 15px;
     }
   }
   .content {
@@ -62,16 +72,24 @@ function Dashboard () {
     <Wrapper className='grid'>
       <section className='menu grid'>
         <Image alt='User avatar' className='avatar' src={user && user.photo} />
-        <button
+        <Fab
           aria-label='Créer un évènement'
+          className='new'
+          color='primary'
           onClick={() => navigate('/app/newevent')}
-          title='Créer un évènement'
+          size='small'
+          variant='extended'
         >
+          <AddIcon />
           Créer un évènement
-        </button>
-        <div>
-          <Link to='/app/profile'>Mon compte</Link>
-        </div>
+        </Fab>
+        <Button
+          aria-label='Mon compte'
+          className='compte'
+          onClick={() => navigate('/app/profile')}
+        >
+          Mon compte
+        </Button>
       </section>
       <section className='content'>
         <CardList data={events} title='Mes Évènements' />

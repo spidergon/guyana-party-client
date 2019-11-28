@@ -6,8 +6,6 @@ import AddIcon from '@material-ui/icons/Add'
 import Map from './MainMap'
 import If from '../addons/If'
 import ListItem from './ListItem'
-import photo from '../../assets/images/gatsby-icon.png'
-import photo2 from '../../assets/images/gatsby-astronaut.png'
 
 const Wrapper = styled.div`
   height: calc(100vh - ${props => props.theme.headerHeight});
@@ -72,12 +70,12 @@ function Home () {
       slug: 'event1',
       photo: ''
     },
-    { position: [51.51, -0.1], title: 'Event 2', slug: 'event2', photo },
+    { position: [51.51, -0.1], title: 'Event 2', slug: 'event2', photo: '' },
     {
       position: [51.49, -0.05],
       title: 'Event 3',
       slug: 'event3',
-      photo: photo2
+      photo: ''
     }
   ]
 

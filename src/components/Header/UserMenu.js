@@ -6,23 +6,6 @@ import MenuItem from '@material-ui/core/MenuItem'
 import Divider from '@material-ui/core/Divider'
 import { If } from '../addons'
 
-const LogoutMenuItem = ({ signout, hide }) => (
-  <MenuItem
-    onClick={() => {
-      hide()
-      signout()
-      navigate('/')
-    }}
-  >
-    Déconnexion
-  </MenuItem>
-)
-
-LogoutMenuItem.propTypes = {
-  signout: PropTypes.func.isRequired,
-  hide: PropTypes.func.isRequired
-}
-
 function UserMenu ({ anchor, hide, isOpen, pathname, user, signout }) {
   const goTo = to => {
     if (typeof hide === 'function') hide()
@@ -30,34 +13,30 @@ function UserMenu ({ anchor, hide, isOpen, pathname, user, signout }) {
   }
 
   return (
-    <If
-      condition={!pathname.match('app')}
-      otherwise={
-        <Menu anchorEl={anchor} id='user-menu' onClose={hide} open={isOpen}>
-          <MenuItem onClick={() => goTo('/')}>Accueil</MenuItem>
-          <Divider />
-          <MenuItem onClick={() => goTo('/app/profile')}>Mon compte</MenuItem>
-          <MenuItem onClick={() => goTo('/app/newevent')}>
-            Créer un évènement
-          </MenuItem>
-          <Divider />
-          <LogoutMenuItem hide={hide} signout={signout} />
-        </Menu>
-      }
-    >
-      <Menu anchorEl={anchor} id='user-menu' onClose={hide} open={isOpen}>
-        <If condition={!pathname.match(/^\/+$/)}>
-          <MenuItem onClick={() => goTo('/')}>Accueil</MenuItem>
-        </If>
-        <MenuItem onClick={() => goTo('/app')}>Tableau de bord</MenuItem>
-        <MenuItem onClick={() => goTo('/app/profile')}>Mon compte</MenuItem>
-        <MenuItem onClick={() => goTo('/app/newevent')}>
-          Créer un évènement
-        </MenuItem>
+    <Menu anchorEl={anchor} id='user-menu' onClose={hide} open={isOpen}>
+      <If condition={!pathname.match(/^\/+$/)}>
+        <MenuItem onClick={() => goTo('/')}>Accueil</MenuItem>
         <Divider />
-        <LogoutMenuItem hide={hide} signout={signout} />
-      </Menu>
-    </If>
+      </If>
+      <If condition={!pathname.match('app')}>
+        <MenuItem onClick={() => goTo('/app')}>Tableau de bord</MenuItem>
+      </If>
+      <MenuItem onClick={() => goTo('/app/profile')}>Mon compte</MenuItem>
+      <MenuItem onClick={() => goTo('/app/newevent')}>
+        Créer un évènement
+      </MenuItem>
+      <MenuItem onClick={() => goTo('/app/newgroup')}>Créer un groupe</MenuItem>
+      <Divider />
+      <MenuItem
+        onClick={() => {
+          hide()
+          signout()
+          navigate('/')
+        }}
+      >
+        Déconnexion
+      </MenuItem>
+    </Menu>
   )
 }
 
@@ -73,4 +52,4 @@ UserMenu.propTypes = {
   signout: PropTypes.func.isRequired
 }
 
-export default React.memo(UserMenu)
+export default UserMenu

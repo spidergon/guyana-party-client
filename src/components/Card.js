@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import Fab from '@material-ui/core/Fab'
+import EditIcon from '@material-ui/icons/Edit'
+import DeleteIcon from '@material-ui/icons/Delete'
+import Dialog from './Dialog'
 import { Image, Link } from './addons'
 
 const Wrapper = styled.div`
@@ -31,6 +35,16 @@ const Wrapper = styled.div`
     width: 100%;
     z-index: 10;
     transition: opacity 0.3s ease;
+    .edit,
+    .delete {
+      position: absolute;
+      margin: 10px;
+      width: 46px;
+      height: 46px;
+    }
+    .delete {
+      right: 0;
+    }
     .text {
       position: absolute;
       bottom: 0;
@@ -39,6 +53,9 @@ const Wrapper = styled.div`
       padding: 5px;
       .red {
         color: rgb(248, 99, 73);
+      }
+      a {
+        color: #fff;
       }
     }
   }
@@ -51,6 +68,8 @@ const Wrapper = styled.div`
 `
 
 function Card ({ data, isGroup }) {
+  const [diagOpen, setDiagOpen] = useState(false)
+
   return (
     <Wrapper>
       <Image
@@ -73,10 +92,26 @@ function Card ({ data, isGroup }) {
         </div>
       </div>
       <div className='overlay'>
+        <Link to={`/${isGroup ? 'group' : 'event'}/${data._id}/edit`}>
+          <Fab aria-label='Modifier' className='edit' title='Modifier'>
+            <EditIcon />
+          </Fab>
+        </Link>
+        <Fab
+          aria-label='Archiver'
+          className='delete'
+          color='secondary'
+          onClick={() => setDiagOpen(true)}
+          title='Archiver'
+        >
+          <DeleteIcon />
+        </Fab>
         <div className='text'>
           {(!isGroup && (
             <>
-              <p>Organisateur : Group1</p>
+              <Link title='Voir le groupe' to={`/group/${data.slug}`}>
+                <p className='text-wrap'>Organisateur : Group1</p>
+              </Link>
               <p>
                 Évènement privé | <span className='red'>non publié</span>
               </p>
@@ -84,6 +119,13 @@ function Card ({ data, isGroup }) {
           )) || <p>Vous êtes administrateur</p>}
         </div>
       </div>
+      <Dialog
+        action={() => console.log('ACTION')}
+        close={() => setDiagOpen(false)}
+        isOpen={diagOpen}
+        text={`Ce${isGroup ? ' group' : 't évènement'} ne sera pas supprimé.`}
+        title={`Voulez-vous vraiment archiver ${data.title} ?`}
+      />
     </Wrapper>
   )
 }
@@ -93,4 +135,4 @@ Card.propTypes = {
   isGroup: PropTypes.bool
 }
 
-export default Card
+export default React.memo(Card)

@@ -97,16 +97,17 @@ function Header ({ pathname }) {
               onClick={() => setUserMenuOpen(!userMenuOpen)}
               src={user.photo}
             />
-            {typeof document !== 'undefined' && (
-              <UserMenu
-                anchor={document.querySelector('.profile img')}
-                hide={() => setUserMenuOpen(false)}
-                isOpen={userMenuOpen}
-                pathname={pathname}
-                signout={signout}
-                user={user}
-              />
-            )}
+            <UserMenu
+              anchor={
+                typeof document !== 'undefined' &&
+                document.querySelector('.profile img')
+              }
+              hide={() => setUserMenuOpen(false)}
+              isOpen={userMenuOpen}
+              pathname={pathname}
+              signout={signout}
+              user={user}
+            />
           </>
         )}
       </nav>

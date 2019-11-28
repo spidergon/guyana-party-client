@@ -5,6 +5,7 @@ import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Card from './Card'
+import { If } from './addons'
 
 const Wrapper = styled.section`
   margin-bottom: 50px;
@@ -37,6 +38,9 @@ function CardList ({ title, data, isGroup }) {
             <Card data={d} isGroup={isGroup} key={d.slug + index} />
           ))}
         </Slider>
+        <If condition={data.length === 0}>
+          <p>{`Vous n'avez aucun ${isGroup ? 'groupe' : 'évènement'}.`}</p>
+        </If>
       </div>
     </Wrapper>
   )

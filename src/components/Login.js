@@ -167,9 +167,9 @@ function Login () {
             fields='name,email,picture'
             render={({ onClick, disabled }) => (
               <Button
+                className='facebook'
                 disabled={loading || disabled}
                 onClick={onClick}
-                provider='facebook'
                 text='Connexion avec Facebook'
               />
             )}
@@ -181,9 +181,9 @@ function Login () {
             onSuccess={loginGoogleHandle}
             render={({ onClick, disabled }) => (
               <Button
+                className='google'
                 disabled={loading || disabled}
                 onClick={onClick}
-                provider='google'
                 text='Connexion avec Google'
               />
             )}
