@@ -36,19 +36,24 @@ function UserMenu ({ anchor, hide, isOpen, pathname, user, signout }) {
         <Menu anchorEl={anchor} id='user-menu' onClose={hide} open={isOpen}>
           <MenuItem onClick={() => goTo('/')}>Accueil</MenuItem>
           <Divider />
+          <MenuItem onClick={() => goTo('/app/profile')}>Mon compte</MenuItem>
+          <MenuItem onClick={() => goTo('/app/newevent')}>
+            Créer un évènement
+          </MenuItem>
+          <Divider />
           <LogoutMenuItem hide={hide} signout={signout} />
         </Menu>
       }
     >
       <Menu anchorEl={anchor} id='user-menu' onClose={hide} open={isOpen}>
-        <MenuItem onClick={() => goTo('/app/profile')} title='Mon compte'>
-          {`${user.name ? `${user.name} (${user.email})` : `${user.email}`}`}
-        </MenuItem>
-        <Divider />
-        <MenuItem onClick={() => goTo('/app')}>Tableau de bord</MenuItem>
         <If condition={!pathname.match(/^\/+$/)}>
           <MenuItem onClick={() => goTo('/')}>Accueil</MenuItem>
         </If>
+        <MenuItem onClick={() => goTo('/app')}>Tableau de bord</MenuItem>
+        <MenuItem onClick={() => goTo('/app/profile')}>Mon compte</MenuItem>
+        <MenuItem onClick={() => goTo('/app/newevent')}>
+          Créer un évènement
+        </MenuItem>
         <Divider />
         <LogoutMenuItem hide={hide} signout={signout} />
       </Menu>

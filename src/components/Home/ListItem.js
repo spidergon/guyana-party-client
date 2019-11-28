@@ -72,7 +72,7 @@ function ListItem ({ item, selected }) {
   return (
     <Wrapper className={selected ? 'selected' : ''}>
       <Link className='grid' to={`/event/${item.slug}`}>
-        <Image alt={item.title} className='cover' src={item.img} />
+        <Image alt={item.title} className='cover' src={item.photo} />
         <div className='content'>
           <h2 className='text-wrap'>{item.title}</h2>
           <h3 className='text-wrap'>

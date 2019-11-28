@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import axios from 'axios'
 import qs from 'qs'
 import Cookies from 'js-cookie'
-import gravatar from '../utils'
+import { gravatar } from '../utils'
 
 const authContext = createContext()
 

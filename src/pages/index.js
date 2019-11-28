@@ -4,7 +4,7 @@ import Home from '../components/Home'
 
 export default () => (
   <>
-    <Seo title='Explorez la carte !' />
+    <Seo title='Liberté Humaine' />
     <Home />
   </>
 )

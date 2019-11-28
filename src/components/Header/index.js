@@ -19,7 +19,7 @@ const Wrapper = styled.header`
   background-color: rgba(255, 255, 255, 0.3);
   transition: background-color 0.4s ease !important;
   z-index: 10;
-  border-bottom: 1px solid rgba(151, 151, 151, 0.2) !important;
+  border-bottom: 1px solid ${props => props.theme.borderColor} !important;
   &.opaque {
     background-color: #fff;
   }
@@ -90,21 +90,25 @@ function Header ({ pathname }) {
           <LinkMenu name='Connexion' to='/connexion' />
         </If>
         {loading && !user && <CircularProgress size={36} />}
-        <If condition={user}>
-          <Image
-            alt='Profile'
-            onClick={() => setUserMenuOpen(!userMenuOpen)}
-            src={user && user.photo}
-          />
-          <UserMenu
-            anchor={document.querySelector('.profile img')}
-            hide={() => setUserMenuOpen(false)}
-            isOpen={userMenuOpen}
-            pathname={pathname}
-            signout={signout}
-            user={user}
-          />
-        </If>
+        {user && (
+          <>
+            <Image
+              alt='Profile'
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              src={user.photo}
+            />
+            {typeof document !== 'undefined' && (
+              <UserMenu
+                anchor={document.querySelector('.profile img')}
+                hide={() => setUserMenuOpen(false)}
+                isOpen={userMenuOpen}
+                pathname={pathname}
+                signout={signout}
+                user={user}
+              />
+            )}
+          </>
+        )}
       </nav>
     </Wrapper>
   )

@@ -3,11 +3,11 @@ const title = 'Guyana Party'
 module.exports = {
   siteMetadata: {
     title,
-    titleTemplate: `%s - ${title}`,
+    titleTemplate: `%s | ${title}`,
     description:
       'Gestion des évènements et mise en avant des activités des associations et des acteurs locaux en Guyane.',
     author: '@chrisservius',
-    keywords: ['guyane', 'carte', 'évènement', 'sortie']
+    keywords: ['guyane', 'carte', 'évènement', 'sortie', 'liberté']
   },
   plugins: [
     'gatsby-plugin-react-helmet',

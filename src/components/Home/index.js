@@ -6,8 +6,8 @@ import AddIcon from '@material-ui/icons/Add'
 import Map from './MainMap'
 import If from '../addons/If'
 import ListItem from './ListItem'
-import img from '../../assets/images/gatsby-icon.png'
-import img2 from '../../assets/images/gatsby-astronaut.png'
+import photo from '../../assets/images/gatsby-icon.png'
+import photo2 from '../../assets/images/gatsby-astronaut.png'
 
 const Wrapper = styled.div`
   height: calc(100vh - ${props => props.theme.headerHeight});
@@ -70,10 +70,15 @@ function Home () {
       position: [4.93, -52.3],
       title: "Event 1: un nom d'évènement super long !",
       slug: 'event1',
-      img: ''
+      photo: ''
     },
-    { position: [51.51, -0.1], title: 'Event 2', slug: 'event2', img },
-    { position: [51.49, -0.05], title: 'Event 3', slug: 'event3', img: img2 }
+    { position: [51.51, -0.1], title: 'Event 2', slug: 'event2', photo },
+    {
+      position: [51.49, -0.05],
+      title: 'Event 3',
+      slug: 'event3',
+      photo: photo2
+    }
   ]
 
   const onMarkerClick = data => {
@@ -101,7 +106,7 @@ function Home () {
           <Fab
             aria-label='Créer un évènement'
             color='primary'
-            onClick={() => navigate('/event/new')}
+            onClick={() => navigate('/app/newevent')}
             title='Créer un évènement'
           >
             <AddIcon />

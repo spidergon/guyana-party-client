@@ -4,6 +4,7 @@ export const theme = {
   headerHeight: '44px',
   linkColor: '#0078a8',
   // black: 'rgb(72, 72, 72)',
+  borderColor: 'rgba(151, 151, 151, 0.2)',
   black: '#000',
   gray: '#dadce0',
   xl: '1680px',
@@ -31,6 +32,7 @@ export const Style = createGlobalStyle`
   }
   img.cover {
     object-fit: cover;
+    width: 100%;
   }
   .text-wrap {
     white-space: nowrap;
