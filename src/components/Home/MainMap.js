@@ -2,22 +2,22 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import Map from '../Map'
 
-const MainMap = ({ markers, onMarkerClick }) => {
+const MainMap = ({ setMarkers, onMarkerClick }) => {
   const [map, setMap] = useState(null)
 
   useEffect(() => {
     if (!map) {
       const newMap = new Map()
-      newMap.addMarkers(markers, onMarkerClick)
+      newMap.initMarkers(setMarkers, onMarkerClick)
       setMap(newMap)
     }
-  }, [map, markers, onMarkerClick])
+  }, [map, onMarkerClick, setMarkers])
 
   return <div id='map' />
 }
 
 MainMap.propTypes = {
-  markers: PropTypes.array,
+  setMarkers: PropTypes.func,
   onMarkerClick: PropTypes.func
 }
 

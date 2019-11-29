@@ -22,7 +22,6 @@ function useProvideAuth () {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [user, setUser] = useState(null)
-  const [hasSignedOut, setHasSignedOut] = useState(false)
 
   useEffect(() => {
     if (!user) {
@@ -102,7 +101,6 @@ function useProvideAuth () {
   const signout = () => {
     Cookies.remove('gp_jwt')
     Cookies.remove('gp_userId')
-    setHasSignedOut(true)
     setUser(null)
   }
 
@@ -113,8 +111,7 @@ function useProvideAuth () {
     loginFacebook,
     loginGoogle,
     loginEmail,
-    signout,
-    hasSignedOut
+    signout
   }
 }
 

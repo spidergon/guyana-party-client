@@ -59,14 +59,7 @@ const events = [
 ]
 
 function Dashboard () {
-  const { loading, user, hasSignedOut } = useAuth()
-
-  useEffect(() => {
-    if (!loading && !user && !hasSignedOut) {
-      showSnack('Veuillez vous connecter pour accéder à cette page.', 'error')
-      navigate('/connexion')
-    }
-  }, [hasSignedOut, loading, user])
+  const { user } = useAuth()
 
   return (
     <Wrapper className='grid'>

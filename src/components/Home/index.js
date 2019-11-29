@@ -61,23 +61,8 @@ const Wrapper = styled.div`
 `
 
 function Home () {
+  const [markers, setMarkers] = useState([])
   const [current, setCurrent] = useState('')
-
-  const markers = [
-    {
-      position: [4.93, -52.3],
-      title: "Event 1: un nom d'évènement super long !",
-      slug: 'event1',
-      photo: ''
-    },
-    { position: [51.51, -0.1], title: 'Event 2', slug: 'event2', photo: '' },
-    {
-      position: [51.49, -0.05],
-      title: 'Event 3',
-      slug: 'event3',
-      photo: ''
-    }
-  ]
 
   const onMarkerClick = data => {
     console.log(data)
@@ -88,7 +73,7 @@ function Home () {
     <Wrapper className='grid'>
       <section id='map-section'>
         <If condition={typeof window !== 'undefined'}>
-          <Map markers={markers} onMarkerClick={onMarkerClick} />
+          <Map onMarkerClick={onMarkerClick} setMarkers={setMarkers} />
         </If>
       </section>
       <section className='grid' id='list-section'>

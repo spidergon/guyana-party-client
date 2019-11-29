@@ -4,7 +4,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import { MarkerClusterGroup } from 'leaflet.markercluster'
 
 class Map {
-  constructor (center, zoom) {
+  constructor(center, zoom) {
     this.map = null
     this.markerClusterGroup = new MarkerClusterGroup()
     this.center = center || [4.93, -52.3]
@@ -49,7 +49,23 @@ class Map {
       .on('locationerror', ({ message }) => console.log(message))
   }
 
-  addMarkers = (markers, onClickFn, fallback) => {
+  initMarkers = (setMarkers, onClickFn, fallback) => {
+    const markers = [
+      {
+        position: [4.93, -52.3],
+        title: "Event 1: un nom d'évènement super long !",
+        slug: 'event1',
+        photo: ''
+      },
+      { position: [51.51, -0.1], title: 'Event 2', slug: 'event2', photo: '' },
+      {
+        position: [51.49, -0.05],
+        title: 'Event 3',
+        slug: 'event3',
+        photo: ''
+      }
+    ]
+    setMarkers(markers)
     try {
       markers.forEach(marker => {
         const latlng = { lat: marker.position[0], lng: marker.position[1] }
