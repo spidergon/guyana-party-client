@@ -617,9 +617,12 @@ pre tt:after {
   }
 }
 
-.navs input {
-  background-image: url(../images/search.svg);
-  background-position: 5px;
+.bg {
   background-repeat: no-repeat;
-  background-size: 20px;
+}
+.search_bg {
+  background-image: url(../images/search.svg);
+}
+.banner_bg {
+  background-image: url(../images/banner.jpg);
 }

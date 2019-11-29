@@ -42,6 +42,8 @@ const Wrapper = styled.header`
         border-color: transparent;
         border-radius: 4px;
         background-color: rgb(239, 239, 239);
+        background-position: 5px;
+        background-size: 20px;
         transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
         &:focus {
           width: 200px;
@@ -82,7 +84,12 @@ function Header ({ pathname }) {
       </nav>
       <nav className='navs'>
         <If condition={pathname.match(/^\/+$/)}>
-          <input aria-label='filtrer' placeholder='Filtrer...' type='search' />
+          <input
+            aria-label='filtrer'
+            className='bg search_bg'
+            placeholder='Filtrer...'
+            type='search'
+          />
         </If>
       </nav>
       <nav className='profile flex'>

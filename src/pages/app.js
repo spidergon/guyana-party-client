@@ -5,7 +5,9 @@ import { Router } from '@reach/router'
 import { useAuth } from '../lib/services/authService'
 import { Seo } from '../components/addons'
 import Dashboard from '../components/Dashboard'
+import Profile from '../components/Dashboard/Profile'
 import NewEvent from '../components/Dashboard/NewEvent'
+import NewGroup from '../components/Dashboard/NewGroup'
 
 const PrivateRoute = ({ component: Component, ...rest }) => {
   const { loading, user } = useAuth()
@@ -26,9 +28,9 @@ export default () => (
     <Seo title='Tableau de bord' />
     <Router>
       <PrivateRoute component={Dashboard} path='/app' />
-      <PrivateRoute component={NewEvent} path='/app/profile' />
+      <PrivateRoute component={Profile} path='/app/profile' />
       <PrivateRoute component={NewEvent} path='/app/newevent' />
-      <PrivateRoute component={NewEvent} path='/app/newgroup' />
+      <PrivateRoute component={NewGroup} path='/app/newgroup' />
     </Router>
   </>
 )

@@ -4,12 +4,12 @@ import Page from './Page'
 
 const Wrapper = styled.div``
 
-function NewEvent () {
+function NewGroup () {
   return (
     <Wrapper>
-      <Page title="Création d'un évènement">Content</Page>
+      <Page title="Création d'un groupe">Content</Page>
     </Wrapper>
   )
 }
 
-export default NewEvent
+export default NewGroup

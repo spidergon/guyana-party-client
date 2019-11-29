@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { navigate } from 'gatsby'
 import styled from 'styled-components'
 import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
 import CardList from '../CardList'
-import { Image, Link } from '../addons'
+import { Image } from '../addons'
 import { useAuth } from '../../lib/services/authService'
-import { showSnack } from '../../lib/state'
 
 const Wrapper = styled.div`
   grid-template-columns: 225px 1fr;

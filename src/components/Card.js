@@ -123,7 +123,7 @@ function Card ({ data, isGroup }) {
         action={() => console.log('ACTION')}
         close={() => setDiagOpen(false)}
         isOpen={diagOpen}
-        text={`Ce${isGroup ? ' group' : 't évènement'} ne sera pas supprimé.`}
+        text={`Ce${isGroup ? ' groupe' : 't évènement'} ne sera pas supprimé.`}
         title={`Voulez-vous vraiment archiver ${data.title} ?`}
       />
     </Wrapper>
