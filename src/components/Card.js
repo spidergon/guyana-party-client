@@ -6,6 +6,8 @@ import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import Dialog from './Dialog'
 import { Image, Link } from './addons'
+import { groupPath } from '../lib/services/groupService'
+import { eventPath } from '../lib/services/eventService'
 
 const Wrapper = styled.div`
   position: relative;
@@ -67,32 +69,32 @@ const Wrapper = styled.div`
   }
 `
 
-function Card ({ data, isGroup }) {
+function Card ({ data: { name, photos, slug, _id }, isGroup }) {
   const [diagOpen, setDiagOpen] = useState(false)
 
   return (
     <Wrapper>
       <Image
-        alt={data.title}
+        alt={name}
         className='cover'
         height='200'
         loading='lazy'
-        src={data.photo}
+        src={photos && photos.length > 0 ? photos[0] : ''}
       />
       <div className='caption'>
         <div className='title text-wrap center'>
           <Link
-            aria-label={data.title}
-            title={data.title}
-            to={`/${isGroup ? 'group' : 'event'}/${data.slug}`}
+            aria-label={name}
+            title={name}
+            to={`/${isGroup ? groupPath : eventPath}/${slug}`}
           >
-            <strong>{data.title}</strong>
+            <strong>{name}</strong>
           </Link>
           {!isGroup && <p>Le 28/11/2019 à 13:24</p>}
         </div>
       </div>
       <div className='overlay'>
-        <Link to={`/${isGroup ? 'group' : 'event'}/${data._id}/edit`}>
+        <Link to={`/${isGroup ? groupPath : eventPath}/${_id}/edit`}>
           <Fab aria-label='Modifier' className='edit' title='Modifier'>
             <EditIcon />
           </Fab>
@@ -109,7 +111,7 @@ function Card ({ data, isGroup }) {
         <div className='text'>
           {(!isGroup && (
             <>
-              <Link title='Voir le groupe' to={`/group/${data.slug}`}>
+              <Link title='Voir le groupe' to={`/${groupPath}/${slug}`}>
                 <p className='text-wrap'>Organisateur : Group1</p>
               </Link>
               <p>
@@ -124,7 +126,7 @@ function Card ({ data, isGroup }) {
         close={() => setDiagOpen(false)}
         isOpen={diagOpen}
         text={`Ce${isGroup ? ' groupe' : 't évènement'} ne sera pas supprimé.`}
-        title={`Voulez-vous vraiment archiver ${data.title} ?`}
+        title={`Voulez-vous vraiment archiver "${name}" ?`}
       />
     </Wrapper>
   )

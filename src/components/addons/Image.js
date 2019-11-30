@@ -1,6 +1,6 @@
 import React from 'react'
 import Proptypes from 'prop-types'
-import defaultImg from '../../assets/images/default.gif'
+import defaultImg from '../../assets/images/default.jpeg'
 
 const Image = ({ alt, fallback, ...rest }) => (
   <img {...rest} alt={alt} onError={e => (e.target.src = fallback)} />

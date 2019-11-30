@@ -1,19 +1,5 @@
-import { createGlobalState } from 'react-hooks-global-state'
+import { State, subscribe } from 'jstates-react'
 
-const defaultState = {
-  snack: { msg: '', variant: '' }
-}
+export const snackState = new State('snackState', { msg: '', variant: '' })
 
-export const {
-  GlobalStateProvider,
-  setGlobalState,
-  useGlobalState
-} = createGlobalState(defaultState)
-
-/**
- * Show a snackbar containing a message.
- * @param {string} msg - the message to display.
- * @param {string} [variant] - the variant of the message (default: 'success').
- */
-export const showSnack = (msg, variant = 'success') =>
-  setGlobalState('snack', { msg, variant })
+export { subscribe }

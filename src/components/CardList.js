@@ -28,23 +28,30 @@ const Wrapper = styled.section`
   }
 `
 
-function CardList ({ title, data, isGroup }) {
-  return (
-    <Wrapper>
-      <h2>{title + (data.length > 0 ? ` (${data.length})` : '')}</h2>
-      <div id='container'>
+const loadingMsg = (loading, isGroup) =>
+  loading ? (
+    <p>Chargement...</p>
+  ) : (
+    <p>{`Vous n'avez aucun ${isGroup ? 'groupe' : 'évènement'}.`}</p>
+  )
+
+const CardList = ({ title, data, isGroup, loading }) => (
+  <Wrapper>
+    <h2>{title + (data.length > 0 ? ` (${data.length})` : '')}</h2>
+    <div id='container'>
+      <If
+        condition={data.length !== 0}
+        otherwise={loadingMsg(loading, isGroup)}
+      >
         <Slider {...sliderConf}>
           {data.map((d, index) => (
             <Card data={d} isGroup={isGroup} key={d.slug + index} />
           ))}
         </Slider>
-        <If condition={data.length === 0}>
-          <p>{`Vous n'avez aucun ${isGroup ? 'groupe' : 'évènement'}.`}</p>
-        </If>
-      </div>
-    </Wrapper>
-  )
-}
+      </If>
+    </div>
+  </Wrapper>
+)
 
 const sliderConf = {
   dots: true,
@@ -62,7 +69,8 @@ const sliderConf = {
 CardList.propTypes = {
   title: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
-  isGroup: PropTypes.bool
+  isGroup: PropTypes.bool,
+  loading: PropTypes.bool
 }
 
 export default CardList

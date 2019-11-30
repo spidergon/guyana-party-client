@@ -9,7 +9,7 @@ import ErrorIcon from '@material-ui/icons/Error'
 import InfoIcon from '@material-ui/icons/Info'
 import CloseIcon from '@material-ui/icons/Close'
 import IconButton from '@material-ui/core/IconButton'
-import { useGlobalState } from '../lib/state'
+import { snackState, subscribe } from '../lib/state'
 
 const Wrapper = styled.div`
   .success {
@@ -44,15 +44,13 @@ const variantIcons = {
   info: <InfoIcon className='icon iconVariant' />
 }
 
-function Snack ({ vertical = 'top', horizontal = 'center' }) {
-  const [{ msg, variant }, update] = useGlobalState('snack')
-
-  const hideSnack = () => update(s => ({ ...s, msg: '' }))
+function Snack ({ msg, variant }) {
+  const hideSnack = () => snackState.setState({ msg: '', variant: '' })
 
   return (
     <Wrapper>
       <Snackbar
-        anchorOrigin={{ vertical, horizontal }}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         autoHideDuration={6000}
         onClose={(e, reason) => {
           if (reason === 'clickway') return
@@ -87,8 +85,15 @@ function Snack ({ vertical = 'top', horizontal = 'center' }) {
 }
 
 Snack.propTypes = {
-  vertical: PropTypes.string,
-  horizontal: PropTypes.string
+  msg: PropTypes.string,
+  variant: PropTypes.string
 }
 
-export default Snack
+export default subscribe(
+  Snack,
+  [snackState],
+  ({ snackState: { msg, variant } }) => ({ msg, variant })
+)
+
+export const showSnack = (msg, variant = 'success') =>
+  snackState.setState({ msg, variant })

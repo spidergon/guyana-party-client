@@ -8,6 +8,8 @@ import Button from '@material-ui/core/Button'
 import Page from './Page'
 import Description from './Mde'
 import Photos from './Photos'
+import { showSnack } from '../Snack'
+import { createGroup } from '../../lib/services/groupService'
 
 const Wrapper = styled.div`
   #name {
@@ -34,14 +36,21 @@ function NewGroup () {
   const [nameError, setNameError] = useState('')
   const [descError, setDescError] = useState('')
 
-  const saveGroup = () => {
-    console.log(name, description, photos)
+  const save = () => {
     setNameError('')
     setDescError('')
     if (!name) return setNameError('Veuillez saisir un nom')
     if (!description) return setDescError('Veuillez saisir une description :')
-    // TODO: save process
     setLoading(true)
+    createGroup(
+      { name, description, photos },
+      slug => navigate(`/group/${slug}`),
+      error => {
+        console.log(error)
+        showSnack('La création du groupe a échoué !', 'error')
+        setLoading(false)
+      }
+    )
   }
 
   return (
@@ -79,7 +88,7 @@ function NewGroup () {
             aria-label='Enregistrer'
             color='primary'
             disabled={loading}
-            onClick={saveGroup}
+            onClick={save}
             variant='contained'
           >
             {loading ? 'Chargement...' : 'Enregistrer'}

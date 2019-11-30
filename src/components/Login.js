@@ -7,7 +7,7 @@ import isEmail from 'validator/lib/isEmail'
 import Button from './Button'
 import { If, Link } from './addons'
 import { useAuth } from '../lib/services/authService'
-import { showSnack } from '../lib/state'
+import { showSnack } from './Snack'
 
 const Wrapper = styled.div`
   font-family: Montserrat, Helvetica, sans-serif;

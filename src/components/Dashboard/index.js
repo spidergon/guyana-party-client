@@ -7,6 +7,7 @@ import AddIcon from '@material-ui/icons/Add'
 import CardList from '../CardList'
 import { Image } from '../addons'
 import { useAuth } from '../../lib/services/authService'
+import { useGroups } from '../../lib/services/groupService'
 
 const Wrapper = styled.div`
   grid-template-columns: 225px 1fr;
@@ -48,17 +49,18 @@ const Wrapper = styled.div`
 const events = [
   {
     position: [4.93, -52.3],
-    title: "Event 1: un nom d'évènement super long !",
+    name: "Event 1: un nom d'évènement super long !",
     slug: 'event1',
-    photo: ''
+    photo: []
   },
-  { position: [51.51, -0.1], title: 'Event 2', slug: 'event2', photo: '' },
-  { position: [51.49, -0.05], title: 'Event 3', slug: 'event3', photo: '' },
-  { position: [51.49, -0.05], title: 'Event 4', slug: 'event4', photo: '' }
+  { position: [51.51, -0.1], name: 'Event 2', slug: 'event2', photo: [] },
+  { position: [51.49, -0.05], name: 'Event 3', slug: 'event3', photo: [] },
+  { position: [51.49, -0.05], name: 'Event 4', slug: 'event4', photo: [] }
 ]
 
 function Dashboard () {
   const { user } = useAuth()
+  const { loading: groupLoading, groups } = useGroups()
 
   return (
     <Wrapper className='grid'>
@@ -85,7 +87,12 @@ function Dashboard () {
       </section>
       <section className='content'>
         <CardList data={events} title='Mes Évènements' />
-        <CardList data={events} isGroup title='Mes Groupes' />
+        <CardList
+          data={groups}
+          isGroup
+          loading={groupLoading}
+          title='Mes Groupes'
+        />
       </section>
     </Wrapper>
   )

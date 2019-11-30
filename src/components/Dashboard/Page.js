@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   .bg {
     display: table;
     background-size: cover;
