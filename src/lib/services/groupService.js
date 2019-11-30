@@ -40,6 +40,16 @@ export const useGroups = () => {
           .get(`${process.env.API}/groups?author=${userId}`)
           .then(({ data: res }) => {
             if (res.status === 200 && res.data) {
+              res.data = res.data.map(d => {
+                d.photos = d.photos.map(p => {
+                  const arrayBufferView = new Uint8Array(p.data.data)
+                  const blob = new Blob([arrayBufferView], {
+                    type: p.contentType
+                  })
+                  return URL.createObjectURL(blob)
+                })
+                return d
+              })
               setGroups(res.data)
             } else {
               setError('Une erreur interne est survenue')

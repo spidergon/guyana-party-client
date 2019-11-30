@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import Fab from '@material-ui/core/Fab'
@@ -71,6 +71,11 @@ const Wrapper = styled.div`
 
 function Card ({ data: { name, photos, slug, _id }, isGroup }) {
   const [diagOpen, setDiagOpen] = useState(false)
+
+  useEffect(
+    () => () => photos && photos.forEach(p => URL.revokeObjectURL(p)), // Revoke the data uris to avoid memory leaks
+    [photos]
+  )
 
   return (
     <Wrapper>

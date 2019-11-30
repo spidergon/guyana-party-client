@@ -73,10 +73,10 @@ function Photos ({ photos, setPhotos, disabled }) {
   const [loading, setLoading] = useState(false)
   const [dropError, setDropError] = useState('')
 
-  useEffect(() => {
-    // Make sure to revoke the data uris to avoid memory leaks
-    return () => photos.forEach(p => URL.revokeObjectURL(p.preview))
-  }, [photos])
+  useEffect(
+    () => () => photos.forEach(p => URL.revokeObjectURL(p.preview)), // Revoke the data uris to avoid memory leaks
+    [photos]
+  )
 
   const handlePreviewDrop = async (acceptedFiles, rejectedFiles) => {
     setDropError('')
