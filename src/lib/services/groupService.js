@@ -5,26 +5,26 @@ import Cookies from 'js-cookie'
 export const createGroup = (payload, next, fallback) => {
   const jwt = Cookies.get('gp_jwt')
   const userId = Cookies.get('gp_userId')
-  if (jwt && userId) {
-    const formData = new FormData()
-    const { name, description, photos } = payload
-    formData.append('name', name)
-    formData.append('description', description)
-    formData.append('author', userId)
-    photos.forEach(photo => formData.append('files[]', photo))
-    axios
-      .post(`${process.env.API}/groups`, formData, {
-        headers: { authorization: `bearer ${jwt}` }
-      })
-      .then(({ data: res }) => {
-        if (res.status === 201 && res.data) {
-          next(res.data.slug)
-        } else {
-          fallback('Une erreur interne est survenue')
-        }
-      })
-      .catch(error => fallback(error))
-  } else fallback(MISSING_TOKEN_ERR)
+  if (!jwt || !userId) return fallback(MISSING_TOKEN_ERR)
+
+  const formData = new FormData()
+  formData.append('name', payload.name)
+  formData.append('description', payload.description)
+  formData.append('author', userId)
+  payload.photos.forEach(photo => formData.append('files[]', photo))
+
+  axios
+    .post(`${process.env.API}/groups`, formData, {
+      headers: { authorization: `bearer ${jwt}` }
+    })
+    .then(({ data: res }) => {
+      if (res.status === 201 && res.data) {
+        next(res.data.slug)
+      } else {
+        fallback('Une erreur interne est survenue')
+      }
+    })
+    .catch(fallback)
 }
 
 export const useGroups = () => {
@@ -33,35 +33,39 @@ export const useGroups = () => {
   const [groups, setGroups] = useState([])
 
   useEffect(() => {
-    if (groups.length === 0) {
-      const userId = Cookies.get('gp_userId')
-      if (userId) {
-        axios
-          .get(`${process.env.API}/groups?author=${userId}`)
-          .then(({ data: res }) => {
-            if (res.status === 200 && res.data) {
-              res.data = res.data.map(d => {
-                d.photos = d.photos.map(p => {
-                  const arrayBufferView = new Uint8Array(p.data.data)
-                  const blob = new Blob([arrayBufferView], {
-                    type: p.contentType
-                  })
-                  return URL.createObjectURL(blob)
-                })
-                return d
-              })
-              setGroups(res.data)
-            } else {
-              setError('Une erreur interne est survenue')
-            }
+    if (groups.length > 0) return setLoading(false)
+
+    const userId = Cookies.get('gp_userId')
+    if (!userId) return formatError(MISSING_TOKEN_ERR)
+
+    axios
+      .get(`${process.env.API}/groups?author=${userId}`)
+      .then(({ data: res }) => {
+        if (res.status !== 200 || !res.data) {
+          return formatError('Une erreur interne est survenue')
+        }
+        if (res.data.length === 0) return formatError()
+
+        res.data = res.data.map(d => {
+          d.photos = d.photos.map(p => {
+            const arrayBufferView = new Uint8Array(p.data.data)
+            const blob = new Blob([arrayBufferView], {
+              type: p.contentType
+            })
+            return URL.createObjectURL(blob)
           })
-          .catch(error => setError(error))
-      } else {
-        setError(MISSING_TOKEN_ERR)
-        setLoading(false)
-      }
-    }
+          return d
+        })
+        setGroups(res.data)
+      })
+      .catch(formatError)
+      .finally(() => formatError())
   }, [groups])
+
+  const formatError = error => {
+    if (error) setError(error)
+    setLoading(false)
+  }
 
   return { loading, error, groups }
 }

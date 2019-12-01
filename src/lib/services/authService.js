@@ -7,14 +7,13 @@ import { gravatar } from '../utils'
 
 const authContext = createContext()
 
-export const AuthProvider = ({ children }) => {
-  const auth = useProvideAuth()
-  return <authContext.Provider value={auth}>{children}</authContext.Provider>
-}
+export const AuthProvider = ({ children }) => (
+  <authContext.Provider value={useProvideAuth()}>
+    {children}
+  </authContext.Provider>
+)
 
-AuthProvider.propTypes = {
-  children: PropTypes.node.isRequired
-}
+AuthProvider.propTypes = { children: PropTypes.node.isRequired }
 
 export const useAuth = () => useContext(authContext)
 
@@ -24,33 +23,33 @@ function useProvideAuth () {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    if (!user) {
-      const jwt = Cookies.get('gp_jwt')
-      const userId = Cookies.get('gp_userId')
-      if (jwt && userId) {
-        axios({
-          method: 'GET',
-          headers: { authorization: `bearer ${jwt}` },
-          url: `${process.env.API}/users/${userId}`
-        })
-          .then(({ data: res }) => {
-            if (res.status === 200 && res.data) {
-              delete res.data.password
-              res.data.photo = res.data.photo || gravatar(res.data.email)
-              setUser(res.data)
-            }
-          })
-          .catch(error => {
-            console.log('Err:', error)
-            setError(error)
-          })
-          .finally(() => setLoading(false))
-      } else {
-        setError(MISSING_TOKEN_ERR)
-        setLoading(false)
-      }
-    } else setLoading(false)
+    if (user) return setLoading(false)
+
+    const jwt = Cookies.get('gp_jwt')
+    const userId = Cookies.get('gp_userId')
+    if (!jwt || !userId) return formatError(MISSING_TOKEN_ERR)
+
+    axios({
+      method: 'GET',
+      headers: { authorization: `bearer ${jwt}` },
+      url: `${process.env.API}/users/${userId}`
+    })
+      .then(({ data: res }) => {
+        if (res.status !== 200 || !res.data) {
+          return formatError('Une erreur interne est survenue')
+        }
+        delete res.data.password
+        res.data.photo = res.data.photo || gravatar(res.data.email)
+        setUser(res.data)
+      })
+      .catch(error => formatError(error))
+      .finally(() => formatError())
   }, [user])
+
+  const formatError = error => {
+    if (error) setError(error)
+    setLoading(false)
+  }
 
   const setNewUser = (newUser, token) => {
     const config = { secure: process.env.NODE_ENV === 'production' }
@@ -65,21 +64,23 @@ function useProvideAuth () {
   }
 
   const loginGoogle = ({ tokenId }, next, fallback) => {
-    if (tokenId) {
-      axios({
-        method: 'POST',
-        headers: { 'content-type': 'application/x-www-form-urlencoded' },
-        data: qs.stringify({ tokenId, provider: 'google' }),
-        url: `${process.env.API}/auth/tokensignin`
+    if (!tokenId) return fallback('Token id missing')
+
+    axios({
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      data: qs.stringify({ tokenId, provider: 'google' }),
+      url: `${process.env.API}/auth/tokensignin`
+    })
+      .then(({ data }) => {
+        if (data.status !== 200 || !data.token || !data.user._id) {
+          return fallback('Une erreur interne est survenue')
+        }
+        setNewUser(data.user, data.token)
+        next()
       })
-        .then(({ data }) => {
-          const { status, token, user: newUser } = data
-          if (status === 200 && token && newUser._id) setNewUser(newUser, token)
-          next()
-        })
-        .catch(fallback)
-        .finally(() => setLoading(false))
-    } else fallback('Token id missing')
+      .catch(fallback)
+      .finally(() => setLoading(false))
   }
 
   const loginEmail = (email, password, next, fallback) => {
@@ -90,8 +91,10 @@ function useProvideAuth () {
       url: `${process.env.API}/auth/login`
     })
       .then(({ data }) => {
-        const { status, token, user: newUser } = data
-        if (status === 200 && token && newUser._id) setNewUser(newUser, token)
+        if (data.status !== 200 || !data.token || !data.user._id) {
+          return fallback('Une erreur interne est survenue')
+        }
+        setNewUser(data.user, data.token)
         next()
       })
       .catch(fallback)
