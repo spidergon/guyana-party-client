@@ -8,3 +8,5 @@ export const gravatar = email =>
   `https://www.gravatar.com/avatar/${require('md5')(email)}?d=mp`
 
 export const purify = async dirty => require('dompurify').sanitize(dirty)
+
+export const MISSING_TOKEN_ERR = 'Token de connexion requis'

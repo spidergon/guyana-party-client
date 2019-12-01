@@ -47,17 +47,6 @@ const Wrapper = styled.div`
       }
     }
   }
-  /* @media (max-height: ${props => props.theme.xs}) and (max-width: ${props =>
-  props.theme.md}) {
-    grid-template-columns: 55% auto;
-    grid-template-rows: auto;
-    #map-section #map {
-      height: 100%;
-    }
-    #list-section img {
-      max-width: 55px;
-    }
-  } */
 `
 
 function Home () {
@@ -89,7 +78,7 @@ function Home () {
           <Fab
             aria-label='Créer un évènement'
             color='primary'
-            onClick={() => navigate('/app/newevent')}
+            onClick={() => navigate('/app/event/new')}
             title='Créer un évènement'
           >
             <AddIcon />

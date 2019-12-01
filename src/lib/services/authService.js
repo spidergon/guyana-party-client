@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import axios from 'axios'
 import qs from 'qs'
 import Cookies from 'js-cookie'
-import { gravatar } from '../utils'
+import { gravatar, MISSING_TOKEN_ERR } from '../utils'
 
 const authContext = createContext()
 
@@ -68,7 +68,7 @@ function useProvideAuth () {
 
     axios({
       method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      // headers: { 'content-type': 'application/x-www-form-urlencoded' },
       data: qs.stringify({ tokenId, provider: 'google' }),
       url: `${process.env.API}/auth/tokensignin`
     })
@@ -86,7 +86,7 @@ function useProvideAuth () {
   const loginEmail = (email, password, next, fallback) => {
     axios({
       method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      // headers: { 'content-type': 'application/x-www-form-urlencoded' },
       data: qs.stringify({ email, password }),
       url: `${process.env.API}/auth/login`
     })
@@ -117,5 +117,3 @@ function useProvideAuth () {
     signout
   }
 }
-
-export const MISSING_TOKEN_ERR = 'Token de connexion requis'

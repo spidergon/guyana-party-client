@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
 import { navigate } from 'gatsby'
 import styled from 'styled-components'
 import Grid from '@material-ui/core/Grid'
@@ -9,7 +10,11 @@ import Page from './Page'
 import Description from './Mde'
 import Photos from './Photos'
 import { showSnack } from '../Snack'
-import { createGroup } from '../../lib/services/groupService'
+import {
+  createGroup,
+  useGroup,
+  updateGroup
+} from '../../lib/services/groupService'
 
 const Wrapper = styled.div`
   #name {
@@ -28,7 +33,7 @@ const Wrapper = styled.div`
   }
 `
 
-function NewGroup () {
+function EditGroup ({ id }) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [photos, setPhotos] = useState([])
@@ -36,26 +41,59 @@ function NewGroup () {
   const [nameError, setNameError] = useState('')
   const [descError, setDescError] = useState('')
 
+  const { error, group } = useGroup(id)
+
+  useEffect(() => {
+    if (error) {
+      showSnack('Une erreur interne est survenue', 'error')
+      return navigate('/app')
+    }
+    if (id && group) {
+      setName(group.name)
+      setDescription(group.description)
+      setPhotos(group.photos)
+    } else {
+      setName('')
+      setDescription('')
+      setPhotos([])
+    }
+  }, [error, group, id])
+
   const save = () => {
     setNameError('')
     setDescError('')
     if (!name) return setNameError('Veuillez saisir un nom')
     if (!description) return setDescError('Veuillez saisir une description :')
     setLoading(true)
-    createGroup(
-      { name, description, photos },
-      slug => navigate(`/group/${slug}`),
-      error => {
-        console.log(error)
-        showSnack('La création du groupe a échoué !', 'error')
-        setLoading(false)
-      }
-    )
+
+    const next = slug => navigate(`/group/${slug}`)
+    const fallback = (error, isCreate = true) => {
+      showSnack(
+        `${isCreate ? 'La création' : "L'édition"} du groupe a échoué !`,
+        'error'
+      )
+      setLoading(false)
+      console.log(error)
+    }
+
+    if (!id) {
+      createGroup({ name, description, photos }, next, fallback)
+    } else {
+      updateGroup(
+        { id, name, description, photos, author: group.author },
+        next,
+        error => fallback(error, false)
+      )
+    }
   }
 
   return (
     <Wrapper>
-      <Page title="Création d'un groupe">
+      <Page
+        title={`${id ? 'Edition' : 'Création'} ${
+          name ? `de ${name}` : "d'un groupe"
+        }`}
+      >
         <div id='name'>
           <Grid alignItems='flex-end' container spacing={1}>
             <Grid item>
@@ -99,4 +137,8 @@ function NewGroup () {
   )
 }
 
-export default NewGroup
+EditGroup.propTypes = {
+  id: PropTypes.string
+}
+
+export default EditGroup

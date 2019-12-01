@@ -6,8 +6,9 @@ import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import Dialog from './Dialog'
 import { Image, Link } from './addons'
-import { groupPath } from '../lib/services/groupService'
-import { eventPath } from '../lib/services/eventService'
+import { deleteGroup } from '../lib/services/groupService'
+import { deleteEvent } from '../lib/services/eventService'
+import { showSnack } from './Snack'
 
 const Wrapper = styled.div`
   position: relative;
@@ -69,13 +70,26 @@ const Wrapper = styled.div`
   }
 `
 
-function Card ({ data: { name, photos, slug, _id }, isGroup }) {
+function Card ({ data: { author, name, photos, slug, _id }, isGroup }) {
   const [diagOpen, setDiagOpen] = useState(false)
 
   useEffect(
     () => () => photos && photos.forEach(p => URL.revokeObjectURL(p)), // Revoke the data uris to avoid memory leaks
     [photos]
   )
+
+  const archiveItem = () => {
+    const next = () => {
+      showSnack(`"${name}" archivé avec succès`)
+      if (typeof window !== 'undefined') window.location.reload()
+    }
+    const fallback = error => {
+      showSnack(`Impossible d'archiver ${name}`, 'error')
+      console.log(error)
+    }
+    if (isGroup) return deleteGroup({ id: _id, author }, next, fallback)
+    deleteEvent({ id: _id, author }, next, fallback)
+  }
 
   return (
     <Wrapper>
@@ -91,7 +105,7 @@ function Card ({ data: { name, photos, slug, _id }, isGroup }) {
           <Link
             aria-label={name}
             title={name}
-            to={`/${isGroup ? groupPath : eventPath}/${slug}`}
+            to={`/${isGroup ? 'group' : 'event'}/${slug}`}
           >
             <strong>{name}</strong>
           </Link>
@@ -99,7 +113,7 @@ function Card ({ data: { name, photos, slug, _id }, isGroup }) {
         </div>
       </div>
       <div className='overlay'>
-        <Link to={`/${isGroup ? groupPath : eventPath}/${_id}/edit`}>
+        <Link to={`/app/${isGroup ? 'group' : 'event'}/edit/${_id}`}>
           <Fab aria-label='Modifier' className='edit' title='Modifier'>
             <EditIcon />
           </Fab>
@@ -116,7 +130,7 @@ function Card ({ data: { name, photos, slug, _id }, isGroup }) {
         <div className='text'>
           {(!isGroup && (
             <>
-              <Link title='Voir le groupe' to={`/${groupPath}/${slug}`}>
+              <Link title='Voir le groupe' to={`/group/${slug}`}>
                 <p className='text-wrap'>Organisateur : Group1</p>
               </Link>
               <p>
@@ -127,7 +141,7 @@ function Card ({ data: { name, photos, slug, _id }, isGroup }) {
         </div>
       </div>
       <Dialog
-        action={() => console.log('ACTION')}
+        action={archiveItem}
         close={() => setDiagOpen(false)}
         isOpen={diagOpen}
         text={`Ce${isGroup ? ' groupe' : 't évènement'} ne sera pas supprimé.`}

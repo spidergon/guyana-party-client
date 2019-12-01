@@ -5,7 +5,6 @@ import { useDropzone } from 'react-dropzone'
 import Grid from '@material-ui/core/Grid'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import CloseIcon from '@material-ui/icons/Cancel'
-// import Compress from 'client-compress'
 
 const Wrapper = styled.div`
   .dropgrid {
@@ -163,8 +162,8 @@ function Photos ({ photos, setPhotos, disabled }) {
         <aside>
           {photos && photos.length > 0 && (
             <Grid container spacing={1}>
-              {photos.map(p => (
-                <Grid className='grid-item' item key={p.id}>
+              {photos.map((p, index) => (
+                <Grid className='grid-item' item key={p.id + index}>
                   <img alt='Preview' className='preview' src={p.preview} />
                   {!disabled && (
                     <CloseIcon

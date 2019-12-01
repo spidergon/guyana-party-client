@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Image, Link } from '../addons'
-import { eventPath } from '../../lib/services/eventService'
 
 const Wrapper = styled.div`
   padding: 5px;
@@ -72,7 +71,7 @@ const Wrapper = styled.div`
 function ListItem ({ item, selected }) {
   return (
     <Wrapper className={selected ? 'selected' : ''}>
-      <Link className='grid' to={`/${eventPath}/${item.slug}`}>
+      <Link className='grid' to={`/event/${item.slug}`}>
         <Image alt={item.title} className='cover' src={item.photo} />
         <div className='content'>
           <h2 className='text-wrap'>{item.title}</h2>

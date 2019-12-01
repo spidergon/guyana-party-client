@@ -171,13 +171,16 @@ textarea {
   height: auto;
 }
 [type='search'] {
+  padding: 5px 1px;
+}
+/* [type='search'] {
   -webkit-appearance: textfield;
   outline-offset: -2px;
 }
 [type='search']::-webkit-search-cancel-button,
 [type='search']::-webkit-search-decoration {
   -webkit-appearance: none;
-}
+} */
 ::-webkit-input-placeholder {
   color: inherit;
   opacity: 0.54;

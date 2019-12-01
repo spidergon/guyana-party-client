@@ -24,12 +24,12 @@ function UserMenu ({ anchor, hide, isOpen, pathname, user, signout }) {
         <MenuItem onClick={() => goTo('/app/profile')}>Mon compte</MenuItem>
       )}
       {!pathname.match('app/newevent') && (
-        <MenuItem onClick={() => goTo('/app/newevent')}>
+        <MenuItem onClick={() => goTo('/app/event/new')}>
           Créer un évènement
         </MenuItem>
       )}
       {!pathname.match('app/newgroup') && (
-        <MenuItem onClick={() => goTo('/app/newgroup')}>
+        <MenuItem onClick={() => goTo('/app/group/new')}>
           Créer un groupe
         </MenuItem>
       )}
