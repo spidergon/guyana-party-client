@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import Fab from '@material-ui/core/Fab'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import { showSnack } from './Snack'
 import { If, Page, Link } from './addons'
 import Dialog from './Dialog'
@@ -49,11 +50,18 @@ const Wrapper = styled.div`
   }
   .controls {
     margin-bottom: 1rem;
-    .edit,
-    .archive {
+    button {
       margin: 10px;
       width: 40px;
       height: 40px;
+    }
+  }
+  @media (max-width: ${props => props.theme.xs}) {
+    .desc-section {
+      margin-bottom: 3rem;
+      .photos .slick-track {
+        margin-left: auto;
+      }
     }
   }
 `
@@ -97,6 +105,11 @@ function GroupPage ({ slug }) {
   return (
     <Page>
       <Wrapper>
+        {loading && !group && (
+          <center>
+            <CircularProgress />
+          </center>
+        )}
         {group && (
           <>
             <section className='title grid'>

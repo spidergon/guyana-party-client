@@ -2,7 +2,7 @@
 
 exports[`<Page /> should match its reference snapshot 1`] = `
 <section
-  class="sc-bdVaJa kDqYGi pageClass"
+  class="sc-bdVaJa inulEF pageClass"
 >
   <div
     class="container"

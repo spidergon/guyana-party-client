@@ -12,7 +12,7 @@ const Wrapper = styled.section`
     padding: 0 1rem;
     .page-content h1 {
       text-align: center;
-      font-size: 22px;
+      font-size: 30px;
     }
   }
   @media screen and (max-width: ${({ theme }) => theme.sm}) {
