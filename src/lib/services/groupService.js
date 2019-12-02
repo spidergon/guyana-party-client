@@ -4,6 +4,10 @@ import qs from 'qs'
 import Cookies from 'js-cookie'
 import { MISSING_TOKEN_ERR } from '../utils'
 
+export const isAuthor = (user, author) => {
+  return user && user._id === author
+}
+
 export const createGroup = (payload, next, fallback) => {
   const jwt = Cookies.get('gp_jwt')
   const userId = Cookies.get('gp_userId')
@@ -49,7 +53,7 @@ export const updateGroup = (payload, next, fallback) => {
     })
     .then(({ data: res }) => {
       if (res.status === 200 && res.data) {
-        next(res.data.slug)
+        next()
       } else {
         fallback('Une erreur interne est survenue')
       }
@@ -83,39 +87,43 @@ export const deleteGroup = async (payload, next, fallback) => {
     .catch(fallback)
 }
 
-export const useGroup = id => {
+export const useGroup = ({ id, slug }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [group, setGroup] = useState(null)
 
   useEffect(() => {
-    if (!id || group) return setLoading(false)
+    if ((!id && !slug) || group) return setLoading(false)
 
-    const userId = Cookies.get('gp_userId')
-    if (!userId) return formatError(MISSING_TOKEN_ERR)
+    const query = `${process.env.API}/groups${
+      slug ? `?slug=${slug}` : `/${id}`
+    }`
 
     axios
-      .get(`${process.env.API}/groups/${id}`)
+      .get(query)
       .then(({ data: res }) => {
         if (res.status !== 200 || !res.data) {
           return formatError('Une erreur interne est survenue')
         }
-        res.data.photos = res.data.photos.map((p, index) => {
-          const arrayBufferView = new Uint8Array(p.data.data)
-          const blob = new Blob([arrayBufferView], {
-            type: p.contentType
-          })
+        const parsePhoto = p => {
+          const blob = getBlob(p)
           Object.assign(blob, {
             preview: URL.createObjectURL(blob),
             id: p._id
           })
           return blob
-        })
+        }
+        if (slug) {
+          res.data[0].photos = res.data[0].photos.map(parsePhoto)
+          res.data = res.data[0]
+        } else {
+          res.data.photos = res.data.photos.map(parsePhoto)
+        }
         setGroup(res.data)
       })
       .catch(formatError)
       .finally(() => formatError())
-  }, [group, id])
+  }, [group, id, slug])
 
   const formatError = error => {
     if (error) setError(error)
@@ -145,15 +153,13 @@ export const useGroups = () => {
         if (res.data.length === 0) return formatError()
 
         res.data = res.data.map(d => {
-          d.photos = d.photos.map(p => {
-            const arrayBufferView = new Uint8Array(p.data.data)
-            const blob = new Blob([arrayBufferView], {
-              type: p.contentType
-            })
-            return URL.createObjectURL(blob)
-          })
+          if (d.photos.length > 0) {
+            d.photo = URL.createObjectURL(getBlob(d.photos[0]))
+            delete d.photos
+          }
           return d
         })
+
         setGroups(res.data)
       })
       .catch(formatError)
@@ -165,5 +171,12 @@ export const useGroups = () => {
     setLoading(false)
   }
 
-  return { loading, error, groups }
+  return { loading, error, groups, setGroups }
+}
+
+function getBlob (photo) {
+  const arrayBufferView = new Uint8Array(photo.data.data)
+  return new Blob([arrayBufferView], {
+    type: photo.contentType
+  })
 }

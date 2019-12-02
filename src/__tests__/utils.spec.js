@@ -1,20 +1,5 @@
 import { expect } from '../lib/test-utils'
-// import wait from 'waait'
 import { gravatar, purify } from '../lib/utils'
-
-// describe('lib > utils.js > asyncLoop', () => {
-//   it.concurrent('should loop async item correctly', async () => {
-//     let count = 0
-//     let val
-//     await asyncLoop(['v1', 'v2'], async v => {
-//       await wait()
-//       count++
-//       val = v
-//     })
-//     expect(count).to.equal(2)
-//     expect(val).to.equal('v2')
-//   })
-// })
 
 describe('lib > utils.js > gravatar', () => {
   it('should return correct url with hashed email', () => {

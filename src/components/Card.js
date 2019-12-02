@@ -6,9 +6,6 @@ import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import Dialog from './Dialog'
 import { Image, Link } from './addons'
-import { deleteGroup } from '../lib/services/groupService'
-import { deleteEvent } from '../lib/services/eventService'
-import { showSnack } from './Snack'
 
 const Wrapper = styled.div`
   position: relative;
@@ -70,26 +67,13 @@ const Wrapper = styled.div`
   }
 `
 
-function Card ({ data: { author, name, photos, slug, _id }, isGroup }) {
+function Card ({ data: { author, name, photo, slug, _id }, isGroup, archive }) {
   const [diagOpen, setDiagOpen] = useState(false)
 
   useEffect(
-    () => () => photos && photos.forEach(p => URL.revokeObjectURL(p)), // Revoke the data uris to avoid memory leaks
-    [photos]
+    () => () => photo && URL.revokeObjectURL(photo), // Revoke the data uris to avoid memory leaks
+    [photo]
   )
-
-  const archiveItem = () => {
-    const next = () => {
-      showSnack(`"${name}" archivé avec succès`)
-      if (typeof window !== 'undefined') window.location.reload()
-    }
-    const fallback = error => {
-      showSnack(`Impossible d'archiver ${name}`, 'error')
-      console.log(error)
-    }
-    if (isGroup) return deleteGroup({ id: _id, author }, next, fallback)
-    deleteEvent({ id: _id, author }, next, fallback)
-  }
 
   return (
     <Wrapper>
@@ -98,7 +82,7 @@ function Card ({ data: { author, name, photos, slug, _id }, isGroup }) {
         className='cover'
         height='200'
         loading='lazy'
-        src={photos && photos.length > 0 ? photos[0] : ''}
+        src={photo || ''}
       />
       <div className='caption'>
         <div className='title text-wrap center'>
@@ -141,7 +125,7 @@ function Card ({ data: { author, name, photos, slug, _id }, isGroup }) {
         </div>
       </div>
       <Dialog
-        action={archiveItem}
+        action={() => archive(_id, author)}
         close={() => setDiagOpen(false)}
         isOpen={diagOpen}
         text={`Ce${isGroup ? ' groupe' : 't évènement'} ne sera pas supprimé.`}
@@ -153,7 +137,8 @@ function Card ({ data: { author, name, photos, slug, _id }, isGroup }) {
 
 Card.propTypes = {
   data: PropTypes.object.isRequired,
-  isGroup: PropTypes.bool
+  isGroup: PropTypes.bool,
+  archive: PropTypes.func.isRequired
 }
 
-export default React.memo(Card)
+export default Card

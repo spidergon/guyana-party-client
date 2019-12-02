@@ -24,7 +24,7 @@ module.exports = {
     'gatsby-plugin-react-leaflet',
     {
       resolve: 'gatsby-plugin-create-client-paths',
-      options: { prefixes: ['/app/*'] }
+      options: { prefixes: ['/app/*', '/group/*', '/event/*'] }
     },
     {
       resolve: 'gatsby-plugin-manifest',

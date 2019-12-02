@@ -6,6 +6,9 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Card from './Card'
 import { If } from './addons'
+import { showSnack } from './Snack'
+import { deleteGroup } from '../lib/services/groupService'
+import { deleteEvent } from '../lib/services/eventService'
 
 const Wrapper = styled.section`
   margin-bottom: 50px;
@@ -32,26 +35,46 @@ const loadingMsg = (loading, isGroup) =>
   loading ? (
     <p>Chargement...</p>
   ) : (
-    <p>{`Vous n'avez aucun ${isGroup ? 'groupe' : 'évènement'}.`}</p>
+    <p>{`Aucun ${isGroup ? 'groupe' : 'évènement'}.`}</p>
   )
 
-const CardList = ({ title, data, isGroup, loading }) => (
-  <Wrapper>
-    <h2>{title + (data.length > 0 ? ` (${data.length})` : '')}</h2>
-    <div id='container'>
-      <If
-        condition={data.length !== 0}
-        otherwise={loadingMsg(loading, isGroup)}
-      >
-        <Slider {...sliderConf}>
-          {data.map((d, index) => (
-            <Card data={d} isGroup={isGroup} key={d.slug + index} />
-          ))}
-        </Slider>
-      </If>
-    </div>
-  </Wrapper>
-)
+const CardList = ({ title, data, isGroup, loading, setData, className }) => {
+  const archiveItem = (id, author) => {
+    const next = () => {
+      showSnack(`${isGroup ? 'Groupe' : 'Évènement'} archivé avec succès`)
+      if (typeof window !== 'undefined') window.location.reload()
+    }
+    const fallback = error => {
+      showSnack('Une erreur est survenue', 'error')
+      console.log(error)
+    }
+    if (isGroup) return deleteGroup({ id, author }, next, fallback)
+    deleteEvent({ id, author }, next, fallback)
+  }
+
+  return (
+    <Wrapper className={className}>
+      <h2>{`${title}${data.length > 0 ? ` (${data.length})` : ''}`}</h2>
+      <div id='container'>
+        <If
+          condition={data.length !== 0}
+          otherwise={loadingMsg(loading, isGroup)}
+        >
+          <Slider {...sliderConf}>
+            {data.map((d, index) => (
+              <Card
+                archive={archiveItem}
+                data={d}
+                isGroup={isGroup}
+                key={d.slug + index}
+              />
+            ))}
+          </Slider>
+        </If>
+      </div>
+    </Wrapper>
+  )
+}
 
 const sliderConf = {
   dots: true,
@@ -70,7 +93,9 @@ CardList.propTypes = {
   title: PropTypes.string.isRequired,
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   isGroup: PropTypes.bool,
-  loading: PropTypes.bool
+  loading: PropTypes.bool,
+  setData: PropTypes.func.isRequired,
+  className: PropTypes.string
 }
 
 export default CardList

@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import ReactMde from 'react-mde'
 import 'react-mde/lib/styles/css/react-mde-all.css'
-import Showdown from 'showdown'
-import { purify } from '../../lib/utils'
+import { markToSafeHTML } from '../../lib/utils'
 
 const Wrapper = styled.div`
   .label {
@@ -27,7 +26,7 @@ function Mde ({ className, label, placeholder, value, setValue, readOnly }) {
     <Wrapper className={`mde ${className}`}>
       {label && <p className='label'>{label}</p>}
       <ReactMde
-        generateMarkdownPreview={mark => purify(converter.makeHtml(mark))}
+        generateMarkdownPreview={mark => markToSafeHTML(mark)}
         onChange={setValue}
         onTabChange={setSelectedTab}
         readOnly={readOnly}
@@ -38,13 +37,6 @@ function Mde ({ className, label, placeholder, value, setValue, readOnly }) {
     </Wrapper>
   )
 }
-
-const converter = new Showdown.Converter({
-  tables: true,
-  simplifiedAutoLink: true,
-  strikethrough: true,
-  tasklists: true
-})
 
 Mde.propTypes = {
   className: PropTypes.string,

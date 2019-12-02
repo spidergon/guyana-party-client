@@ -3,9 +3,10 @@ import PropTypes from 'prop-types'
 import { navigate } from 'gatsby'
 import styled from 'styled-components'
 import Grid from '@material-ui/core/Grid'
-import Edit from '@material-ui/icons/Edit'
+import EditIcon from '@material-ui/icons/Edit'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Page from './Page'
 import Description from './Mde'
 import Photos from './Photos'
@@ -41,7 +42,7 @@ function EditGroup ({ id }) {
   const [nameError, setNameError] = useState('')
   const [descError, setDescError] = useState('')
 
-  const { error, group } = useGroup(id)
+  const { loading: groupLoading, error, group } = useGroup({ id })
 
   useEffect(() => {
     if (error) {
@@ -66,7 +67,7 @@ function EditGroup ({ id }) {
     if (!description) return setDescError('Veuillez saisir une description :')
     setLoading(true)
 
-    const next = slug => navigate(`/group/${slug}`)
+    const next = () => navigate(`/group/${group.slug}`)
     const fallback = (error, isCreate = true) => {
       showSnack(
         `${isCreate ? 'La création' : "L'édition"} du groupe a échoué !`,
@@ -97,11 +98,11 @@ function EditGroup ({ id }) {
         <div id='name'>
           <Grid alignItems='flex-end' container spacing={1}>
             <Grid item>
-              <Edit />
+              {loading || groupLoading ? <CircularProgress /> : <EditIcon />}
             </Grid>
             <Grid item>
               <TextField
-                disabled={loading}
+                disabled={loading || groupLoading}
                 error={!!nameError}
                 fullWidth
                 helperText={nameError}
@@ -116,20 +117,24 @@ function EditGroup ({ id }) {
           className={descError ? 'error' : ''}
           label={descError || 'Description du groupe et de vos actions :'}
           placeholder='Donnez envie !'
-          readOnly={loading}
+          readOnly={loading || groupLoading}
           setValue={setDescription}
           value={description}
         />
-        <Photos disabled={loading} photos={photos} setPhotos={setPhotos} />
+        <Photos
+          disabled={loading || groupLoading}
+          photos={photos}
+          setPhotos={setPhotos}
+        />
         <div className='save center'>
           <Button
             aria-label='Enregistrer'
             color='primary'
-            disabled={loading}
+            disabled={loading || groupLoading}
             onClick={save}
             variant='contained'
           >
-            {loading ? 'Chargement...' : 'Enregistrer'}
+            {loading || groupLoading ? 'Chargement...' : 'Enregistrer'}
           </Button>
         </div>
       </Page>
@@ -137,8 +142,6 @@ function EditGroup ({ id }) {
   )
 }
 
-EditGroup.propTypes = {
-  id: PropTypes.string
-}
+EditGroup.propTypes = { id: PropTypes.string }
 
 export default EditGroup
