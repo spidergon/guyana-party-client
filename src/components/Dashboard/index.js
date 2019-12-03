@@ -70,7 +70,7 @@ function Dashboard () {
           aria-label='Créer un évènement'
           className='new'
           color='primary'
-          onClick={() => navigate('/app/newevent')}
+          onClick={() => navigate('/app/event/new')}
           size='small'
           variant='extended'
         >

@@ -39,6 +39,7 @@ const Wrapper = styled.div`
   #dates {
     grid-template-columns: auto auto auto auto;
     justify-content: start;
+    align-items: center;
     input {
       margin-left: 0.5rem;
       padding: 5px 10px;
@@ -53,7 +54,8 @@ const Wrapper = styled.div`
     margin-top: 2.5rem;
   }
   .error p,
-  p.error {
+  p.error,
+  label.error {
     color: ${props => props.theme.errorColor};
     font-weight: 600;
   }
@@ -70,11 +72,12 @@ const Wrapper = styled.div`
   }
 `
 
-const MyDatePicker = ({ label, date, setDate, id }) => (
+const MyDatePicker = ({ label, date, setDate, id, disabled }) => (
   <>
     <label htmlFor={id}>{label}</label>
     <DatePicker
       dateFormat='dd/MM/yyyy à HH:mm'
+      disabled={disabled}
       id={id}
       locale='fr'
       onChange={d => setDate(d)}
@@ -95,23 +98,56 @@ const MyDatePicker = ({ label, date, setDate, id }) => (
 )
 
 function NewEvent ({ id }) {
-  const [name, setName] = useState('')
+  const [name, setName] = useState('Mon Event')
   const [group, setGroup] = useState('')
   const [newGroup, setNewGroup] = useState('')
   const [startDate, setStartDate] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
-  const [description, setDescription] = useState('')
+  const [description, setDescription] = useState('Une description')
   const [photos, setPhotos] = useState([])
   const [loading, setLoading] = useState(false)
   const [eventLoading, setEventLoading] = useState(false)
   const [nameError, setNameError] = useState('')
+  const [groupError, setGroupError] = useState('')
+  const [dateError, setDateError] = useState('')
   const [descError, setDescError] = useState('')
 
   const { loading: groupLoading, groups } = useGroups()
 
   useEffect(() => {
-    if (groups && groups.length > 0) setGroup(groups[0].slug)
+    if (groups && groups.length > 0) setGroup(groups[0]._id)
   }, [groups])
+
+  const validateStartDate = d => {
+    if (!d) return
+    if (d > endDate) setEndDate(d)
+    setStartDate(d)
+  }
+
+  const validateEndDate = d => {
+    if (!d) return
+    if (d < startDate) setStartDate(d)
+    setEndDate(d)
+  }
+
+  const save = () => {
+    setNameError('')
+    setGroupError('')
+    setDateError('')
+    setDescError('')
+    if (!name) return setNameError('Veuillez saisir un nom')
+    if (!group && !newGroup) {
+      return setGroupError('Veuillez saisir le nom du groupe')
+    }
+    if (startDate.getTime() === endDate.getTime()) {
+      return setDateError(
+        'La date de fin doit être différente de la date de début'
+      )
+    }
+    if (!description) return setDescError('Veuillez saisir une description :')
+    setLoading(true)
+    // TODO
+  }
 
   return (
     <Wrapper>
@@ -150,8 +186,8 @@ function NewEvent ({ id }) {
             value={group}
           >
             {groups &&
-              groups.map((g, index) => (
-                <MenuItem key={g._id} value={g.slug}>
+              groups.map(g => (
+                <MenuItem key={g._id} value={g._id}>
                   {g.name}
                 </MenuItem>
               ))}
@@ -165,8 +201,8 @@ function NewEvent ({ id }) {
             <TextField
               className='new-group'
               disabled={loading || eventLoading}
-              error={!!nameError}
-              helperText={nameError}
+              error={!!groupError}
+              helperText={groupError}
               onChange={e => setNewGroup(e.target.value)}
               placeholder='Nom'
               value={newGroup}
@@ -176,17 +212,20 @@ function NewEvent ({ id }) {
         <div className='grid' id='dates'>
           <MyDatePicker
             date={startDate}
+            disabled={loading || eventLoading}
             id='start'
             label='Début :'
-            setDate={setStartDate}
+            setDate={validateStartDate}
           />
           <MyDatePicker
             date={endDate}
+            disabled={loading || eventLoading}
             id='end'
             label='Fin :'
-            setDate={setEndDate}
+            setDate={validateEndDate}
           />
         </div>
+        {dateError && <p className='error'>{dateError}</p>}
         <Description
           className={descError ? 'error' : ''}
           label={descError || 'Description :'}
@@ -205,7 +244,7 @@ function NewEvent ({ id }) {
             aria-label='Enregistrer'
             color='primary'
             disabled={loading || eventLoading}
-            onClick={() => {}}
+            onClick={save}
             variant='contained'
           >
             {loading || eventLoading ? 'Chargement...' : 'Enregistrer'}
@@ -220,9 +259,10 @@ NewEvent.propTypes = { id: PropTypes.string }
 
 MyDatePicker.propTypes = {
   label: PropTypes.string.isRequired,
-  date: PropTypes.object.isRequired,
+  date: PropTypes.object,
   setDate: PropTypes.func.isRequired,
-  id: PropTypes.string.isRequired
+  id: PropTypes.string.isRequired,
+  disabled: PropTypes.bool
 }
 
 export default NewEvent
