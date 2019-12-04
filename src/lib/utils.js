@@ -1,6 +1,8 @@
 import Showdown from 'showdown'
 import { format } from 'date-fns'
 import fr from 'date-fns/locale/fr'
+import axios from 'axios'
+import Cookies from 'js-cookie'
 
 export const gravatar = email =>
   `https://www.gravatar.com/avatar/${require('md5')(email)}?d=mp`
@@ -33,3 +35,34 @@ export const dateToStr = (date, formatStr = 'd MMM yyyy à HH:mm') => {
 }
 
 export const MISSING_TOKEN_ERR = 'Token de connexion requis'
+
+export const axiosGet = (url, next, fallback) => {
+  return axios
+    .get(url)
+    .then(payload => next(payload))
+    .catch(fallback)
+}
+
+export const axiosPost = (url, data, next, fallback) => {
+  const jwt = Cookies.get('gp_jwt')
+  if (!jwt) return fallback(MISSING_TOKEN_ERR)
+
+  const options = { headers: { authorization: `bearer ${jwt}` } }
+
+  return axios
+    .post(url, data, options)
+    .then(next)
+    .catch(fallback)
+}
+
+export const axiosPut = (url, data, next, fallback) => {
+  const jwt = Cookies.get('gp_jwt')
+  if (!jwt) return fallback(MISSING_TOKEN_ERR)
+
+  const options = { headers: { authorization: `bearer ${jwt}` } }
+
+  return axios
+    .put(url, data, options)
+    .then(next)
+    .catch(fallback)
+}

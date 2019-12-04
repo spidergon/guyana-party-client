@@ -20,6 +20,7 @@ import Fab from '@material-ui/core/Fab'
 import DateFnsUtils from '@date-io/date-fns'
 import fr from 'date-fns/locale/fr'
 import Page from './Page'
+import EventsStatus from './EventStatus'
 import Description from './Mde'
 import Photos from './Photos'
 import SingleMap from './SingleMap'
@@ -38,6 +39,9 @@ import { showSnack } from '../Snack'
 const Wrapper = styled.div`
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-size: 1rem;
+  .switch {
+    margin: 1.5rem 0 2rem;
+  }
   #name {
     max-width: 290px;
     margin: auto;
@@ -273,8 +277,6 @@ function NewEvent ({ id }) {
       setLoading(false)
     }
 
-    // console.log(payload)
-
     if (!id) {
       createEvent(payload, slug => navigate(`/event/${slug}`), fallback)
     } else {
@@ -303,6 +305,7 @@ function NewEvent ({ id }) {
           name ? `de ${name}` : "d'un évènement"
         }`}
       >
+        {id && event && <EventsStatus className='switch' event={event} />}
         <div id='name'>
           <Grid alignItems='flex-end' container spacing={1}>
             <Grid item>

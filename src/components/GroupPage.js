@@ -9,7 +9,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import { showSnack } from './Snack'
 import { If, Page, Link } from './addons'
 import Dialog from './Dialog'
-import { useGroup, deleteGroup } from '../lib/services/groupService'
+import { useGroup, archiveGroup } from '../lib/services/groupService'
 import { markToSafeHTML, isAuthor } from '../lib/utils'
 import CardList from './CardList'
 import PhotoList from './PhotoList'
@@ -99,7 +99,7 @@ function GroupPage ({ slug }) {
       showSnack('Une erreur est survenue', 'error')
       console.log(error)
     }
-    deleteGroup({ id: group._id, author: group.author }, next, fallback)
+    archiveGroup({ id: group._id, author: group.author }, next, fallback)
   }
 
   return (

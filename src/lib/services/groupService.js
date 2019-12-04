@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-import qs from 'qs'
+// import qs from 'qs'
 import Cookies from 'js-cookie'
-import { getBlob, MISSING_TOKEN_ERR } from '../utils'
+import {
+  axiosGet,
+  axiosPost,
+  axiosPut,
+  getBlob,
+  MISSING_TOKEN_ERR
+} from '../utils'
 
 export const createGroup = (payload, next, fallback) => {
-  const jwt = Cookies.get('gp_jwt')
   const userId = Cookies.get('gp_userId')
-  if (!jwt || !userId) return fallback(MISSING_TOKEN_ERR)
+  if (!userId) return fallback(MISSING_TOKEN_ERR)
 
   const formData = new FormData()
   formData.append('name', payload.name)
@@ -15,24 +19,22 @@ export const createGroup = (payload, next, fallback) => {
   formData.append('author', userId)
   payload.photos.forEach(photo => formData.append('files[]', photo))
 
-  axios
-    .post(`${process.env.API}/groups`, formData, {
-      headers: { authorization: `bearer ${jwt}` }
-    })
-    .then(({ data: res }) => {
-      if (res.status === 201 && res.data) {
-        next(res.data.slug)
-      } else {
-        fallback('Une erreur interne est survenue')
-      }
-    })
-    .catch(fallback)
+  axiosPost(
+    `${process.env.API}/groups`,
+    formData,
+    ({ data: res }) => {
+      if (res.status === 201 && res.data) next(res.data.slug)
+      else fallback('Une erreur interne est survenue')
+    },
+    fallback
+  )
 }
 
 export const updateGroup = (payload, next, fallback) => {
-  const jwt = Cookies.get('gp_jwt')
+  if (!payload.id || !payload.author) fallback()
+
   const userId = Cookies.get('gp_userId')
-  if (!jwt || !userId) return fallback(MISSING_TOKEN_ERR)
+  if (!userId) return fallback(MISSING_TOKEN_ERR)
 
   if (userId !== payload.author) {
     return fallback('Vous ne pouvez pas éditer ce groupe')
@@ -43,44 +45,36 @@ export const updateGroup = (payload, next, fallback) => {
   formData.append('description', payload.description)
   payload.photos.forEach(photo => formData.append('files[]', photo))
 
-  axios
-    .put(`${process.env.API}/groups/${payload.id}`, formData, {
-      headers: { authorization: `bearer ${jwt}` }
-    })
-    .then(({ data: res }) => {
-      if (res.status === 200 && res.data) {
-        next()
-      } else {
-        fallback('Une erreur interne est survenue')
-      }
-    })
-    .catch(fallback)
+  axiosPost(
+    `${process.env.API}/groups/${payload.id}`,
+    formData,
+    ({ data: res }) => {
+      if (res.status === 200 && res.data) next()
+      else fallback('Une erreur interne est survenue')
+    },
+    fallback
+  )
 }
 
-export const archiveGroup = async (payload, next, fallback) => {
+export const archiveGroup = (payload, next, fallback) => {
   if (!payload.id || !payload.author) fallback()
-  const jwt = Cookies.get('gp_jwt')
+
   const userId = Cookies.get('gp_userId')
-  if (!jwt || !userId) return fallback(MISSING_TOKEN_ERR)
+  if (!userId) return fallback(MISSING_TOKEN_ERR)
 
   if (userId !== payload.author) {
     return fallback('Vous ne pouvez pas supprimer ce groupe')
   }
 
-  axios({
-    method: 'PUT',
-    headers: { authorization: `bearer ${jwt}` },
-    data: qs.stringify({ status: 'archived' }),
-    url: `${process.env.API}/groups/${payload.id}`
-  })
-    .then(({ data: res }) => {
-      if (res.status === 200 && res.data) {
-        next()
-      } else {
-        fallback('Une erreur interne est survenue')
-      }
-    })
-    .catch(fallback)
+  axiosPut(
+    `${process.env.API}/groups/${payload.id}`,
+    { status: 'archived' },
+    ({ data: res }) => {
+      if (res.status === 200 && res.data) next()
+      else fallback('Une erreur interne est survenue')
+    },
+    fallback
+  )
 }
 
 export const useGroup = ({ id, slug }) => {
@@ -90,14 +84,9 @@ export const useGroup = ({ id, slug }) => {
 
   useEffect(() => {
     if ((!id && !slug) || group) return setLoading(false)
-
-    const query = `${process.env.API}/groups${
-      slug ? `?slug=${slug}` : `/${id}`
-    }`
-
-    axios
-      .get(query)
-      .then(({ data: res }) => {
+    axiosGet(
+      `${process.env.API}/groups${slug ? `?slug=${slug}` : `/${id}`}`,
+      ({ data: res }) => {
         if (res.status !== 200 || !res.data) {
           return formatError('Une erreur interne est survenue')
         }
@@ -116,9 +105,9 @@ export const useGroup = ({ id, slug }) => {
           res.data.photos = res.data.photos.map(parsePhoto)
         }
         setGroup(res.data)
-      })
-      .catch(formatError)
-      .finally(() => formatError())
+      },
+      formatError
+    ).finally(formatError)
   }, [group, id, slug])
 
   const formatError = error => {
@@ -140,14 +129,13 @@ export const useGroups = () => {
     const userId = Cookies.get('gp_userId')
     if (!userId) return formatError(MISSING_TOKEN_ERR)
 
-    axios
-      .get(`${process.env.API}/groups?author=${userId}&status=online`)
-      .then(({ data: res }) => {
+    axiosGet(
+      `${process.env.API}/groups?author=${userId}&status=online`,
+      ({ data: res }) => {
         if (res.status !== 200 || !res.data) {
           return formatError('Une erreur interne est survenue')
         }
         if (res.data.length === 0) return formatError()
-
         res.data = res.data.map(d => {
           if (d.photos.length > 0) {
             d.photo = URL.createObjectURL(getBlob(d.photos[0]))
@@ -155,11 +143,10 @@ export const useGroups = () => {
           }
           return d
         })
-
         setGroups(res.data)
-      })
-      .catch(formatError)
-      .finally(() => formatError())
+      },
+      formatError
+    ).finally(formatError)
   }, [groups])
 
   const formatError = error => {

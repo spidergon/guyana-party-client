@@ -73,7 +73,7 @@ const Wrapper = styled.div`
 `
 
 function Card ({
-  data: { author, name, photo, slug, _id, startDate, private: privacy, status },
+  data: { author, name, photo, slug, _id, startDate, isPrivate, status },
   isGroup,
   archive
 }) {
@@ -133,7 +133,7 @@ function Card ({
                   <span className='red'>Hors ligne</span>
                 )}
                 {status === 'online' && <span className='green'>En ligne</span>}
-                {privacy && ' | Évènement privé'}
+                {isPrivate && ' | Évènement privé'}
               </p>
             </>
           )}

@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-import qs from 'qs'
 import Cookies from 'js-cookie'
-import { getBlob, MISSING_TOKEN_ERR } from '../utils'
+import {
+  axiosGet,
+  axiosPost,
+  axiosPut,
+  getBlob,
+  MISSING_TOKEN_ERR
+} from '../utils'
 
 export const createEvent = (payload, next, fallback) => {
-  const jwt = Cookies.get('gp_jwt')
   const userId = Cookies.get('gp_userId')
-  if (!jwt || !userId) return fallback(MISSING_TOKEN_ERR)
+  if (!userId) return fallback(MISSING_TOKEN_ERR)
 
   const formData = new FormData()
   formData.append('name', payload.name)
@@ -22,24 +25,22 @@ export const createEvent = (payload, next, fallback) => {
   formData.append('author', userId)
   payload.photos.forEach(photo => formData.append('files[]', photo))
 
-  axios
-    .post(`${process.env.API}/events`, formData, {
-      headers: { authorization: `bearer ${jwt}` }
-    })
-    .then(({ data: res }) => {
-      if (res.status === 201 && res.data) {
-        next(res.data.slug)
-      } else {
-        fallback('Une erreur interne est survenue')
-      }
-    })
-    .catch(fallback)
+  axiosPost(
+    `${process.env.API}/events`,
+    formData,
+    ({ data: res }) => {
+      if (res.status === 201 && res.data) next(res.data.slug)
+      else fallback('Une erreur interne est survenue')
+    },
+    fallback
+  )
 }
 
 export const updateEvent = (payload, next, fallback) => {
-  const jwt = Cookies.get('gp_jwt')
+  if (!payload.id || !payload.author) fallback()
+
   const userId = Cookies.get('gp_userId')
-  if (!jwt || !userId) return fallback(MISSING_TOKEN_ERR)
+  if (!userId) return fallback(MISSING_TOKEN_ERR)
 
   if (userId !== payload.author) {
     return fallback('Vous ne pouvez pas éditer ce groupe')
@@ -57,44 +58,78 @@ export const updateEvent = (payload, next, fallback) => {
   formData.append('location.coordinates[1]', payload.location.coordinates[1])
   payload.photos.forEach(photo => formData.append('files[]', photo))
 
-  axios
-    .put(`${process.env.API}/events/${payload.id}`, formData, {
-      headers: { authorization: `bearer ${jwt}` }
-    })
-    .then(({ data: res }) => {
-      if (res.status === 200 && res.data) {
-        next()
-      } else {
-        fallback('Une erreur interne est survenue')
-      }
-    })
-    .catch(fallback)
+  axiosPut(
+    `${process.env.API}/events/${payload.id}`,
+    formData,
+    ({ data: res }) => {
+      if (res.status === 200 && res.data) next()
+      else fallback('Une erreur interne est survenue')
+    },
+    fallback
+  )
 }
 
-export const archiveEvent = async (payload, next, fallback) => {
+export const archiveEvent = (payload, next, fallback) => {
   if (!payload.id || !payload.author) fallback()
-  const jwt = Cookies.get('gp_jwt')
+
   const userId = Cookies.get('gp_userId')
-  if (!jwt || !userId) return fallback(MISSING_TOKEN_ERR)
+  if (!userId) return fallback(MISSING_TOKEN_ERR)
 
   if (userId !== payload.author) {
     return fallback('Vous ne pouvez pas supprimer cet évènement')
   }
 
-  axios({
-    method: 'PUT',
-    headers: { authorization: `bearer ${jwt}` },
-    data: qs.stringify({ status: 'archived' }),
-    url: `${process.env.API}/events/${payload.id}`
-  })
-    .then(({ data: res }) => {
-      if (res.status === 200 && res.data) {
-        next()
-      } else {
-        fallback('Une erreur interne est survenue')
-      }
-    })
-    .catch(fallback)
+  axiosPut(
+    `${process.env.API}/events/${payload.id}`,
+    { status: 'archived' },
+    ({ data: res }) => {
+      if (res.status === 200 && res.data) next()
+      else fallback('Une erreur interne est survenue')
+    },
+    fallback
+  )
+}
+
+export const goPublic = (payload, next, fallback) => {
+  if (!payload.id || !payload.author) fallback()
+
+  const userId = Cookies.get('gp_userId')
+  if (!userId) return fallback(MISSING_TOKEN_ERR)
+
+  if (userId !== payload.author) {
+    return fallback('Vous ne pouvez pas éditer cet évènement')
+  }
+
+  axiosPut(
+    `${process.env.API}/events/${payload.id}`,
+    { isPrivate: payload.cancel },
+    ({ data: res }) => {
+      if (res.status === 200 && res.data) next()
+      else fallback('Une erreur interne est survenue')
+    },
+    fallback
+  )
+}
+
+export const publish = (payload, next, fallback) => {
+  if (!payload.id || !payload.author) fallback()
+
+  const userId = Cookies.get('gp_userId')
+  if (!userId) return fallback(MISSING_TOKEN_ERR)
+
+  if (userId !== payload.author) {
+    return fallback('Vous ne pouvez pas éditer cet évènement')
+  }
+
+  axiosPut(
+    `${process.env.API}/events/${payload.id}`,
+    { status: payload.cancel ? 'waiting' : 'online' },
+    ({ data: res }) => {
+      if (res.status === 200 && res.data) next()
+      else fallback('Une erreur interne est survenue')
+    },
+    fallback
+  )
 }
 
 export const useEvent = ({ id, slug }) => {
@@ -104,14 +139,9 @@ export const useEvent = ({ id, slug }) => {
 
   useEffect(() => {
     if ((!id && !slug) || event) return setLoading(false)
-
-    const query = `${process.env.API}/events${
-      slug ? `?slug=${slug}` : `/${id}`
-    }`
-
-    axios
-      .get(query)
-      .then(({ data: res }) => {
+    axiosGet(
+      `${process.env.API}/events${slug ? `?slug=${slug}` : `/${id}`}`,
+      ({ data: res }) => {
         if (res.status !== 200 || !res.data) {
           return formatError('Une erreur interne est survenue')
         }
@@ -130,9 +160,9 @@ export const useEvent = ({ id, slug }) => {
           res.data.photos = res.data.photos.map(parsePhoto)
         }
         setEvent(res.data)
-      })
-      .catch(formatError)
-      .finally(() => formatError())
+      },
+      formatError
+    ).finally(formatError)
   }, [event, id, slug])
 
   const formatError = error => {
@@ -154,11 +184,9 @@ export const useEvents = () => {
     const userId = Cookies.get('gp_userId')
     if (!userId) return formatError(MISSING_TOKEN_ERR)
 
-    axios
-      .get(
-        `${process.env.API}/events?author=${userId}&status=waiting&status=online`
-      )
-      .then(({ data: res }) => {
+    axiosGet(
+      `${process.env.API}/events?author=${userId}&status=waiting&status=online`,
+      ({ data: res }) => {
         if (res.status !== 200 || !res.data) {
           return formatError('Une erreur interne est survenue')
         }
@@ -171,9 +199,9 @@ export const useEvents = () => {
           return d
         })
         setEvents(res.data)
-      })
-      .catch(formatError)
-      .finally(() => formatError())
+      },
+      formatError
+    ).finally(formatError)
   }, [events])
 
   const formatError = error => {
@@ -186,13 +214,12 @@ export const useEvents = () => {
 
 export const getAddressFromCoords = (coords, next, fallback) => {
   if (!coords || coords.length < 2) return next('')
-  axios
-    .get(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords[0].toString()}&lon=${coords[1].toString()}`
-    )
-    .then(({ data, status }) => {
+  axiosGet(
+    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords[0].toString()}&lon=${coords[1].toString()}`,
+    ({ data, status }) => {
       if (status === 200 && data) next(data.display_name)
       else fallback(new Error('Une erreur interne est survenue'))
-    })
-    .catch(fallback)
+    },
+    fallback
+  )
 }
