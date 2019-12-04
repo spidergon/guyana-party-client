@@ -7,14 +7,19 @@ import EditIcon from '@material-ui/icons/Edit'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import DeleteIcon from '@material-ui/icons/Delete'
+import Fab from '@material-ui/core/Fab'
 import Page from './Page'
 import Description from './Mde'
 import Photos from './Photos'
+import Dialog from '../Dialog'
 import { showSnack } from '../Snack'
+import If from '../addons/If'
 import {
   createGroup,
   useGroup,
-  updateGroup
+  updateGroup,
+  archiveGroup
 } from '../../lib/services/groupService'
 
 const Wrapper = styled.div`
@@ -32,6 +37,18 @@ const Wrapper = styled.div`
     color: ${props => props.theme.errorColor};
     font-weight: 600;
   }
+  .archive-btn {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 1rem;
+  }
+  @media (max-width: ${props => props.theme.xs}) {
+    .archive-btn {
+      width: 40px;
+      height: 40px;
+    }
+  }
 `
 
 function EditGroup ({ id }) {
@@ -41,6 +58,7 @@ function EditGroup ({ id }) {
   const [loading, setLoading] = useState(false)
   const [nameError, setNameError] = useState('')
   const [descError, setDescError] = useState('')
+  const [diagOpen, setDiagOpen] = useState(false)
 
   const { loading: groupLoading, error, group } = useGroup({ id })
 
@@ -67,14 +85,14 @@ function EditGroup ({ id }) {
     if (!description) return setDescError('Veuillez saisir une description :')
     setLoading(true)
 
-    const next = () => navigate(`/group/${group.slug}`)
-    const fallback = (error, isCreate = true) => {
+    const next = slug => navigate(`/group/${slug || group.slug}`)
+    const fallback = error => {
+      console.log(error)
       showSnack(
-        `${isCreate ? 'La création' : "L'édition"} du groupe a échoué !`,
+        `${id ? "L'édition" : 'La création'} du groupe a échoué !`,
         'error'
       )
       setLoading(false)
-      console.log(error)
     }
 
     if (!id) {
@@ -83,9 +101,21 @@ function EditGroup ({ id }) {
       updateGroup(
         { id, name, description, photos, author: group.author },
         next,
-        error => fallback(error, false)
+        fallback
       )
     }
+  }
+
+  const archive = () => {
+    const next = () => {
+      showSnack('Groupe archivé avec succès')
+      navigate('/app')
+    }
+    const fallback = error => {
+      showSnack('Une erreur est survenue', 'error')
+      console.log(error)
+    }
+    archiveGroup({ id, author: group.author }, next, fallback)
   }
 
   return (
@@ -114,7 +144,7 @@ function EditGroup ({ id }) {
           </Grid>
         </div>
         <Description
-          className={descError ? 'error' : ''}
+          error={!!descError}
           label={descError || 'Description du groupe et de vos actions :'}
           placeholder='Donnez envie !'
           readOnly={loading || groupLoading}
@@ -126,6 +156,24 @@ function EditGroup ({ id }) {
           photos={photos}
           setPhotos={setPhotos}
         />
+        <If condition={id}>
+          <Fab
+            aria-label='Archiver'
+            className='archive-btn'
+            color='secondary'
+            onClick={() => setDiagOpen(true)}
+            title='Archiver'
+          >
+            <DeleteIcon />
+          </Fab>
+          <Dialog
+            action={() => archive()}
+            close={() => setDiagOpen(false)}
+            isOpen={diagOpen}
+            text='Ce groupe ne sera pas supprimé.'
+            title={`Voulez-vous vraiment archiver "${name}" ?`}
+          />
+        </If>
         <div className='save center'>
           <Button
             aria-label='Enregistrer'

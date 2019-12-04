@@ -19,12 +19,12 @@ const Wrapper = styled.div`
   }
 `
 
-function Mde ({ className, label, placeholder, value, setValue, readOnly }) {
+function Mde ({ label, placeholder, value, setValue, readOnly, error }) {
   const [selectedTab, setSelectedTab] = useState('write')
 
   return (
-    <Wrapper className={`mde ${className}`}>
-      {label && <p className='label'>{label}</p>}
+    <Wrapper className='mde'>
+      {label && <p className={`label${error ? ' error' : ''}`}>{label}</p>}
       <ReactMde
         generateMarkdownPreview={mark => markToSafeHTML(mark)}
         onChange={setValue}
@@ -39,12 +39,12 @@ function Mde ({ className, label, placeholder, value, setValue, readOnly }) {
 }
 
 Mde.propTypes = {
-  className: PropTypes.string,
   label: PropTypes.string,
   placeholder: PropTypes.string,
   value: PropTypes.string.isRequired,
   setValue: PropTypes.func.isRequired,
-  readOnly: PropTypes.bool
+  readOnly: PropTypes.bool,
+  error: PropTypes.bool
 }
 
 export default Mde

@@ -9,6 +9,7 @@ class Map {
     this.markerClusterGroup = new MarkerClusterGroup()
     this.center = center || [4.93, -52.3]
     this.zoom = zoom || 14
+    this.singleMarker = null
     this.init()
     this.locate()
   }
@@ -41,12 +42,35 @@ class Map {
           fillColor: '#fff',
           fillOpacity: 0.3,
           radius: accuracy
-        })
-          .addTo(this.map)
-          .bindPopup('Vous êtes situé(e) approximativement dans cette zone.')
-          .openPopup()
+        }).addTo(this.map)
+        // .bindPopup('Vous êtes situé(e) approximativement dans cette zone.')
+        // .openPopup()
       })
       .on('locationerror', ({ message }) => console.log(message))
+  }
+
+  initSingle = onClick => {
+    if (typeof onClick !== 'function') return
+    this.map.on('click', ({ latlng }) => {
+      console.log(latlng)
+      if (this.singleMarker) this.map.removeLayer(this.singleMarker)
+      this.singleMarker = L.marker(latlng, {
+        title: `Coordonnées : ${latlng.lat}, ${latlng.lng}`
+      })
+      this.map.addLayer(this.singleMarker)
+      onClick(latlng)
+    })
+  }
+
+  initSingleMarker = coords => {
+    if (!this.singleMarker && coords && coords.length === 2) {
+      console.log(coords)
+      this.singleMarker = L.marker(
+        { lat: coords[0], lng: coords[1] },
+        { title: `Coordonnées : ${coords[0]}, ${coords[1]}` }
+      )
+      this.map.addLayer(this.singleMarker)
+    }
   }
 
   initMarkers = (setMarkers, onClickFn, fallback) => {

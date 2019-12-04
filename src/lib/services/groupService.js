@@ -2,11 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import qs from 'qs'
 import Cookies from 'js-cookie'
-import { MISSING_TOKEN_ERR } from '../utils'
-
-export const isAuthor = (user, author) => {
-  return user && user._id === author
-}
+import { getBlob, MISSING_TOKEN_ERR } from '../utils'
 
 export const createGroup = (payload, next, fallback) => {
   const jwt = Cookies.get('gp_jwt')
@@ -61,7 +57,7 @@ export const updateGroup = (payload, next, fallback) => {
     .catch(fallback)
 }
 
-export const deleteGroup = async (payload, next, fallback) => {
+export const archiveGroup = async (payload, next, fallback) => {
   if (!payload.id || !payload.author) fallback()
   const jwt = Cookies.get('gp_jwt')
   const userId = Cookies.get('gp_userId')
@@ -172,11 +168,4 @@ export const useGroups = () => {
   }
 
   return { loading, error, groups, setGroups }
-}
-
-function getBlob (photo) {
-  const arrayBufferView = new Uint8Array(photo.data.data)
-  return new Blob([arrayBufferView], {
-    type: photo.contentType
-  })
 }

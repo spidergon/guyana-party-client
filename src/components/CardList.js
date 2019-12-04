@@ -7,8 +7,8 @@ import 'slick-carousel/slick/slick-theme.css'
 import Card from './Card'
 import { If } from './addons'
 import { showSnack } from './Snack'
-import { deleteGroup } from '../lib/services/groupService'
-import { deleteEvent } from '../lib/services/eventService'
+import { archiveGroup } from '../lib/services/groupService'
+import { archiveEvent } from '../lib/services/eventService'
 
 const Wrapper = styled.section`
   margin-bottom: 50px;
@@ -48,8 +48,8 @@ const CardList = ({ title, data, isGroup, loading, setData, className }) => {
       showSnack('Une erreur est survenue', 'error')
       console.log(error)
     }
-    if (isGroup) return deleteGroup({ id, author }, next, fallback)
-    deleteEvent({ id, author }, next, fallback)
+    if (isGroup) return archiveGroup({ id, author }, next, fallback)
+    archiveEvent({ id, author }, next, fallback)
   }
 
   return (

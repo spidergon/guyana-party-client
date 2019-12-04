@@ -8,6 +8,7 @@ import CardList from '../CardList'
 import { Image } from '../addons'
 import { useAuth } from '../../lib/services/authService'
 import { useGroups } from '../../lib/services/groupService'
+import { useEvents } from '../../lib/services/eventService'
 
 const Wrapper = styled.div`
   grid-template-columns: 225px 1fr;
@@ -46,20 +47,9 @@ const Wrapper = styled.div`
   }
 `
 
-const events = [
-  {
-    position: [4.93, -52.3],
-    name: "Event 1: un nom d'évènement super long !",
-    slug: 'event1',
-    photo: []
-  },
-  { position: [51.51, -0.1], name: 'Event 2', slug: 'event2', photo: [] },
-  { position: [51.49, -0.05], name: 'Event 3', slug: 'event3', photo: [] },
-  { position: [51.49, -0.05], name: 'Event 4', slug: 'event4', photo: [] }
-]
-
 function Dashboard () {
   const { user } = useAuth()
+  const { loading: eventLoading, events, setEvents } = useEvents()
   const { loading: groupLoading, groups, setGroups } = useGroups()
 
   return (
@@ -88,8 +78,8 @@ function Dashboard () {
       <section className='content'>
         <CardList
           data={events}
-          loading={false}
-          setData={() => {}}
+          loading={eventLoading}
+          setData={setEvents}
           title='Mes Évènements'
         />
         <CardList

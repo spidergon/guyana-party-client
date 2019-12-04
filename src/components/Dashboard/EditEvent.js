@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
+import { navigate } from 'gatsby'
 import styled from 'styled-components'
 import Divider from '@material-ui/core/Divider'
 import Grid from '@material-ui/core/Grid'
@@ -14,24 +15,41 @@ import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormControl from '@material-ui/core/FormControl'
 import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import DeleteIcon from '@material-ui/icons/Delete'
+import Fab from '@material-ui/core/Fab'
 import DateFnsUtils from '@date-io/date-fns'
 import fr from 'date-fns/locale/fr'
 import Page from './Page'
 import Description from './Mde'
 import Photos from './Photos'
+import SingleMap from './SingleMap'
+import Dialog from '../Dialog'
+import If from '../addons/If'
 import { useGroups } from '../../lib/services/groupService'
+import {
+  createEvent,
+  getAddressFromCoords,
+  useEvent,
+  updateEvent,
+  archiveEvent
+} from '../../lib/services/eventService'
+import { showSnack } from '../Snack'
 
 const Wrapper = styled.div`
-  font-size: 1rem;
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  font-size: 1rem;
   #name {
     max-width: 290px;
     margin: auto;
   }
   #group,
   #dates,
-  #occurrence {
+  #occurrence,
+  .map-section {
     margin-top: 2.5rem;
+    p {
+      margin-bottom: 0.5rem;
+    }
   }
   #group {
     label {
@@ -53,12 +71,28 @@ const Wrapper = styled.div`
   #occurrence .daylabel .MuiFormControlLabel-label {
     font-size: 0.9rem;
   }
+  .map-section {
+    #map {
+      height: 400px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #e6e6e6;
+      outline: none;
+    }
+  }
+  .archive-btn {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 1rem;
+  }
   .mde,
   .photos,
   .save {
     margin-top: 2.5rem;
   }
-  .error p,
   p.error {
     color: ${props => props.theme.errorColor};
     font-weight: 600;
@@ -67,6 +101,10 @@ const Wrapper = styled.div`
     #dates {
       grid-template-columns: auto;
       grid-gap: 1.5rem;
+    }
+    .archive-btn {
+      width: 40px;
+      height: 40px;
     }
   }
 `
@@ -92,27 +130,85 @@ const initialOccurrence = {
 }
 
 function NewEvent ({ id }) {
-  const [name, setName] = useState('Mon Event')
+  const [name, setName] = useState('')
   const [group, setGroup] = useState('')
   const [newGroup, setNewGroup] = useState('')
   const [startDate, setStartDate] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
   const [occurrence, setOccurrence] = useState(initialOccurrence)
   const [showDays, setShowDays] = useState(false)
-  const [description, setDescription] = useState('Une description')
+  const [description, setDescription] = useState('')
   const [photos, setPhotos] = useState([])
+  const [coordinates, setCoordinates] = useState([])
+  const [address, setAddress] = useState('')
   const [loading, setLoading] = useState(false)
-  const [eventLoading, setEventLoading] = useState(false)
   const [nameError, setNameError] = useState('')
   const [groupError, setGroupError] = useState('')
   const [endDateError, setEndDateError] = useState('')
   const [descError, setDescError] = useState('')
+  const [addressError, setAddressError] = useState('')
+  const [diagOpen, setDiagOpen] = useState(false)
+
+  const { loading: eventLoading, error, event } = useEvent({ id })
 
   const { loading: groupLoading, groups } = useGroups()
 
   useEffect(() => {
     if (groups && groups.length > 0) setGroup(groups[0]._id)
   }, [groups])
+
+  useEffect(() => {
+    if (error) {
+      showSnack('Une erreur interne est survenue', 'error')
+      return navigate('/app')
+    }
+    if (id && event) {
+      setName(event.name)
+      if (groups && groups.length > 0) setGroup(event.group)
+      setStartDate(new Date(event.startDate))
+      setEndDate(new Date(event.endDate))
+      setOccurrence(JSON.parse(event.occurrence))
+      setDescription(event.description)
+      setPhotos(event.photos)
+      setCoordinates([
+        event.location.coordinates[0],
+        event.location.coordinates[1]
+      ])
+    } else {
+      setName('')
+      if (groups && groups.length > 0) setGroup(groups[0]._id)
+      setStartDate(new Date())
+      setEndDate(new Date())
+      setOccurrence(initialOccurrence)
+      setShowDays(false)
+      setDescription('')
+      setPhotos([])
+    }
+  }, [error, event, groups, id])
+
+  useEffect(() => {
+    if (id) {
+      for (const d in days) {
+        const { value } = days[d]
+        if (occurrence[value]) {
+          setShowDays(true)
+          break
+        }
+      }
+    }
+  }, [id, occurrence])
+
+  useEffect(() => {
+    setAddressError('')
+    getAddressFromCoords(
+      coordinates,
+      addr => setAddress(addr),
+      error => {
+        console.log(error)
+        return showSnack('Une erreur est survenue', 'error')
+      }
+    )
+  }, [coordinates])
 
   const validateStartDate = d => {
     if (d > endDate) setEndDate(d)
@@ -124,10 +220,7 @@ function NewEvent ({ id }) {
     setEndDate(d)
   }
 
-  const handleShowDaysChange = ({ target: { checked } }) => {
-    if (!checked) setOccurrence(initialOccurrence)
-    setShowDays(checked)
-  }
+  const handleShowDaysChange = ({ target: { checked } }) => setShowDays(checked)
 
   const handleOccurrenceChange = value => ({ target: { checked } }) => {
     setOccurrence({ ...occurrence, [value]: checked })
@@ -138,6 +231,7 @@ function NewEvent ({ id }) {
     setGroupError('')
     setEndDateError('')
     setDescError('')
+    setAddressError('')
     if (!name) return setNameError('Veuillez saisir un nom')
     if (group === 'new' && !newGroup) {
       return setGroupError('Veuillez saisir le nom du groupe')
@@ -148,9 +242,58 @@ function NewEvent ({ id }) {
       )
     }
     if (!description) return setDescError('Veuillez saisir une description :')
+    if (!address) {
+      return setAddressError(
+        "Veuillez cliquer sur la carte pour obtenir l'adresse"
+      )
+    }
     setLoading(true)
-    setEventLoading(true)
-    // TODO
+
+    const payload = {
+      name,
+      group,
+      description,
+      startDate,
+      endDate,
+      occurrence: JSON.stringify(showDays ? occurrence : initialOccurrence),
+      photos,
+      location: { coordinates, address }
+    }
+
+    if (group === 'new' && newGroup) {
+      // TODO: create group
+    }
+
+    const fallback = error => {
+      console.log(error)
+      showSnack(
+        `${id ? "L'édition" : 'La création'} de l'évènement a échoué !`,
+        'error'
+      )
+      setLoading(false)
+    }
+
+    // console.log(payload)
+
+    if (!id) {
+      createEvent(payload, slug => navigate(`/event/${slug}`), fallback)
+    } else {
+      payload.id = id
+      payload.author = event.author
+      updateEvent(payload, () => navigate(`/event/${event.slug}`), fallback)
+    }
+  }
+
+  const archive = () => {
+    const next = () => {
+      showSnack('Évènement archivé avec succès')
+      navigate('/app')
+    }
+    const fallback = error => {
+      showSnack('Une erreur est survenue', 'error')
+      console.log(error)
+    }
+    archiveEvent({ id, author: event.author }, next, fallback)
   }
 
   return (
@@ -235,11 +378,16 @@ function NewEvent ({ id }) {
           <FormControl component='fieldset'>
             <FormGroup row>
               <FormControlLabel
-                control={<Checkbox onChange={handleShowDaysChange} />}
+                control={
+                  <Checkbox
+                    checked={showDays}
+                    onChange={handleShowDaysChange}
+                  />
+                }
                 label="Répétition de l'évènement"
               />
             </FormGroup>
-            {showDays && (
+            <If condition={showDays}>
               <FormGroup row>
                 {days.map(({ label, value }, index) => (
                   <FormControlLabel
@@ -257,11 +405,11 @@ function NewEvent ({ id }) {
                   />
                 ))}
               </FormGroup>
-            )}
+            </If>
           </FormControl>
         </div>
         <Description
-          className={descError ? 'error' : ''}
+          error={!!descError}
           label={descError || 'Description :'}
           placeholder='Donnez envie !'
           readOnly={loading || eventLoading}
@@ -273,6 +421,41 @@ function NewEvent ({ id }) {
           photos={photos}
           setPhotos={setPhotos}
         />
+        <div className='map-section'>
+          {(addressError && <p className='error'>{addressError}&nbsp;:</p>) || (
+            <p>Lieu de l&rsquo;évènement&nbsp;:</p>
+          )}
+          <If condition={typeof window !== 'undefined'}>
+            <SingleMap
+              coords={coordinates}
+              onClick={({ lat, lng }) => setCoordinates([lat, lng])}
+            />
+            <input
+              placeholder="Cliquez sur la carte pour obtenir l'adresse..."
+              readOnly
+              type='text'
+              value={address}
+            />
+          </If>
+        </div>
+        <If condition={id}>
+          <Fab
+            aria-label='Archiver'
+            className='archive-btn'
+            color='secondary'
+            onClick={() => setDiagOpen(true)}
+            title='Archiver'
+          >
+            <DeleteIcon />
+          </Fab>
+          <Dialog
+            action={() => archive()}
+            close={() => setDiagOpen(false)}
+            isOpen={diagOpen}
+            text='Cet évènement ne sera pas supprimé.'
+            title={`Voulez-vous vraiment archiver "${name}" ?`}
+          />
+        </If>
         <div className='save center'>
           <Button
             aria-label='Enregistrer'

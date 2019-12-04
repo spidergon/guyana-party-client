@@ -6,6 +6,8 @@ import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import Dialog from './Dialog'
 import { Image, Link } from './addons'
+import { dateToStr, isAuthor } from '../lib/utils'
+import { useAuth } from '../lib/services/authService'
 
 const Wrapper = styled.div`
   position: relative;
@@ -54,6 +56,9 @@ const Wrapper = styled.div`
       .red {
         color: rgb(248, 99, 73);
       }
+      .green {
+        color: #43a047;
+      }
       a {
         color: #fff;
       }
@@ -67,8 +72,14 @@ const Wrapper = styled.div`
   }
 `
 
-function Card ({ data: { author, name, photo, slug, _id }, isGroup, archive }) {
+function Card ({
+  data: { author, name, photo, slug, _id, startDate, private: privacy, status },
+  isGroup,
+  archive
+}) {
   const [diagOpen, setDiagOpen] = useState(false)
+
+  const { user } = useAuth()
 
   useEffect(
     () => () => photo && URL.revokeObjectURL(photo), // Revoke the data uris to avoid memory leaks
@@ -93,7 +104,7 @@ function Card ({ data: { author, name, photo, slug, _id }, isGroup, archive }) {
           >
             <strong>{name}</strong>
           </Link>
-          {!isGroup && <p>Le 28/11/2019 à 13:24</p>}
+          {!isGroup && <p>{`Le ${dateToStr(startDate)}`}</p>}
         </div>
       </div>
       <div className='overlay'>
@@ -112,16 +123,21 @@ function Card ({ data: { author, name, photo, slug, _id }, isGroup, archive }) {
           <DeleteIcon />
         </Fab>
         <div className='text'>
-          {(!isGroup && (
+          {!isGroup && (
             <>
               <Link title='Voir le groupe' to={`/group/${slug}`}>
                 <p className='text-wrap'>Organisateur : Group1</p>
               </Link>
               <p>
-                Évènement privé | <span className='red'>non publié</span>
+                {status === 'waiting' && (
+                  <span className='red'>Hors ligne</span>
+                )}
+                {status === 'online' && <span className='green'>En ligne</span>}
+                {privacy && ' | Évènement privé'}
               </p>
             </>
-          )) || <p>Vous êtes administrateur</p>}
+          )}
+          {isGroup && isAuthor(user, author) && <p>Vous êtes administrateur</p>}
         </div>
       </div>
       <Dialog
