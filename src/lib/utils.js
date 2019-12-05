@@ -2,7 +2,12 @@ import Showdown from 'showdown'
 import { format } from 'date-fns'
 import fr from 'date-fns/locale/fr'
 import axios from 'axios'
+// import qs from 'qs'
 import Cookies from 'js-cookie'
+
+export const reload = () => {
+  if (typeof window !== 'undefined') window.location.reload()
+}
 
 export const gravatar = email =>
   `https://www.gravatar.com/avatar/${require('md5')(email)}?d=mp`
@@ -17,10 +22,6 @@ export const markToSafeHTML = markdown => {
     tasklists: true
   })
   return purify(converter.makeHtml(markdown))
-}
-
-export const isAuthor = (user, author) => {
-  return user && user._id === author
 }
 
 export const getBlob = photo => {

@@ -49,8 +49,8 @@ const Wrapper = styled.div`
 
 function Dashboard () {
   const { user } = useAuth()
-  const { loading: eventLoading, events, setEvents } = useEvents()
-  const { loading: groupLoading, groups, setGroups } = useGroups()
+  const { loading: eventLoading, events } = useEvents()
+  const { loading: groupLoading, groups } = useGroups()
 
   return (
     <Wrapper className='grid'>
@@ -76,17 +76,11 @@ function Dashboard () {
         </Button>
       </section>
       <section className='content'>
-        <CardList
-          data={events}
-          loading={eventLoading}
-          setData={setEvents}
-          title='Mes Évènements'
-        />
+        <CardList data={events} loading={eventLoading} title='Mes Évènements' />
         <CardList
           data={groups}
           isGroup
           loading={groupLoading}
-          setData={setGroups}
           title='Mes Groupes'
         />
       </section>

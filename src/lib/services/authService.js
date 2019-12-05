@@ -4,6 +4,7 @@ import axios from 'axios'
 import qs from 'qs'
 import Cookies from 'js-cookie'
 import { gravatar, MISSING_TOKEN_ERR } from '../utils'
+import { navigate } from 'gatsby'
 
 const authContext = createContext()
 
@@ -17,7 +18,7 @@ AuthProvider.propTypes = { children: PropTypes.node.isRequired }
 
 export const useAuth = () => useContext(authContext)
 
-function useProvideAuth () {
+function useProvideAuth() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [user, setUser] = useState(null)
@@ -105,6 +106,7 @@ function useProvideAuth () {
     Cookies.remove('gp_jwt')
     Cookies.remove('gp_userId')
     setUser(null)
+    navigate('/')
   }
 
   return {

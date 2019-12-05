@@ -6,14 +6,22 @@ import Fab from '@material-ui/core/Fab'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Button from '@material-ui/core/Button'
 import { showSnack } from './Snack'
-import { If, Page, Link } from './addons'
+import { If, Page } from './addons'
 import Dialog from './Dialog'
-import { useGroup, archiveGroup } from '../lib/services/groupService'
-import { markToSafeHTML, isAuthor } from '../lib/utils'
 import CardList from './CardList'
 import PhotoList from './PhotoList'
-import { useAuth } from '../lib/services/authService'
+import Community from './Community'
+import { useEvents } from '../lib/services/eventService'
+import { useGroup, archiveGroup } from '../lib/services/groupService'
+import {
+  isAdmin,
+  confirmMember,
+  addPendingRequest,
+  removePendingRequest
+} from '../lib/services/communityService'
+import { markToSafeHTML } from '../lib/utils'
 
 const Wrapper = styled.div`
   height: calc(100vh - ${props => props.theme.headerHeight} - 2rem);
@@ -26,14 +34,21 @@ const Wrapper = styled.div`
     padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(151, 151, 151, 0.2);
   }
-  .title {
+  #title {
+    margin-bottom: 2rem;
     h1 {
       margin-bottom: 0.5rem;
     }
+    .ok {
+      color: green;
+    }
+    .error {
+      color: ${props => props.theme.errorColor};
+    }
   }
-  .desc-section {
+  #desc {
     max-width: 800px;
-    margin: 0 auto 6rem;
+    margin: 0 auto 3rem;
     p {
       margin: 0.5rem 0;
     }
@@ -42,26 +57,34 @@ const Wrapper = styled.div`
       margin-bottom: 2rem;
       background: #fff;
     }
+  }
+  #photos {
     .photos {
       .slick-track {
         margin-left: 0;
       }
     }
   }
+  #photos,
+  .events {
+    margin: 0 auto 6rem;
+  }
   .controls {
     margin-bottom: 1rem;
     button {
       margin: 10px;
-      width: 40px;
-      height: 40px;
     }
   }
   @media (max-width: ${props => props.theme.xs}) {
-    .desc-section {
-      margin-bottom: 3rem;
+    #desc {
+      margin-bottom: 2rem;
       .photos .slick-track {
         margin-left: auto;
       }
+    }
+    #photos,
+    .events {
+      margin: 0 auto 3rem;
     }
   }
 `
@@ -71,8 +94,8 @@ function GroupPage ({ slug }) {
   const [diagOpen, setDiagOpen] = useState(false)
   const [showControls, setShowControls] = useState(false)
 
-  const { user } = useAuth()
   const { loading, group } = useGroup({ slug })
+  const { loading: eventLoading, events } = useEvents(true, group)
 
   useEffect(() => {
     if (!loading && !group) {
@@ -84,11 +107,11 @@ function GroupPage ({ slug }) {
   useEffect(() => {
     (async () => {
       if (group) {
-        setShowControls(isAuthor(user, group.author))
+        setShowControls(isAdmin(group.community))
         setDescription(await markToSafeHTML(group.description))
       }
     })()
-  }, [group, user])
+  }, [group])
 
   const archive = (id, author) => {
     const next = () => {
@@ -112,24 +135,25 @@ function GroupPage ({ slug }) {
         )}
         {group && (
           <>
-            <section className='title grid'>
+            <section className='grid' id='title'>
               <h1>{group.name}</h1>
               <If condition={showControls}>
                 <div className='controls center'>
-                  <Link to={`/app/group/edit/${group._id}`}>
-                    <Fab
-                      aria-label='Modifier'
-                      className='edit'
-                      title='Modifier'
-                    >
-                      <EditIcon />
-                    </Fab>
-                  </Link>
+                  <Fab
+                    aria-label='Modifier'
+                    className='edit'
+                    onClick={() => navigate(`/app/group/edit/${group._id}`)}
+                    size='small'
+                    title='Modifier'
+                  >
+                    <EditIcon />
+                  </Fab>
                   <Fab
                     aria-label='Archiver'
                     className='archive'
                     color='secondary'
                     onClick={() => setDiagOpen(true)}
+                    size='small'
                     title='Archiver'
                   >
                     <DeleteIcon />
@@ -143,29 +167,60 @@ function GroupPage ({ slug }) {
                   title='Voulez-vous vraiment archiver ce groupe ?'
                 />
               </If>
+              <center>
+                {!confirmMember(group.community) && (
+                  <Button
+                    aria-label='Adhérer au groupe'
+                    onClick={() => addPendingRequest(group)}
+                    size='small'
+                    title='Adhérer au groupe'
+                    variant='contained'
+                  >
+                    Adhérer
+                  </Button>
+                )}
+                {confirmMember(group.community, 'pending_request') && (
+                  <>
+                    <p className='ok'>
+                      Votre demande d&rsquo;adhésion est en cours de traitement.
+                    </p>
+                    <Button
+                      onClick={() => removePendingRequest(group)}
+                      size='small'
+                      variant='contained'
+                    >
+                      Annuler la demande
+                    </Button>
+                  </>
+                )}
+                {confirmMember(group.community, 'denied') && (
+                  <strong className='error'>Vous avez été bloqué.</strong>
+                )}
+              </center>
             </section>
 
-            <section className='desc-section'>
+            <section id='desc'>
               <p>Description :</p>
               <div
                 className='desc-content'
                 dangerouslySetInnerHTML={{ __html: description }} // eslint-disable-line react/no-danger
               />
+            </section>
+            <section id='photos'>
               <p>
                 {`Photos${group.photos ? ` (${group.photos.length})` : ''} :`}
               </p>
               <PhotoList className='photos' photos={group.photos} />
             </section>
             <CardList
+              addBtn={isAdmin(group.community)}
               className='events'
-              data={[]}
-              loading={false}
-              setData={() => {}}
+              data={events}
+              groupId={group._id}
+              loading={eventLoading}
               title='Évènements en cours'
             />
-            <section className='community'>
-              <h2>La communauté</h2>
-            </section>
+            <Community group={group} />
           </>
         )}
       </Wrapper>

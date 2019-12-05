@@ -6,8 +6,8 @@ import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import Dialog from './Dialog'
 import { Image, Link } from './addons'
-import { dateToStr, isAuthor } from '../lib/utils'
-import { useAuth } from '../lib/services/authService'
+import { dateToStr } from '../lib/utils'
+import { isAdmin } from '../lib/services/communityService'
 
 const Wrapper = styled.div`
   position: relative;
@@ -73,18 +73,35 @@ const Wrapper = styled.div`
 `
 
 function Card ({
-  data: { author, name, photo, slug, _id, startDate, isPrivate, status },
+  data: {
+    author,
+    name,
+    photo,
+    slug,
+    _id,
+    startDate,
+    isPrivate,
+    status,
+    group,
+    community
+  },
   isGroup,
   archive
 }) {
   const [diagOpen, setDiagOpen] = useState(false)
-
-  const { user } = useAuth()
+  const [showButtons, setShowButtons] = useState(false)
 
   useEffect(
     () => () => photo && URL.revokeObjectURL(photo), // Revoke the data uris to avoid memory leaks
     [photo]
   )
+
+  useEffect(() => {
+    setShowButtons(
+      (isGroup && isAdmin(community)) ||
+        (!isGroup && group && isAdmin(group.community))
+    )
+  }, [community, group, isGroup])
 
   return (
     <Wrapper>
@@ -108,36 +125,44 @@ function Card ({
         </div>
       </div>
       <div className='overlay'>
-        <Link to={`/app/${isGroup ? 'group' : 'event'}/edit/${_id}`}>
-          <Fab aria-label='Modifier' className='edit' title='Modifier'>
-            <EditIcon />
-          </Fab>
-        </Link>
-        <Fab
-          aria-label='Archiver'
-          className='delete'
-          color='secondary'
-          onClick={() => setDiagOpen(true)}
-          title='Archiver'
-        >
-          <DeleteIcon />
-        </Fab>
+        {showButtons && (
+          <>
+            <Link to={`/app/${isGroup ? 'group' : 'event'}/edit/${_id}`}>
+              <Fab aria-label='Modifier' className='edit' title='Modifier'>
+                <EditIcon />
+              </Fab>
+            </Link>
+            <Fab
+              aria-label='Archiver'
+              className='delete'
+              color='secondary'
+              onClick={() => setDiagOpen(true)}
+              title='Archiver'
+            >
+              <DeleteIcon />
+            </Fab>
+          </>
+        )}
         <div className='text'>
           {!isGroup && (
             <>
-              <Link title='Voir le groupe' to={`/group/${slug}`}>
-                <p className='text-wrap'>Organisateur : Group1</p>
+              <Link title='Voir le groupe' to={`/group/${group.slug}`}>
+                <p className='text-wrap'>Organisateur : {group.name}</p>
               </Link>
-              <p>
-                {status === 'waiting' && (
-                  <span className='red'>Hors ligne</span>
-                )}
-                {status === 'online' && <span className='green'>En ligne</span>}
-                {isPrivate && ' | Évènement privé'}
-              </p>
+              {isAdmin(group.community) && (
+                <p>
+                  {status === 'waiting' && (
+                    <span className='red'>Hors ligne</span>
+                  )}
+                  {status === 'online' && (
+                    <span className='green'>En ligne</span>
+                  )}
+                  {isPrivate && ' | Évènement privé'}
+                </p>
+              )}
             </>
           )}
-          {isGroup && isAuthor(user, author) && <p>Vous êtes administrateur</p>}
+          {isGroup && isAdmin(community) && <p>Vous êtes administrateur</p>}
         </div>
       </div>
       <Dialog

@@ -7,6 +7,7 @@ import {
   getBlob,
   MISSING_TOKEN_ERR
 } from '../utils'
+import { isAdmin, isMember } from './communityService'
 
 export const createEvent = (payload, next, fallback) => {
   const userId = Cookies.get('gp_userId')
@@ -173,7 +174,7 @@ export const useEvent = ({ id, slug }) => {
   return { loading, error, event }
 }
 
-export const useEvents = () => {
+export const useEvents = (byGroup, group) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [events, setEvents] = useState([])
@@ -181,11 +182,31 @@ export const useEvents = () => {
   useEffect(() => {
     if (events.length > 0) return setLoading(false)
 
+    if (byGroup && !group) return setLoading(false)
+
     const userId = Cookies.get('gp_userId')
-    if (!userId) return formatError(MISSING_TOKEN_ERR)
+    if (!byGroup && !userId) return formatError(MISSING_TOKEN_ERR)
+
+    let query = `author=${userId}&status=waiting&status=online`
+    if (group && group._id) {
+      query = `group=${group._id}`
+      if (userId) {
+        // We are connected, we check that we are admin
+        if (!isAdmin(group.community)) {
+          // We are not admin (perhaps member): we see only online
+          query += '&status=online'
+          if (!isMember(group.community)) {
+            // We are not member: the event has to be public
+            query += '&isPrivate=false'
+          }
+        }
+      } else {
+        query = `${query}&status=online&isPrivate=false`
+      }
+    }
 
     axiosGet(
-      `${process.env.API}/events?author=${userId}&status=waiting&status=online`,
+      `${process.env.API}/events?${query}`,
       ({ data: res }) => {
         if (res.status !== 200 || !res.data) {
           return formatError('Une erreur interne est survenue')
@@ -202,7 +223,7 @@ export const useEvents = () => {
       },
       formatError
     ).finally(formatError)
-  }, [events])
+  }, [byGroup, events, group])
 
   const formatError = error => {
     if (error) setError(error)

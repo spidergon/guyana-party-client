@@ -10,10 +10,10 @@ const Wrapper = styled.section`
   background: #fff;
 `
 
-const PhotoList = ({ photos, className }) => (
+const PhotoList = ({ photos, className, conf }) => (
   <Wrapper className={className}>
     {photos && (
-      <Slider {...sliderConf}>
+      <Slider {...(conf || sliderConf)}>
         {photos.map(({ preview, id }, index) => (
           <Image
             alt='photo'
@@ -43,7 +43,8 @@ const sliderConf = {
 
 PhotoList.propTypes = {
   photos: PropTypes.array.isRequired,
-  className: PropTypes.string
+  className: PropTypes.string,
+  conf: PropTypes.object
 }
 
 export default PhotoList

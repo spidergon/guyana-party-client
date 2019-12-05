@@ -20,9 +20,6 @@ function UserMenu ({ anchor, hide, isOpen, pathname, user, signout }) {
       {!pathname.match(/^\/app\/?$/) && (
         <MenuItem onClick={() => goTo('/app')}>Tableau de bord</MenuItem>
       )}
-      {!pathname.match('app/profile') && (
-        <MenuItem onClick={() => goTo('/app/profile')}>Mon compte</MenuItem>
-      )}
       {!pathname.match('app/newevent') && (
         <MenuItem onClick={() => goTo('/app/event/new')}>
           Créer un évènement

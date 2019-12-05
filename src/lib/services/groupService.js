@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-// import qs from 'qs'
 import Cookies from 'js-cookie'
 import {
   axiosGet,
@@ -45,7 +44,7 @@ export const updateGroup = (payload, next, fallback) => {
   formData.append('description', payload.description)
   payload.photos.forEach(photo => formData.append('files[]', photo))
 
-  axiosPost(
+  axiosPut(
     `${process.env.API}/groups/${payload.id}`,
     formData,
     ({ data: res }) => {

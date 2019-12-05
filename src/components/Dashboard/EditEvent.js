@@ -158,7 +158,12 @@ function NewEvent ({ id }) {
   const { loading: groupLoading, groups } = useGroups()
 
   useEffect(() => {
-    if (groups && groups.length > 0) setGroup(groups[0]._id)
+    if (groups && groups.length > 0) {
+      const groupIdParam =
+        typeof window !== 'undefined' && window.location.search.substr(1)
+      if (!groupIdParam) setGroup(groups[0]._id)
+      else setGroup(groupIdParam)
+    }
   }, [groups])
 
   useEffect(() => {
@@ -168,7 +173,7 @@ function NewEvent ({ id }) {
     }
     if (id && event) {
       setName(event.name)
-      if (groups && groups.length > 0) setGroup(event.group)
+      if (groups && groups.length > 0) setGroup(event.group._id)
       setStartDate(new Date(event.startDate))
       setEndDate(new Date(event.endDate))
       setOccurrence(JSON.parse(event.occurrence))
@@ -180,7 +185,7 @@ function NewEvent ({ id }) {
       ])
     } else {
       setName('')
-      if (groups && groups.length > 0) setGroup(groups[0]._id)
+      // if (groups && groups.length > 0) setGroup(groups[0]._id)
       setStartDate(new Date())
       setEndDate(new Date())
       setOccurrence(initialOccurrence)
