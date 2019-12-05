@@ -72,9 +72,13 @@ function ListItem ({ item, selected }) {
   return (
     <Wrapper className={selected ? 'selected' : ''}>
       <Link className='grid' to={`/event/${item.slug}`}>
-        <Image alt={item.title} className='cover' src={item.photo} />
+        <Image
+          alt={item.name}
+          className='cover'
+          src={item.photos ? item.photos : ''}
+        />
         <div className='content'>
-          <h2 className='text-wrap'>{item.title}</h2>
+          <h2 className='text-wrap'>{item.name}</h2>
           <h3 className='text-wrap'>
             Group name: un nom de group super long !
           </h3>

@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
 import { navigate } from 'gatsby'
 import styled from 'styled-components'
+import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
+import GpsFixed from '@material-ui/icons/GpsFixed'
+import Shuffle from '@material-ui/icons/Shuffle'
 import Map from './MainMap'
 import If from '../addons/If'
 import ListItem from './ListItem'
+import { showSnack } from '../Snack'
 
 const Wrapper = styled.div`
   height: calc(100vh - ${props => props.theme.headerHeight});
@@ -18,10 +22,24 @@ const Wrapper = styled.div`
   }
   #list-section {
     overflow: auto;
-    padding: 5px;
     grid-auto-rows: max-content;
     grid-gap: 0.5rem;
-    .actions {
+    padding: 0 5px 5px;
+    background-color: #fff;
+    #actions {
+      position: fixed;
+      width: 100%;
+      background: #fff;
+      padding: 5px 0;
+      button:not(:first-of-type) {
+        margin-left: 5px;
+      }
+    }
+    #events {
+      grid-gap: 0.5rem;
+      margin-top: 2.4rem;
+    }
+    #add-btn {
       padding: 10px;
       position: absolute;
       bottom: 0;
@@ -38,7 +56,7 @@ const Wrapper = styled.div`
       }
     }
     #list-section {
-      .actions {
+      #add-btn {
         padding: 5px 10px;
         button {
           width: 46px;
@@ -52,6 +70,7 @@ const Wrapper = styled.div`
 function Home () {
   const [markers, setMarkers] = useState([])
   const [current, setCurrent] = useState('')
+  const [mapActions, setMapActions] = useState({})
 
   const onMarkerClick = data => {
     console.log(data)
@@ -62,19 +81,48 @@ function Home () {
     <Wrapper className='grid'>
       <section id='map-section'>
         <If condition={typeof window !== 'undefined'}>
-          <Map onMarkerClick={onMarkerClick} setMarkers={setMarkers} />
+          <Map
+            onMarkerClick={onMarkerClick}
+            setActions={setMapActions}
+            setMarkers={setMarkers}
+          />
         </If>
       </section>
       <section className='grid' id='list-section'>
-        {markers &&
-          markers.map((marker, index) => (
-            <ListItem
-              item={marker}
-              key={marker.slug + index}
-              selected={marker.slug === current}
-            />
-          ))}
-        <div className='actions'>
+        <div id='actions'>
+          <Button
+            endIcon={<GpsFixed />}
+            onClick={() => {
+              if (mapActions.isDenied()) {
+                return showSnack('La localisation a été désactivée !', 'info')
+              }
+              mapActions.locate()
+            }}
+            size='small'
+            variant='outlined'
+          >
+            Autour de moi
+          </Button>
+          <Button
+            endIcon={<Shuffle />}
+            onClick={() => mapActions.random()}
+            size='small'
+            variant='outlined'
+          >
+            AléaTown
+          </Button>
+        </div>
+        <div className='grid' id='events'>
+          {markers &&
+            markers.map((marker, index) => (
+              <ListItem
+                item={marker}
+                key={marker.slug + index}
+                selected={marker.slug === current}
+              />
+            ))}
+        </div>
+        <div id='add-btn'>
           <Fab
             aria-label='Créer un évènement'
             color='primary'

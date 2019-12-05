@@ -18,7 +18,7 @@ AuthProvider.propTypes = { children: PropTypes.node.isRequired }
 
 export const useAuth = () => useContext(authContext)
 
-function useProvideAuth() {
+function useProvideAuth () {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [user, setUser] = useState(null)
@@ -39,7 +39,6 @@ function useProvideAuth() {
         if (res.status !== 200 || !res.data) {
           return formatError('Une erreur interne est survenue')
         }
-        delete res.data.password
         res.data.photo = res.data.photo || gravatar(res.data.email)
         setUser(res.data)
       })
@@ -69,7 +68,6 @@ function useProvideAuth() {
 
     axios({
       method: 'POST',
-      // headers: { 'content-type': 'application/x-www-form-urlencoded' },
       data: qs.stringify({ tokenId, provider: 'google' }),
       url: `${process.env.API}/auth/tokensignin`
     })
@@ -87,7 +85,6 @@ function useProvideAuth() {
   const loginEmail = (email, password, next, fallback) => {
     axios({
       method: 'POST',
-      // headers: { 'content-type': 'application/x-www-form-urlencoded' },
       data: qs.stringify({ email, password }),
       url: `${process.env.API}/auth/login`
     })

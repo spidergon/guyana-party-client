@@ -133,6 +133,19 @@ export const publish = (payload, next, fallback) => {
   )
 }
 
+export const requestMarkers = (box, next, fallback) => {
+  const query = ''
+
+  axiosGet(`${process.env.API}/events?${query}`, ({ data: res }) => {
+    if (res.status !== 200 || !res.data) {
+      return fallback('Une erreur interne est survenue')
+    }
+    if (res.data.length === 0) return fallback()
+
+    next(res.data)
+  })
+}
+
 export const useEvent = ({ id, slug }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
