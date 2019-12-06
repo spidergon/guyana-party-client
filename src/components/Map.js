@@ -19,10 +19,12 @@ class Map {
     this.center = center || POINTS[0]
     this.zoom = zoom || 14
     this.locateCircle = null
+    this.isSingle = false
     this.singleMarker = null
     this.noRandom = false
     this.islocateDenied = false
     this.viewActions = {}
+    this.search = ''
     this.init()
     this.locate(false)
   }
@@ -41,8 +43,9 @@ class Map {
         })
       ]
     })
+      .on('moveend', () => !this.isSingle && this.showMarkers())
       .on('locationfound', ({ latlng, accuracy }) => {
-        console.log('My position: ', { lat: latlng.lat, lng: latlng.lng })
+        console.log('My position:', { lat: latlng.lat, lng: latlng.lng })
         if (this.locateCircle) this.map.removeLayer(this.locateCircle)
         this.locateCircle = L.circle(latlng, {
           color: '#dadce0',
@@ -59,9 +62,6 @@ class Map {
         this.islocateDenied = true
         if (!this.noRandom) this.random()
       })
-      .on('moveend', e => {
-        this.showMarkers()
-      })
 
     L.control
       .zoom({ zoomInTitle: 'Zoom +', zoomOutTitle: 'Zoom -' })
@@ -76,13 +76,14 @@ class Map {
   random = () => {
     const pos = POINTS[Math.floor(Math.random() * POINTS.length)]
     this.map.setView(pos, this.zoom)
-    console.log('Random position: ', { lat: pos[0], lng: pos[1] })
+    console.log('Random position:', { lat: pos[0], lng: pos[1] })
   }
 
   initSingle = onClick => {
+    this.isSingle = true
     if (typeof onClick !== 'function') return
     this.map.on('click', ({ latlng }) => {
-      console.log(latlng)
+      console.log('Marker position:', { lat: latlng.lat, lng: latlng.lng })
       if (this.singleMarker) this.map.removeLayer(this.singleMarker)
       this.singleMarker = L.marker(latlng, {
         title: `Coordonnées : ${latlng.lat}, ${latlng.lng}`
@@ -94,36 +95,35 @@ class Map {
 
   initSingleMarker = coords => {
     if (!this.singleMarker && coords && coords.length === 2) {
-      console.log(coords)
+      console.log('Marker position:', { lat: coords[1], lng: coords[0] })
       this.singleMarker = L.marker(
-        { lat: coords[0], lng: coords[1] },
-        { title: `Coordonnées : ${coords[0]}, ${coords[1]}` }
+        { lat: coords[1], lng: coords[0] },
+        { title: `Coordonnées : ${coords[1]}, ${coords[0]}` }
       )
       this.map.addLayer(this.singleMarker)
     }
   }
 
-  getBox = () => {
-    const {
-      _northEast: { lng: x1, lat: y1 },
-      _southWest: { lng: x2, lat: y2 }
-    } = this.map.getBounds()
-    return [
-      [x1, y1],
-      [x1, y2],
-      [x2, y2],
-      [x2, y1],
-      [x1, y1]
-    ]
-  }
-
   initMarkers = (requestMarkers, setMarkers, onClickFn) => {
     this.viewActions = { requestMarkers, setMarkers, onClickFn }
-    this.showMarkers()
+
+    const searchInput = document.querySelector('.search_bg')
+    if (searchInput) {
+      searchInput.addEventListener('keydown', ({ target, key, keyCode }) => {
+        this.search = target.value
+        if (key === 'Enter' || keyCode === 13) {
+          this.showMarkers(target.value)
+        }
+      })
+      searchInput.addEventListener('search', ({ target: { value } }) => {
+        this.search = value
+      })
+    }
   }
 
-  showMarkers = () => {
+  showMarkers = (search = this.search) => {
     this.viewActions.requestMarkers(
+      search,
       this.getBox(),
       markers => {
         try {
@@ -131,8 +131,8 @@ class Map {
           this.markerClusterGroup.clearLayers()
           markers.forEach(marker => {
             const latlng = {
-              lat: marker.location.coordinates[0],
-              lng: marker.location.coordinates[1]
+              lat: marker.location.coordinates[1],
+              lng: marker.location.coordinates[0]
             }
             const newMarker = L.marker(latlng, {
               title: marker.name
@@ -156,6 +156,17 @@ class Map {
       },
       error => console.log(error)
     )
+  }
+
+  getBox = () => {
+    const {
+      _southWest: { lng: x1, lat: y1 },
+      _northEast: { lng: x2, lat: y2 }
+    } = this.map.getBounds()
+    return [
+      [x1, y1],
+      [x2, y2]
+    ]
   }
 
   getActions = () => ({

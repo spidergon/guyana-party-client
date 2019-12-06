@@ -436,7 +436,7 @@ function NewEvent ({ id }) {
           <If condition={typeof window !== 'undefined'}>
             <SingleMap
               coords={coordinates}
-              onClick={({ lat, lng }) => setCoordinates([lat, lng])}
+              onClick={({ lat, lng }) => setCoordinates([lng, lat])}
             />
             <input
               placeholder="Cliquez sur la carte pour obtenir l'adresse..."

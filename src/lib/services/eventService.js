@@ -133,17 +133,19 @@ export const publish = (payload, next, fallback) => {
   )
 }
 
-export const requestMarkers = (box, next, fallback) => {
-  const query = ''
-
-  axiosGet(`${process.env.API}/events?${query}`, ({ data: res }) => {
-    if (res.status !== 200 || !res.data) {
-      return fallback('Une erreur interne est survenue')
+export const requestMarkers = (search, box, next, fallback) => {
+  let uid = Cookies.get('gp_userId')
+  uid = uid ? `&uid=${uid}` : ''
+  axiosGet(
+    `${process.env.API}/search?q=${search}&box=${JSON.stringify(box)}${uid}`,
+    ({ data: res }) => {
+      if (res.status !== 200 || !res.data) {
+        return fallback('Une erreur interne est survenue')
+      }
+      if (res.data.length === 0) return next([])
+      next(res.data)
     }
-    if (res.data.length === 0) return fallback()
-
-    next(res.data)
-  })
+  )
 }
 
 export const useEvent = ({ id, slug }) => {
@@ -249,7 +251,7 @@ export const useEvents = (byGroup, group) => {
 export const getAddressFromCoords = (coords, next, fallback) => {
   if (!coords || coords.length < 2) return next('')
   axiosGet(
-    `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords[0].toString()}&lon=${coords[1].toString()}`,
+    `https://nominatim.openstreetmap.org/reverse?format=json&lon=${coords[0]}&lat=${coords[1]}`,
     ({ data, status }) => {
       if (status === 200 && data) next(data.display_name)
       else fallback(new Error('Une erreur interne est survenue'))
