@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Image, Link } from '../addons'
+import { dateToStr } from '../../lib/utils'
 
 const Wrapper = styled.div`
   padding: 5px;
@@ -79,10 +80,8 @@ function ListItem ({ item, selected }) {
         />
         <div className='content'>
           <h2 className='text-wrap'>{item.name}</h2>
-          <h3 className='text-wrap'>
-            Group name: un nom de group super long !
-          </h3>
-          <p>Le 13/11/2019 à 18:03</p>
+          <h3 className='text-wrap'>{item.group.name}</h3>
+          <p>Le {dateToStr(item.startDate)}</p>
         </div>
       </Link>
     </Wrapper>

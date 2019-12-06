@@ -14,11 +14,13 @@ import Checkbox from '@material-ui/core/Checkbox'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormControl from '@material-ui/core/FormControl'
+import InputLabel from '@material-ui/core/InputLabel'
 import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import DeleteIcon from '@material-ui/icons/Delete'
 import Fab from '@material-ui/core/Fab'
 import DateFnsUtils from '@date-io/date-fns'
 import fr from 'date-fns/locale/fr'
+import { minimalTimezoneSet } from 'compact-timezone-list'
 import Page from './Page'
 import EventsStatus from './EventStatus'
 import Description from './Mde'
@@ -35,6 +37,7 @@ import {
   archiveEvent
 } from '../../lib/services/eventService'
 import { showSnack } from '../Snack'
+import { toUTCIsoDate } from '../../lib/utils'
 
 const Wrapper = styled.div`
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
@@ -64,10 +67,16 @@ const Wrapper = styled.div`
     }
   }
   #dates {
-    grid-template-columns: auto auto;
+    grid-template-columns: auto auto auto;
     grid-gap: 2rem;
     justify-content: start;
     align-items: center;
+    .tz-control {
+      min-width: 110px;
+      em {
+        font-size: 15px;
+      }
+    }
   }
   .date-error {
     margin-top: 0.5rem;
@@ -105,6 +114,7 @@ const Wrapper = styled.div`
     #dates {
       grid-template-columns: auto;
       grid-gap: 1.5rem;
+      justify-content: stretch;
     }
     .archive-btn {
       width: 40px;
@@ -137,6 +147,7 @@ function NewEvent ({ id }) {
   const [name, setName] = useState('')
   const [group, setGroup] = useState('')
   const [newGroup, setNewGroup] = useState('')
+  const [timezone, setTimezone] = useState('Europe/London')
   const [startDate, setStartDate] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
   const [occurrence, setOccurrence] = useState(initialOccurrence)
@@ -174,6 +185,7 @@ function NewEvent ({ id }) {
     if (id && event) {
       setName(event.name)
       if (groups && groups.length > 0) setGroup(event.group._id)
+      setTimezone(event.timezone)
       setStartDate(new Date(event.startDate))
       setEndDate(new Date(event.endDate))
       setOccurrence(JSON.parse(event.occurrence))
@@ -262,8 +274,9 @@ function NewEvent ({ id }) {
       name,
       group,
       description,
-      startDate,
-      endDate,
+      timezone,
+      startDate: toUTCIsoDate(startDate, timezone),
+      endDate: toUTCIsoDate(endDate, timezone),
       occurrence: JSON.stringify(showDays ? occurrence : initialOccurrence),
       photos,
       location: { coordinates, address }
@@ -334,7 +347,6 @@ function NewEvent ({ id }) {
             Groupe créateur de l&rsquo;évènement :
           </label>
           <Select
-            className=''
             displayEmpty
             id='group-select'
             onChange={e => setGroup(e.target.value)}
@@ -367,6 +379,22 @@ function NewEvent ({ id }) {
           )}
         </div>
         <div className='grid' id='dates'>
+          <FormControl className='tz-control'>
+            <InputLabel id='tz-label'>Fuseau horaire</InputLabel>
+            <Select
+              displayEmpty
+              id='tz-select'
+              labelId='tz-label'
+              onChange={e => setTimezone(e.target.value)}
+              value={timezone}
+            >
+              {minimalTimezoneSet.map(tz => (
+                <MenuItem key={tz.tzCode} value={tz.tzCode}>
+                  <em>{tz.label}</em>
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <DatePicker
             date={startDate}
             disabled={loading || eventLoading}

@@ -1,6 +1,7 @@
 import Showdown from 'showdown'
-import { format } from 'date-fns'
+// import { format } from 'date-fns'
 import fr from 'date-fns/locale/fr'
+import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
 import axios from 'axios'
 // import qs from 'qs'
 import Cookies from 'js-cookie'
@@ -31,8 +32,23 @@ export const getBlob = photo => {
   })
 }
 
-export const dateToStr = (date, formatStr = 'd MMM yyyy à HH:mm') => {
-  return format(new Date(date), formatStr, { locale: fr })
+export const toUTCIsoDate = (date, timeZone) => {
+  return zonedTimeToUtc(date, timeZone).toISOString()
+}
+
+export const dateToStr = (
+  date,
+  timeZone,
+  formatStr = 'd MMM yyyy à HH:mm (zzz)',
+  locale = fr
+) => {
+  if (timeZone) {
+    return format(utcToZonedTime(date, timeZone), formatStr, {
+      locale,
+      timeZone
+    })
+  }
+  return format(new Date(date), formatStr, { locale })
 }
 
 export const MISSING_TOKEN_ERR = 'Token de connexion requis'

@@ -121,7 +121,7 @@ function Card ({
           >
             <strong>{name}</strong>
           </Link>
-          {!isGroup && <p>{`Le ${dateToStr(startDate)}`}</p>}
+          {!isGroup && <p>Le {dateToStr(startDate)}</p>}
         </div>
       </div>
       <div className='overlay'>

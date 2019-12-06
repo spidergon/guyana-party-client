@@ -2,6 +2,7 @@ import L from 'leaflet'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import { MarkerClusterGroup } from 'leaflet.markercluster'
+import { dateToStr } from '../lib/utils'
 
 const POINTS = [
   [4.931609, -52.3009], // Cayenne
@@ -139,8 +140,8 @@ class Map {
             }).bindPopup(`
           <p>
             <strong>${marker.name}</strong><br />
-            Organisateur: <i>group name</i><br />
-            <i>Le 13/11/2019 à 18:03</i><br />
+            Organisateur: <i>${marker.group.name}</i><br />
+            <i>Le ${dateToStr(marker.startDate)}</i><br />
             <code style="font-size:12px;">45° 51′ 08″ N 1° 15′ 53″ E</code>
           </p>
         `)

@@ -17,6 +17,7 @@ export const createEvent = (payload, next, fallback) => {
   formData.append('name', payload.name)
   formData.append('group', payload.group)
   formData.append('description', payload.description)
+  formData.append('timezone', payload.timezone)
   formData.append('startDate', payload.startDate)
   formData.append('endDate', payload.endDate)
   formData.append('occurrence', payload.occurrence)
@@ -51,6 +52,7 @@ export const updateEvent = (payload, next, fallback) => {
   formData.append('name', payload.name)
   formData.append('group', payload.group)
   formData.append('description', payload.description)
+  formData.append('timezone', payload.timezone)
   formData.append('startDate', payload.startDate)
   formData.append('endDate', payload.endDate)
   formData.append('occurrence', payload.occurrence)
@@ -122,9 +124,12 @@ export const publish = (payload, next, fallback) => {
     return fallback('Vous ne pouvez pas éditer cet évènement')
   }
 
+  const data = { status: payload.cancel ? 'waiting' : 'online' }
+  if (!payload.cancel) data.published = { date: Date.now(), user: userId }
+
   axiosPut(
     `${process.env.API}/events/${payload.id}`,
-    { status: payload.cancel ? 'waiting' : 'online' },
+    data,
     ({ data: res }) => {
       if (res.status === 200 && res.data) next()
       else fallback('Une erreur interne est survenue')
