@@ -5,6 +5,7 @@ import { useDropzone } from 'react-dropzone'
 import Grid from '@material-ui/core/Grid'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import CloseIcon from '@material-ui/icons/Cancel'
+import { compress } from '../../lib/utils'
 
 const Wrapper = styled.div`
   .dropgrid {
@@ -93,26 +94,19 @@ function Photos ({ photos, setPhotos, disabled }) {
     }
     setLoading(true)
 
-    if (typeof window !== 'undefined') {
-      const Compress = require('client-compress')
-      const compress = new Compress({
-        targetSize: 1.0,
-        quality: 0.75
-      })
-      compress.compress(acceptedFiles).then(conversions => {
-        const newPhotos = conversions.map(({ photo, info }, index) => {
-          if (process.env.NODE_ENV !== 'production') {
-            console.log(`Added "${photo.name}":`, info)
-          }
-          return Object.assign(photo.data, {
-            preview: URL.createObjectURL(photo.data),
-            id: `${Date.now()}${photos.length}${index}`
-          })
+    compress(acceptedFiles, data => {
+      const newPhotos = data.map(({ photo, info }, index) => {
+        if (process.env.NODE_ENV !== 'production') {
+          console.log(`Added "${photo.name}":`, info)
+        }
+        return Object.assign(photo.data, {
+          preview: URL.createObjectURL(photo.data),
+          id: `${Date.now()}${photos.length}${index}`
         })
-        setPhotos([...photos, ...newPhotos])
-        setLoading(false)
       })
-    }
+      setPhotos([...photos, ...newPhotos])
+      setLoading(false)
+    })
   }
 
   const deletePhoto = photo => {

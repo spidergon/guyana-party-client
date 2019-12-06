@@ -6,6 +6,7 @@ import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
 import GpsFixed from '@material-ui/icons/GpsFixed'
 import Shuffle from '@material-ui/icons/Shuffle'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Map from './MainMap'
 import If from '../addons/If'
 import ListItem from './ListItem'
@@ -33,6 +34,15 @@ const Wrapper = styled.div`
       padding: 5px 0;
       button:not(:first-of-type) {
         margin-left: 5px;
+      }
+      .progress {
+        display: inline-flex;
+        vertical-align: middle;
+        margin-left: 0.5rem;
+        div {
+          width: 20px !important;
+          height: 20px !important;
+        }
       }
     }
     #events {
@@ -69,6 +79,7 @@ const Wrapper = styled.div`
 
 function Home () {
   const [markers, setMarkers] = useState([])
+  const [loading, setLoading] = useState(false)
   const [current, setCurrent] = useState('')
   const [mapActions, setMapActions] = useState({})
 
@@ -84,6 +95,7 @@ function Home () {
           <Map
             onMarkerClick={onMarkerClick}
             setActions={setMapActions}
+            setLoading={setLoading}
             setMarkers={setMarkers}
           />
         </If>
@@ -111,6 +123,11 @@ function Home () {
           >
             AléaTown
           </Button>
+          {loading && (
+            <span className='progress'>
+              <CircularProgress />
+            </span>
+          )}
         </div>
         <div className='grid' id='events'>
           {markers &&

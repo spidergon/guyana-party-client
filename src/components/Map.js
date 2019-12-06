@@ -2,7 +2,7 @@ import L from 'leaflet'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import { MarkerClusterGroup } from 'leaflet.markercluster'
-import { dateToStr } from '../lib/utils'
+import { dateToStr, gpsCoords } from '../lib/utils'
 
 const POINTS = [
   [4.931609, -52.3009], // Cayenne
@@ -105,8 +105,8 @@ class Map {
     }
   }
 
-  initMarkers = (requestMarkers, setMarkers, onClickFn) => {
-    this.viewActions = { requestMarkers, setMarkers, onClickFn }
+  initMarkers = (requestMarkers, setMarkers, onClickFn, setLoading) => {
+    this.viewActions = { requestMarkers, setMarkers, onClickFn, setLoading }
 
     const searchInput = document.querySelector('.search_bg')
     if (searchInput) {
@@ -123,28 +123,36 @@ class Map {
   }
 
   showMarkers = (search = this.search) => {
+    this.viewActions.setLoading(true)
     this.viewActions.requestMarkers(
       search,
       this.getBox(),
       markers => {
         try {
           this.viewActions.setMarkers(markers)
+          this.viewActions.setLoading(false)
           this.markerClusterGroup.clearLayers()
           markers.forEach(marker => {
+            const { name, location, group, startDate, slug } = marker
             const latlng = {
-              lat: marker.location.coordinates[1],
-              lng: marker.location.coordinates[0]
+              lat: location.coordinates[1],
+              lng: location.coordinates[0]
             }
             const newMarker = L.marker(latlng, {
-              title: marker.name
+              title: `${name} par ${group.name}`
             }).bindPopup(`
-          <p>
-            <strong>${marker.name}</strong><br />
-            Organisateur: <i>${marker.group.name}</i><br />
-            <i>Le ${dateToStr(marker.startDate)}</i><br />
-            <code style="font-size:12px;">45° 51′ 08″ N 1° 15′ 53″ E</code>
-          </p>
-        `)
+              <p>
+                <a href='/event/${slug}'><strong>${name}</strong></a><br /><br />
+                Organisateur: <a href='/group/${group.slug}'><i>${
+              group.name
+            }</i></a><br /><br />
+                <i>Le ${dateToStr(startDate)}</i><br />
+                <code style="font-size:12px;">${gpsCoords(
+                  latlng.lat,
+                  latlng.lng
+                )}</code>
+              </p>
+            `)
             newMarker.on('click', () => {
               this.viewActions.onClickFn(marker)
             })
@@ -153,9 +161,13 @@ class Map {
           this.map.addLayer(this.markerClusterGroup)
         } catch (error) {
           console.error(error)
+          this.viewActions.setLoading(false)
         }
       },
-      error => console.log(error)
+      error => {
+        console.log(error)
+        this.viewActions.setLoading(false)
+      }
     )
   }
 

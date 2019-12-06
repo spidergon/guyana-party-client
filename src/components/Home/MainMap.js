@@ -4,17 +4,17 @@ import Map from '../Map'
 
 import { requestMarkers } from '../../lib/services/eventService'
 
-const MainMap = ({ setMarkers, onMarkerClick, setActions }) => {
+const MainMap = ({ setMarkers, onMarkerClick, setActions, setLoading }) => {
   const [map, setMap] = useState(null)
 
   useEffect(() => {
     if (!map) {
       const newMap = new Map()
-      newMap.initMarkers(requestMarkers, setMarkers, onMarkerClick)
+      newMap.initMarkers(requestMarkers, setMarkers, onMarkerClick, setLoading)
       setActions(newMap.getActions())
       setMap(newMap)
     }
-  }, [map, onMarkerClick, setActions, setMarkers])
+  }, [map, onMarkerClick, setActions, setLoading, setMarkers])
 
   return <div id='map' />
 }
@@ -22,7 +22,8 @@ const MainMap = ({ setMarkers, onMarkerClick, setActions }) => {
 MainMap.propTypes = {
   setMarkers: PropTypes.func,
   onMarkerClick: PropTypes.func,
-  setActions: PropTypes.func
+  setActions: PropTypes.func,
+  setLoading: PropTypes.func
 }
 
 export default MainMap
