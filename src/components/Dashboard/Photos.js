@@ -157,7 +157,7 @@ function Photos ({ photos, setPhotos, disabled }) {
           {photos && photos.length > 0 && (
             <Grid container spacing={1}>
               {photos.map((p, index) => (
-                <Grid className='grid-item' item key={p.id + index}>
+                <Grid className='grid-item' item key={index}>
                   <img alt='Preview' className='preview' src={p.preview} />
                   {!disabled && (
                     <CloseIcon
