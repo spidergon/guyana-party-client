@@ -148,7 +148,7 @@ export const requestMarkers = (search, box, next, fallback) => {
       if (res.status !== 200 || !res.data) {
         return fallback('Une erreur interne est survenue')
       }
-      if (res.data.length === 0) return next([])
+      // if (res.data.length === 0) return next([])
       next(res.data)
     }
   )

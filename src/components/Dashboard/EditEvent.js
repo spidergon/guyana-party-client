@@ -37,7 +37,7 @@ import {
   archiveEvent
 } from '../../lib/services/eventService'
 import { showSnack } from '../Snack'
-import { toUTCIsoDate } from '../../lib/utils'
+import { toUTCIsoDate, userTZ } from '../../lib/utils'
 
 const Wrapper = styled.div`
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
@@ -148,8 +148,8 @@ function NewEvent ({ id }) {
   const [group, setGroup] = useState('')
   const [newGroup, setNewGroup] = useState('')
   const [timezone, setTimezone] = useState('Europe/London')
-  const [startDate, setStartDate] = useState(new Date())
-  const [endDate, setEndDate] = useState(new Date())
+  const [startDate, setStartDate] = useState(null)
+  const [endDate, setEndDate] = useState(null)
   const [occurrence, setOccurrence] = useState(initialOccurrence)
   const [showDays, setShowDays] = useState(false)
   const [description, setDescription] = useState('')
@@ -198,6 +198,7 @@ function NewEvent ({ id }) {
     } else {
       setName('')
       // if (groups && groups.length > 0) setGroup(groups[0]._id)
+      setTimezone(userTZ())
       setStartDate(new Date())
       setEndDate(new Date())
       setOccurrence(initialOccurrence)

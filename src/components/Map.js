@@ -147,7 +147,7 @@ class Map {
                 Organisateur: <a href='/group/${group.slug}'><i>${
               group.name
             }</i></a><br /><br />
-                <i>Le ${dateToStr(startDate)}</i><br />
+                <i>Le ${dateToStr(startDate)}</i><br /><br />
                 <code style="font-size:12px;">${gpsCoords(
                   latlng.lat,
                   latlng.lng
