@@ -110,14 +110,15 @@ class Map {
 
     const searchInput = document.querySelector('.search_bg')
     if (searchInput) {
-      searchInput.addEventListener('keydown', ({ target, key, keyCode }) => {
-        this.search = target.value
-        if (key === 'Enter' || keyCode === 13) {
-          this.showMarkers(target.value)
-        }
-      })
+      // searchInput.addEventListener('keydown', ({ target, key, keyCode }) => {
+      //   this.search = target.value
+      //   if (key === 'Enter' || keyCode === 13) {
+      //     this.showMarkers(target.value)
+      //   }
+      // })
       searchInput.addEventListener('search', ({ target: { value } }) => {
         this.search = value
+        this.showMarkers(value)
       })
     }
   }

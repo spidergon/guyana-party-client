@@ -141,8 +141,9 @@ export const publish = (payload, next, fallback) => {
 export const requestMarkers = (search, box, next, fallback) => {
   let uid = Cookies.get('gp_userId')
   uid = uid ? `&uid=${uid}` : ''
+  const [[sw1, sw2], [ne1, ne2]] = box
   axiosGet(
-    `${process.env.API}/search?q=${search}&box=${JSON.stringify(box)}${uid}`,
+    `${process.env.API}/search?q=${search}${uid}&sw1=${sw1}&sw2=${sw2}&ne1=${ne1}&ne2=${ne2}`,
     ({ data: res }) => {
       if (res.status !== 200 || !res.data) {
         return fallback('Une erreur interne est survenue')
