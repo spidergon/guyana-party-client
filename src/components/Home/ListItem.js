@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Image, Link } from '../addons'
-import { dateToStr } from '../../lib/utils'
+import { dateToStr } from '../../lib/date'
 
 const Wrapper = styled.div`
   padding: 5px;

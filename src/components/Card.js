@@ -6,7 +6,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import Dialog from './Dialog'
 import { Image, Link } from './addons'
-import { dateToStr } from '../lib/utils'
+import { dateToStr } from '../lib/date'
 import { isAdmin } from '../lib/services/communityService'
 
 const Wrapper = styled.div`

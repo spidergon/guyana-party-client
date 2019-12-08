@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import axios from 'axios'
 import qs from 'qs'
 import Cookies from 'js-cookie'
-import { gravatar, MISSING_TOKEN_ERR } from '../utils'
+import { gravatar, MISSING_TOKEN_ERR, reload } from '../utils'
 import { navigate } from 'gatsby'
 
 const authContext = createContext()
@@ -104,6 +104,7 @@ function useProvideAuth () {
     Cookies.remove('gp_userId')
     setUser(null)
     navigate('/')
+    reload()
   }
 
   return {

@@ -1,8 +1,5 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import { zonedTimeToUtc, utcToZonedTime, format } from 'date-fns-tz'
-import fr from 'date-fns/locale/fr'
-import { minimalTimezoneSet } from 'compact-timezone-list'
 
 export const reload = () => {
   if (typeof window !== 'undefined') window.location.reload()
@@ -29,41 +26,6 @@ export const getBlob = photo => {
   return new Blob([arrayBufferView], {
     type: photo.contentType
   })
-}
-
-export const userTZ = () => {
-  try {
-    let offset = new Date().getTimezoneOffset()
-    const o = Math.abs(offset)
-    offset =
-      (offset < 0 ? '+' : '-') +
-      ('00' + Math.floor(o / 60)).slice(-2) +
-      ':' +
-      ('00' + (o % 60)).slice(-2)
-    return minimalTimezoneSet.filter(t => t.offset === offset)[0].tzCode
-  } catch (error) {
-    console.log(error)
-    return 'Europe/London'
-  }
-}
-
-export const toUTCIsoDate = (date, timeZone) => {
-  return zonedTimeToUtc(date, timeZone).toISOString()
-}
-
-export const dateToStr = (
-  date,
-  timeZone,
-  formatStr = 'd MMM yyyy à HH:mm (zzz)',
-  locale = fr
-) => {
-  if (timeZone) {
-    return format(utcToZonedTime(date, timeZone), formatStr, {
-      locale,
-      timeZone
-    })
-  }
-  return format(new Date(date), formatStr, { locale })
 }
 
 export const axiosGet = (url, next, fallback) => {

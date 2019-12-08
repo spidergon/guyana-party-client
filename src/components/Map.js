@@ -2,7 +2,8 @@ import L from 'leaflet'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import { MarkerClusterGroup } from 'leaflet.markercluster'
-import { dateToStr, gpsCoords } from '../lib/utils'
+import { gpsCoords } from '../lib/utils'
+import { dateToStr } from '../lib/date'
 
 const POINTS = [
   [4.931609, -52.3009], // Cayenne

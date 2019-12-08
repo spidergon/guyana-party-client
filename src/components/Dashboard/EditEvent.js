@@ -20,7 +20,6 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import Fab from '@material-ui/core/Fab'
 import DateFnsUtils from '@date-io/date-fns'
 import fr from 'date-fns/locale/fr'
-import { minimalTimezoneSet } from 'compact-timezone-list'
 import Page from './Page'
 import EventsStatus from './EventStatus'
 import Description from './Mde'
@@ -37,7 +36,7 @@ import {
   archiveEvent
 } from '../../lib/services/eventService'
 import { showSnack } from '../Snack'
-import { toUTCIsoDate, userTZ } from '../../lib/utils'
+import { toUTCIsoDate, toZonedTime, tzList, userTZ } from '../../lib/date'
 
 const Wrapper = styled.div`
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
@@ -186,8 +185,8 @@ function NewEvent ({ id }) {
       setName(event.name)
       if (groups && groups.length > 0) setGroup(event.group._id)
       setTimezone(event.timezone)
-      setStartDate(new Date(event.startDate))
-      setEndDate(new Date(event.endDate))
+      setStartDate(toZonedTime(new Date(event.startDate), event.timezone))
+      setEndDate(toZonedTime(new Date(event.endDate), event.timezone))
       setOccurrence(JSON.parse(event.occurrence))
       setDescription(event.description)
       setPhotos(event.photos)
@@ -389,7 +388,7 @@ function NewEvent ({ id }) {
               onChange={e => setTimezone(e.target.value)}
               value={timezone}
             >
-              {minimalTimezoneSet.map(tz => (
+              {tzList.map(tz => (
                 <MenuItem key={tz.tzCode} value={tz.tzCode}>
                   <em>{tz.label}</em>
                 </MenuItem>
