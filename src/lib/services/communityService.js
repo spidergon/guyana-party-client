@@ -36,6 +36,7 @@ const getUserId = slug => {
 
 const pendingRequestMember = (group, action, role) => {
   const userId = getUserId(group.slug)
+  if (!userId) return
   axiosPut(
     `${process.env.API}/groups/${group._id}`,
     { [action]: { community: { user: userId, ...role } } },

@@ -171,9 +171,9 @@ function NewEvent ({ id }) {
   useEffect(() => {
     if (groups && groups.length > 0) {
       const groupIdParam =
-        typeof window !== 'undefined' && window.location.search.substr(1)
-      if (!groupIdParam) setGroup(groups[0]._id)
-      else setGroup(groupIdParam)
+        typeof window !== 'undefined' && window.location.search.split('=')[1]
+      if (groupIdParam) return setGroup(groupIdParam)
+      setGroup(groups[0]._id)
     }
   }, [groups])
 

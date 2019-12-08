@@ -141,7 +141,13 @@ function Login () {
       loginEmail(
         email,
         password,
-        () => navigate('/app'),
+        () => {
+          const redirect =
+            typeof window !== 'undefined' &&
+            window.location.search.split('=')[1]
+          if (redirect) return navigate(redirect)
+          navigate('/app')
+        },
         error => {
           setLoading(false)
           setPassword('')

@@ -53,7 +53,7 @@ const CardList = ({
         {addBtn && groupId && (
           <Button
             aria-label='Ajouter un évènement'
-            onClick={() => navigate(`/app/event/new?${groupId}`)}
+            onClick={() => navigate(`/app/event/new?group=${groupId}`)}
             size='small'
             title='Ajouter un évènement'
             variant='contained'
