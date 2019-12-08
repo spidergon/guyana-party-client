@@ -7,6 +7,9 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import Dialog from './Dialog'
 import { Image, Link } from './addons'
 import { dateToStr } from '../lib/date'
+import { showSnack } from './Snack'
+import { archiveGroup } from '../lib/services/groupService'
+import { archiveEvent } from '../lib/services/eventService'
 import { isAdmin } from '../lib/services/communityService'
 
 const Wrapper = styled.div`
@@ -85,23 +88,38 @@ function Card ({
     group,
     community
   },
-  isGroup,
-  archive
+  isGroup
 }) {
   const [diagOpen, setDiagOpen] = useState(false)
-  const [showButtons, setShowButtons] = useState(false)
+  const [admin, setAdmin] = useState(false)
+
+  useEffect(() => {
+    setAdmin(isAdmin(isGroup ? community : group.community))
+  }, [community, group, isGroup])
 
   useEffect(
     () => () => photo && URL.revokeObjectURL(photo), // Revoke the data uris to avoid memory leaks
     [photo]
   )
 
-  useEffect(() => {
-    setShowButtons(
-      (isGroup && isAdmin(community)) ||
-        (!isGroup && group && isAdmin(group.community))
-    )
-  }, [community, group, isGroup])
+  const archive = () => {
+    if (!admin) {
+      return showSnack(
+        `Vous ne pouvez pas archiver ce${isGroup ? ' groupe' : 't évènement'}`,
+        'error'
+      )
+    }
+    const next = () => {
+      showSnack(`${isGroup ? 'Groupe' : 'Évènement'} archivé avec succès`)
+      if (typeof window !== 'undefined') window.location.reload()
+    }
+    const fallback = error => {
+      showSnack('Une erreur est survenue', 'error')
+      console.log(error)
+    }
+    if (isGroup) return archiveGroup(_id, next, fallback)
+    archiveEvent(_id, next, fallback)
+  }
 
   return (
     <Wrapper>
@@ -125,7 +143,7 @@ function Card ({
         </div>
       </div>
       <div className='overlay'>
-        {showButtons && (
+        {admin && (
           <>
             <Link to={`/app/${isGroup ? 'group' : 'event'}/edit/${_id}`}>
               <Fab aria-label='Modifier' className='edit' title='Modifier'>
@@ -149,7 +167,7 @@ function Card ({
               <Link title='Voir le groupe' to={`/group/${group.slug}`}>
                 <p className='text-wrap'>Organisateur : {group.name}</p>
               </Link>
-              {isAdmin(group.community) && (
+              {admin && (
                 <p>
                   {status === 'waiting' && (
                     <span className='red'>Hors ligne</span>
@@ -162,11 +180,11 @@ function Card ({
               )}
             </>
           )}
-          {isGroup && isAdmin(community) && <p>Vous êtes administrateur</p>}
+          {isGroup && admin && <p>Vous êtes administrateur</p>}
         </div>
       </div>
       <Dialog
-        action={() => archive(_id, author)}
+        action={archive}
         close={() => setDiagOpen(false)}
         isOpen={diagOpen}
         text={`Ce${isGroup ? ' groupe' : 't évènement'} ne sera pas supprimé.`}
@@ -178,8 +196,7 @@ function Card ({
 
 Card.propTypes = {
   data: PropTypes.object.isRequired,
-  isGroup: PropTypes.bool,
-  archive: PropTypes.func.isRequired
+  isGroup: PropTypes.bool
 }
 
 export default Card

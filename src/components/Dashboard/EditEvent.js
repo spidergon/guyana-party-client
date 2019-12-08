@@ -37,6 +37,7 @@ import {
 } from '../../lib/services/eventService'
 import { showSnack } from '../Snack'
 import { toUTCIsoDate, toZonedTime, tzList, userTZ } from '../../lib/date'
+import { isAdmin } from '../../lib/services/communityService'
 
 const Wrapper = styled.div`
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
@@ -305,6 +306,9 @@ function NewEvent ({ id }) {
   }
 
   const archive = () => {
+    if (!isAdmin(event.group.community)) {
+      return showSnack('Vous ne pouvez pas archiver cet évènement', 'error')
+    }
     const next = () => {
       showSnack('Évènement archivé avec succès')
       navigate('/app')
@@ -313,7 +317,7 @@ function NewEvent ({ id }) {
       showSnack('Une erreur est survenue', 'error')
       console.log(error)
     }
-    archiveEvent({ id, author: event.author }, next, fallback)
+    archiveEvent(id, next, fallback)
   }
 
   return (
@@ -485,7 +489,7 @@ function NewEvent ({ id }) {
             <DeleteIcon />
           </Fab>
           <Dialog
-            action={() => archive()}
+            action={archive}
             close={() => setDiagOpen(false)}
             isOpen={diagOpen}
             text='Cet évènement ne sera pas supprimé.'

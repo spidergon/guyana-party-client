@@ -72,18 +72,12 @@ export const updateEvent = (payload, next, fallback) => {
   )
 }
 
-export const archiveEvent = (payload, next, fallback) => {
-  if (!payload.id || !payload.author) fallback()
-
+export const archiveEvent = (id, next, fallback) => {
   const userId = Cookies.get('gp_userId')
   if (!userId) return fallback(MISSING_TOKEN_ERR)
 
-  if (userId !== payload.author) {
-    return fallback('Vous ne pouvez pas supprimer cet évènement')
-  }
-
   axiosPut(
-    `${process.env.API}/events/${payload.id}`,
+    `${process.env.API}/events/${id}`,
     { status: 'archived' },
     ({ data: res }) => {
       if (res.status === 200 && res.data) next()

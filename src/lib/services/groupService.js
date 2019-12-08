@@ -55,18 +55,12 @@ export const updateGroup = (payload, next, fallback) => {
   )
 }
 
-export const archiveGroup = (payload, next, fallback) => {
-  if (!payload.id || !payload.author) fallback()
-
+export const archiveGroup = (id, next, fallback) => {
   const userId = Cookies.get('gp_userId')
   if (!userId) return fallback(MISSING_TOKEN_ERR)
 
-  if (userId !== payload.author) {
-    return fallback('Vous ne pouvez pas supprimer ce groupe')
-  }
-
   axiosPut(
-    `${process.env.API}/groups/${payload.id}`,
+    `${process.env.API}/groups/${id}`,
     { status: 'archived' },
     ({ data: res }) => {
       if (res.status === 200 && res.data) next()

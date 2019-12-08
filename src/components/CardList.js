@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { navigate } from 'gatsby'
 import styled from 'styled-components'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
@@ -7,10 +8,6 @@ import 'slick-carousel/slick/slick-theme.css'
 import Button from '@material-ui/core/Button'
 import Card from './Card'
 import { If } from './addons'
-import { showSnack } from './Snack'
-import { archiveGroup } from '../lib/services/groupService'
-import { archiveEvent } from '../lib/services/eventService'
-import { navigate } from 'gatsby'
 
 const Wrapper = styled.section`
   margin-bottom: 50px;
@@ -26,14 +23,8 @@ const Wrapper = styled.section`
     }
   }
   #container {
-    /* max-width: calc(100vw - 200px - 3rem); */
     .slick-track {
       margin-left: 0;
-    }
-  }
-  @media (max-width: ${props => props.theme.sm}) {
-    #container {
-      /* max-width: calc(100vw - 3rem); */
     }
   }
 `
@@ -55,19 +46,6 @@ const CardList = ({
   groupId,
   conf
 }) => {
-  const archiveItem = (id, author) => {
-    const next = () => {
-      showSnack(`${isGroup ? 'Groupe' : 'Évènement'} archivé avec succès`)
-      if (typeof window !== 'undefined') window.location.reload()
-    }
-    const fallback = error => {
-      showSnack('Une erreur est survenue', 'error')
-      console.log(error)
-    }
-    if (isGroup) return archiveGroup({ id, author }, next, fallback)
-    archiveEvent({ id, author }, next, fallback)
-  }
-
   return (
     <Wrapper className={className}>
       <h2>
@@ -91,12 +69,7 @@ const CardList = ({
         >
           <Slider {...(conf || sliderConf)}>
             {data.map((d, index) => (
-              <Card
-                archive={archiveItem}
-                data={d}
-                isGroup={isGroup}
-                key={d.slug + index}
-              />
+              <Card data={d} isGroup={isGroup} key={d.slug + index} />
             ))}
           </Slider>
         </If>

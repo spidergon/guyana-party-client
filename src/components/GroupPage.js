@@ -92,7 +92,10 @@ const Wrapper = styled.div`
 function GroupPage ({ slug }) {
   const [description, setDescription] = useState(null)
   const [diagOpen, setDiagOpen] = useState(false)
-  const [showControls, setShowControls] = useState(false)
+  const [admin, setAdmin] = useState(false)
+  const [inCommunity, setInCommunity] = useState(false)
+  const [pending, setPending] = useState(false)
+  const [denied, setDenied] = useState(false)
 
   const { loading, group } = useGroup({ slug })
   const { loading: eventLoading, events } = useEvents(true, group)
@@ -105,11 +108,17 @@ function GroupPage ({ slug }) {
   }, [group, loading, slug])
 
   useEffect(() => {
+    if (group) {
+      setAdmin(isAdmin(group.community))
+      setInCommunity(confirmMember(group.community))
+      setPending(confirmMember(group.community, 'pending_request'))
+      setDenied(confirmMember(group.community, 'denied'))
+    }
+  }, [group])
+
+  useEffect(() => {
     (async () => {
-      if (group) {
-        setShowControls(isAdmin(group.community))
-        setDescription(await markToSafeHTML(group.description))
-      }
+      if (group) setDescription(await markToSafeHTML(group.description))
     })()
   }, [group])
 
@@ -137,7 +146,7 @@ function GroupPage ({ slug }) {
           <>
             <section className='grid' id='title'>
               <h1>{group.name}</h1>
-              <If condition={showControls}>
+              <If condition={admin}>
                 <div className='controls center'>
                   <Fab
                     aria-label='Modifier'
@@ -168,7 +177,7 @@ function GroupPage ({ slug }) {
                 />
               </If>
               <center>
-                {!confirmMember(group.community) && (
+                {!inCommunity && (
                   <Button
                     aria-label='Adhérer au groupe'
                     onClick={() => addPendingRequest(group)}
@@ -179,7 +188,7 @@ function GroupPage ({ slug }) {
                     Adhérer
                   </Button>
                 )}
-                {confirmMember(group.community, 'pending_request') && (
+                {pending && (
                   <>
                     <p className='ok'>
                       Votre demande d&rsquo;adhésion est en cours de traitement.
@@ -193,7 +202,7 @@ function GroupPage ({ slug }) {
                     </Button>
                   </>
                 )}
-                {confirmMember(group.community, 'denied') && (
+                {denied && (
                   <strong className='error'>Vous avez été bloqué.</strong>
                 )}
               </center>
@@ -213,7 +222,7 @@ function GroupPage ({ slug }) {
               <PhotoList className='photos' photos={group.photos} />
             </section>
             <CardList
-              addBtn={isAdmin(group.community)}
+              addBtn={admin}
               className='events'
               data={events}
               groupId={group._id}

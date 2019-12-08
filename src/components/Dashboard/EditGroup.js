@@ -21,6 +21,7 @@ import {
   updateGroup,
   archiveGroup
 } from '../../lib/services/groupService'
+import { isAdmin } from '../../lib/services/communityService'
 
 const Wrapper = styled.div`
   #name {
@@ -107,6 +108,9 @@ function EditGroup ({ id }) {
   }
 
   const archive = () => {
+    if (!isAdmin(group.community)) {
+      return showSnack('Vous ne pouvez pas archiver ce groupe', 'error')
+    }
     const next = () => {
       showSnack('Groupe archivé avec succès')
       navigate('/app')
@@ -115,7 +119,7 @@ function EditGroup ({ id }) {
       showSnack('Une erreur est survenue', 'error')
       console.log(error)
     }
-    archiveGroup({ id, author: group.author }, next, fallback)
+    archiveGroup(id, next, fallback)
   }
 
   return (

@@ -55,8 +55,25 @@ const translate = {
 function Community ({ group }) {
   const [data, setData] = useState([])
   const [showList, setShowList] = useState(false)
-  const [showActions, setShowActions] = useState(false)
   const [showQuitBtn, setShowQuitBtn] = useState(false)
+  const [admin, setAdmin] = useState(false)
+  const [member, setMember] = useState(false)
+  const [adminNb, setAdminNb] = useState(1)
+
+  useEffect(() => {
+    setAdmin(isAdmin(group.community))
+    setMember(isMember(group.community))
+    setAdminNb(countAdmins(group.community))
+    setShowList(
+      confirmMember(group.community) &&
+        !confirmMember(group.community, 'denied') &&
+        !confirmMember(group.community, 'pending_request')
+    )
+  }, [group.community])
+
+  useEffect(() => {
+    setShowQuitBtn((admin && adminNb > 1) || member)
+  }, [admin, adminNb, member])
 
   useEffect(() => {
     setData(
@@ -65,17 +82,6 @@ function Community ({ group }) {
         translate[m.role].label,
         `${m.role}__${m.user._id}`
       ])
-    )
-    setShowList(
-      group.community &&
-        confirmMember(group.community) &&
-        !confirmMember(group.community, 'denied') &&
-        !confirmMember(group.community, 'pending_request')
-    )
-    setShowActions(confirmMember(group.community, 'admin'))
-    setShowQuitBtn(
-      (isAdmin(group.community) && countAdmins(group.community) > 1) ||
-        isMember(group.community)
     )
   }, [group.community])
 
@@ -93,48 +99,47 @@ function Community ({ group }) {
     }
   }
 
-  const columns = [
-    'Nom',
-    'Rôle',
-    {
-      name: 'Actions',
-      options: {
-        display: showActions,
-        filter: false,
-        sort: false,
-        customBodyRender: (roleId, tableMeta, updateValue) => {
-          const [role, id] = roleId.split('__')
-          if (
-            !showActions ||
-            (role === 'admin' && countAdmins(group.community) === 1)
-          ) {
-            return null
+  const columns = !showList
+    ? []
+    : [
+        'Nom',
+        'Rôle',
+        {
+          name: 'Actions',
+          options: {
+            display: admin,
+            filter: false,
+            sort: false,
+            customBodyRender: (roleId, tableMeta, updateValue) => {
+              const [role, id] = roleId.split('__')
+              if (!admin || (role === 'admin' && adminNb === 1)) {
+                return null
+              }
+              const { action, action2 } = translate[role]
+              return (
+                <>
+                  <Button
+                    onClick={() => doAction(role, action, id)}
+                    size='small'
+                    variant='contained'
+                  >
+                    {action}
+                  </Button>
+                  {action2 && (
+                    <Button
+                      onClick={() => doAction(role, action2, id)}
+                      size='small'
+                      variant='contained'
+                    >
+                      {action2}
+                    </Button>
+                  )}
+                </>
+              )
+            }
           }
-          const { action, action2 } = translate[role]
-          return (
-            <>
-              <Button
-                onClick={() => doAction(role, action, id)}
-                size='small'
-                variant='contained'
-              >
-                {action}
-              </Button>
-              {action2 && (
-                <Button
-                  onClick={() => doAction(role, action2, id)}
-                  size='small'
-                  variant='contained'
-                >
-                  {action2}
-                </Button>
-              )}
-            </>
-          )
         }
-      }
-    }
-  ]
+      ]
 
   return (
     <Wrapper className='community'>
@@ -179,8 +184,6 @@ function Community ({ group }) {
   )
 }
 
-Community.propTypes = {
-  group: PropTypes.object.isRequired
-}
+Community.propTypes = { group: PropTypes.object.isRequired }
 
 export default Community
