@@ -24,7 +24,7 @@ import {
 import { markToSafeHTML } from '../lib/utils'
 
 const Wrapper = styled.div`
-  height: calc(100vh - ${props => props.theme.headerHeight} - 2rem);
+  /* height: calc(100vh - ${props => props.theme.headerHeight} - 2rem); */
   h1,
   h2 {
     text-transform: uppercase;
@@ -39,6 +39,12 @@ const Wrapper = styled.div`
     h1 {
       margin-bottom: 0.5rem;
     }
+    .controls {
+    margin-bottom: 1rem;
+    button {
+      margin: 10px
+    }
+  }
     .ok {
       color: green;
     }
@@ -68,12 +74,6 @@ const Wrapper = styled.div`
   #photos,
   .events {
     margin: 0 auto 6rem;
-  }
-  .controls {
-    margin-bottom: 1rem;
-    button {
-      margin: 10px;
-    }
   }
   @media (max-width: ${props => props.theme.xs}) {
     #desc {
