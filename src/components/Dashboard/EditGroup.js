@@ -64,6 +64,13 @@ function EditGroup ({ id }) {
   const { loading: groupLoading, error, group } = useGroup({ id })
 
   useEffect(() => {
+    if (group && !isAdmin(group.community)) {
+      showSnack("Vous n'avez pas accès à cet évènement", 'error')
+      return navigate('/app')
+    }
+  }, [group, id])
+
+  useEffect(() => {
     if (error) {
       showSnack('Une erreur interne est survenue', 'error')
       return navigate('/app')
@@ -99,11 +106,7 @@ function EditGroup ({ id }) {
     if (!id) {
       createGroup({ name, description, photos }, next, fallback)
     } else {
-      updateGroup(
-        { id, name, description, photos, author: group.author },
-        next,
-        fallback
-      )
+      updateGroup({ id, name, description, photos }, next, fallback)
     }
   }
 

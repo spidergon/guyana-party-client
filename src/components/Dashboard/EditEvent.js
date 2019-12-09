@@ -169,6 +169,13 @@ function NewEvent ({ id }) {
   const { loading: groupLoading, groups } = useGroups()
 
   useEffect(() => {
+    if (event && !isAdmin(event.group.community)) {
+      showSnack("Vous n'avez pas accès à ce groupe", 'error')
+      return navigate('/app')
+    }
+  }, [event])
+
+  useEffect(() => {
     if (groups && groups.length > 0) {
       const groupIdParam =
         typeof window !== 'undefined' && window.location.search.split('=')[1]
@@ -300,7 +307,6 @@ function NewEvent ({ id }) {
       createEvent(payload, slug => navigate(`/event/${slug}`), fallback)
     } else {
       payload.id = id
-      payload.author = event.author
       updateEvent(payload, () => navigate(`/event/${event.slug}`), fallback)
     }
   }

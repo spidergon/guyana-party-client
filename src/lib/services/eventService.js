@@ -39,15 +39,10 @@ export const createEvent = (payload, next, fallback) => {
 }
 
 export const updateEvent = (payload, next, fallback) => {
-  if (!payload.id || !payload.author) fallback()
+  if (!payload.id) fallback()
 
   const userId = Cookies.get('gp_userId')
   if (!userId) return fallback(MISSING_TOKEN_ERR)
-
-  // TODO
-  if (userId !== payload.author) {
-    return fallback('Vous ne pouvez pas éditer ce groupe')
-  }
 
   const formData = new FormData()
   formData.append('name', payload.name)
@@ -89,15 +84,10 @@ export const archiveEvent = (id, next, fallback) => {
 }
 
 export const goPublic = (payload, next, fallback) => {
-  if (!payload.id || !payload.author) fallback()
+  if (!payload.id) fallback()
 
   const userId = Cookies.get('gp_userId')
   if (!userId) return fallback(MISSING_TOKEN_ERR)
-
-  // TODO
-  if (userId !== payload.author) {
-    return fallback('Vous ne pouvez pas éditer cet évènement')
-  }
 
   axiosPut(
     `${process.env.API}/events/${payload.id}`,
@@ -111,15 +101,10 @@ export const goPublic = (payload, next, fallback) => {
 }
 
 export const publish = (payload, next, fallback) => {
-  if (!payload.id || !payload.author) fallback()
+  if (!payload.id) fallback()
 
   const userId = Cookies.get('gp_userId')
   if (!userId) return fallback(MISSING_TOKEN_ERR)
-
-  // TODO
-  if (userId !== payload.author) {
-    return fallback('Vous ne pouvez pas éditer cet évènement')
-  }
 
   const data = { status: payload.cancel ? 'waiting' : 'online' }
   if (!payload.cancel) data.published = { date: Date.now(), user: userId }
@@ -179,6 +164,7 @@ export const useEvent = ({ id, slug }) => {
         } else {
           res.data.photos = res.data.photos.map(parsePhoto)
         }
+        console.log(res)
         setEvent(res.data)
       },
       formatError
@@ -204,7 +190,7 @@ export const useEvents = (byGroup, group) => {
     if (byGroup && !group) return setLoading(false)
 
     const userId = Cookies.get('gp_userId')
-    if (!byGroup && !userId) return formatError(MISSING_TOKEN_ERR)
+    // if (!userId) return formatError(MISSING_TOKEN_ERR)
 
     let query = `author=${userId}&status=waiting&status=online`
     if (group && group._id) {
@@ -250,6 +236,13 @@ export const useEvents = (byGroup, group) => {
   }
 
   return { loading, error, events, setEvents }
+}
+
+export const allowedEvent = event => {
+  const { group, status, isPrivate } = event
+  if (isAdmin(group.community)) return true
+  if (isMember(group.community)) return status === 'online'
+  return status === 'online' && isPrivate === false
 }
 
 export const getAddressFromCoords = (coords, next, fallback) => {

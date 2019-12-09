@@ -30,14 +30,10 @@ export const createGroup = (payload, next, fallback) => {
 }
 
 export const updateGroup = (payload, next, fallback) => {
-  if (!payload.id || !payload.author) fallback()
+  if (!payload.id) fallback()
 
   const userId = Cookies.get('gp_userId')
   if (!userId) return fallback(MISSING_TOKEN_ERR)
-
-  if (userId !== payload.author) {
-    return fallback('Vous ne pouvez pas éditer ce groupe')
-  }
 
   const formData = new FormData()
   formData.append('name', payload.name)

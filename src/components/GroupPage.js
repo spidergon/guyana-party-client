@@ -104,7 +104,7 @@ function GroupPage ({ slug }) {
   const { loading: eventLoading, events } = useEvents(true, group)
 
   useEffect(() => {
-    if (!loading && !group) {
+    if ((!loading && !group) || (group && group.status !== 'online')) {
       showSnack(`Le group à l'adresse "${slug}" est introuvable`, 'error')
       navigate('/')
     }
@@ -134,7 +134,7 @@ function GroupPage ({ slug }) {
       showSnack('Une erreur est survenue', 'error')
       console.log(error)
     }
-    archiveGroup({ id: group._id, author: group.author }, next, fallback)
+    archiveGroup(group._id, next, fallback)
   }
 
   return (

@@ -9,7 +9,11 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import Dialog from './Dialog'
 import { If, Page, Link, Seo } from './addons'
 import { showSnack } from './Snack'
-import { useEvent } from '../lib/services/eventService'
+import {
+  useEvent,
+  archiveEvent,
+  allowedEvent
+} from '../lib/services/eventService'
 import { isAdmin } from '../lib/services/communityService'
 import SingleMap from './Dashboard/SingleMap'
 import { markToSafeHTML } from '../lib/utils'
@@ -120,7 +124,7 @@ function EventPage ({ slug }) {
   const { loading, event } = useEvent({ slug })
 
   useEffect(() => {
-    if (!loading && !event) {
+    if ((!loading && !event) || (event && !allowedEvent(event))) {
       showSnack(`L'évènement à l'adresse "${slug}" est introuvable`, 'error')
       navigate('/')
     }
@@ -152,7 +156,20 @@ function EventPage ({ slug }) {
     setOccurrenceStr(str)
   }, [occurrence])
 
-  const archive = () => {}
+  const archive = () => {
+    if (!isAdmin(event.group.community)) {
+      return showSnack('Vous ne pouvez pas archiver cet évènement', 'error')
+    }
+    const next = () => {
+      showSnack('Évènement archivé avec succès')
+      navigate('/app')
+    }
+    const fallback = error => {
+      showSnack('Une erreur est survenue', 'error')
+      console.log(error)
+    }
+    archiveEvent(event._id, next, fallback)
+  }
 
   return (
     <Wrapper>
@@ -188,6 +205,9 @@ function EventPage ({ slug }) {
               <p>{event.location.address}</p>
               <If condition={admin}>
                 <p>
+                  {event.status === 'archived' && (
+                    <span className='red'>Archivé</span>
+                  )}
                   {event.status === 'waiting' && (
                     <span className='red'>Hors ligne</span>
                   )}

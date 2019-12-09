@@ -10,7 +10,11 @@ import { useAuth } from '../lib/services/authService'
 import { showSnack } from './Snack'
 
 const Wrapper = styled.div`
+  margin-top: 0.5rem;
   font-family: Montserrat, Helvetica, sans-serif;
+  h1 {
+    text-transform: uppercase;
+  }
   .content {
     max-width: 390px;
     padding: 30px;

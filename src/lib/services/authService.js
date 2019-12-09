@@ -99,6 +99,22 @@ function useProvideAuth () {
       .finally(() => setLoading(false))
   }
 
+  const signEmail = (name, email, password, next, fallback) => {
+    axios({
+      method: 'POST',
+      data: qs.stringify({ name, email, password }),
+      url: `${process.env.API}/auth/signup`
+    })
+      .then(({ data }) => {
+        if (data.status !== 201) {
+          return fallback('Une erreur interne est survenue')
+        }
+        next()
+      })
+      .catch(fallback)
+      .finally(() => setLoading(false))
+  }
+
   const signout = () => {
     Cookies.remove('gp_jwt')
     Cookies.remove('gp_userId')
@@ -114,6 +130,7 @@ function useProvideAuth () {
     loginFacebook,
     loginGoogle,
     loginEmail,
+    signEmail,
     signout
   }
 }

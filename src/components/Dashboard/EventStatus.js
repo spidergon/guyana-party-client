@@ -29,7 +29,7 @@ function EventStatus ({
   const handlePublic = e => {
     e.persist()
     goPublic(
-      { id, author, cancel: isPublicState },
+      { id, cancel: isPublicState },
       () => {
         showSnack(`Votre évènement est ${isPublicState ? 'privé' : 'public'}`)
         setIsPublicState(!isPublicState)
@@ -44,7 +44,7 @@ function EventStatus ({
   const handleOnline = e => {
     e.persist()
     publish(
-      { id, author, cancel: isOnlineState },
+      { id, cancel: isOnlineState },
       () => {
         showSnack(
           `Votre évènement est ${isOnlineState ? 'non publié' : 'en ligne !'}`
