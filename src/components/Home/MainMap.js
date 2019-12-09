@@ -9,7 +9,7 @@ const MainMap = ({ setMarkers, onMarkerClick, setActions, setLoading }) => {
 
   useEffect(() => {
     if (!map) {
-      const newMap = new Map()
+      const newMap = new Map(true)
       newMap.initMarkers(requestMarkers, setMarkers, onMarkerClick, setLoading)
       setActions(newMap.getActions())
       setMap(newMap)

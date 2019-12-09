@@ -15,11 +15,11 @@ const POINTS = [
 ]
 
 class Map {
-  constructor (center, zoom) {
+  constructor (locate) {
     this.map = null
     this.markerClusterGroup = new MarkerClusterGroup()
-    this.center = center || POINTS[0]
-    this.zoom = zoom || 14
+    this.center = POINTS[0]
+    this.zoom = 14
     this.locateCircle = null
     this.isSingle = false
     this.singleMarker = null
@@ -28,7 +28,7 @@ class Map {
     this.viewActions = {}
     this.search = ''
     this.init()
-    this.locate(false)
+    if (locate) this.locate(false)
   }
 
   init = () => {
@@ -62,7 +62,8 @@ class Map {
       .on('locationerror', ({ message }) => {
         console.log(message)
         this.islocateDenied = true
-        if (!this.noRandom) this.random()
+        // if (!this.noRandom) this.random()
+        this.random()
       })
 
     L.control
@@ -91,11 +92,12 @@ class Map {
         title: `Coordonnées : ${latlng.lat}, ${latlng.lng}`
       })
       this.map.addLayer(this.singleMarker)
+      this.map.setView(latlng)
       onClick(latlng)
     })
   }
 
-  initSingleMarker = coords => {
+  initSingleMarker = (coords, viewOffset = 0, zoom = this.zoom) => {
     if (!this.singleMarker && coords && coords.length === 2) {
       console.log('Marker position:', { lat: coords[1], lng: coords[0] })
       this.singleMarker = L.marker(
@@ -103,6 +105,7 @@ class Map {
         { title: `Coordonnées : ${coords[1]}, ${coords[0]}` }
       )
       this.map.addLayer(this.singleMarker)
+      this.map.setView([coords[1], coords[0] - viewOffset], zoom)
     }
   }
 
@@ -122,6 +125,7 @@ class Map {
         this.showMarkers(value)
       })
     }
+    // this.showMarkers()
   }
 
   showMarkers = (search = this.search) => {

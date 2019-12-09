@@ -468,6 +468,7 @@ function NewEvent ({ id }) {
           <If condition={typeof window !== 'undefined'}>
             <SingleMap
               coords={coordinates}
+              locate
               onClick={({ lat, lng }) => setCoordinates([lng, lat])}
             />
             <input

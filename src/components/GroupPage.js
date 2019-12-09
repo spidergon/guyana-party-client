@@ -34,8 +34,11 @@ const Wrapper = styled.div`
     padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(151, 151, 151, 0.2);
   }
+  .progress {
+    margin-top: 1rem;
+  }
   #title {
-    margin-bottom: 2rem;
+    margin: 2rem 0;
     h1 {
       margin-bottom: 0.5rem;
     }
@@ -138,7 +141,7 @@ function GroupPage ({ slug }) {
     <Page>
       <Wrapper>
         {loading && !group && (
-          <center>
+          <center className='progress'>
             <CircularProgress />
           </center>
         )}
@@ -209,7 +212,7 @@ function GroupPage ({ slug }) {
             </section>
 
             <section id='desc'>
-              <p>Description :</p>
+              {/* <p>Description :</p> */}
               <div
                 className='desc-content'
                 dangerouslySetInnerHTML={{ __html: description }} // eslint-disable-line react/no-danger
