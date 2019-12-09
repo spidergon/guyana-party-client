@@ -18,7 +18,7 @@ const Wrapper = styled.header`
   height: ${({ theme }) => theme.headerHeight};
   background-color: rgba(255, 255, 255, 0.3);
   transition: background-color 0.4s ease !important;
-  z-index: 10;
+  z-index: 1001;
   border-bottom: 1px solid ${props => props.theme.borderColor} !important;
   &.opaque {
     background-color: #fff;

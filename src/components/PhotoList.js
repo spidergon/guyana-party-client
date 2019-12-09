@@ -12,7 +12,7 @@ const Wrapper = styled.section`
 
 const PhotoList = ({ photos, className, conf }) => (
   <Wrapper className={className}>
-    {photos && (
+    {photos && photos.length > 0 && (
       <Slider {...(conf || sliderConf)}>
         {photos.map(({ preview, id }, index) => (
           <Image

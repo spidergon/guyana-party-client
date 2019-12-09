@@ -6,7 +6,7 @@ import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
 import Dialog from './Dialog'
 import { Image, Link } from './addons'
-import { dateToStr } from '../lib/date'
+import { formatPlage } from '../lib/date'
 import { showSnack } from './Snack'
 import { archiveGroup } from '../lib/services/groupService'
 import { archiveEvent } from '../lib/services/eventService'
@@ -83,6 +83,7 @@ function Card ({
     slug,
     _id,
     startDate,
+    endDate,
     isPrivate,
     status,
     group,
@@ -139,7 +140,7 @@ function Card ({
           >
             <strong>{name}</strong>
           </Link>
-          {!isGroup && <p>Le {dateToStr(startDate)}</p>}
+          {!isGroup && <p>{formatPlage({ startDate, endDate })}</p>}
         </div>
       </div>
       <div className='overlay'>

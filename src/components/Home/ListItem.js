@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Image, Link } from '../addons'
-import { dateToStr } from '../../lib/date'
+import { formatPlage } from '../../lib/date'
 
 const Wrapper = styled.div`
   padding: 5px;
@@ -81,7 +81,7 @@ function ListItem ({ item, selected }) {
         <div className='content'>
           <h2 className='text-wrap'>{item.name}</h2>
           <h3 className='text-wrap'>{item.group.name}</h3>
-          <p>Le {dateToStr(item.startDate)}</p>
+          <p>{formatPlage(item)}</p>
         </div>
       </Link>
     </Wrapper>

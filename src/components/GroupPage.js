@@ -220,7 +220,11 @@ function GroupPage ({ slug }) {
             </section>
             <section id='photos'>
               <p>
-                {`Photos${group.photos ? ` (${group.photos.length})` : ''} :`}
+                {`${
+                  group.photos && group.photos.length
+                    ? `Photos (${group.photos.length}) :`
+                    : ''
+                }`}
               </p>
               <PhotoList className='photos' photos={group.photos} />
             </section>

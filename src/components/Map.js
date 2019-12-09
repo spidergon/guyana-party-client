@@ -3,7 +3,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import { MarkerClusterGroup } from 'leaflet.markercluster'
 import { gpsCoords } from '../lib/utils'
-import { dateToStr } from '../lib/date'
+import { formatPlage } from '../lib/date'
 
 const POINTS = [
   [4.931609, -52.3009], // Cayenne
@@ -15,7 +15,8 @@ const POINTS = [
 ]
 
 class Map {
-  constructor (locate) {
+  constructor (locate, id) {
+    this.mapId = id || 'map'
     this.map = null
     this.markerClusterGroup = new MarkerClusterGroup()
     this.center = POINTS[0]
@@ -32,7 +33,7 @@ class Map {
   }
 
   init = () => {
-    this.map = L.map('map', {
+    this.map = L.map(this.mapId, {
       center: this.center,
       zoom: this.zoom,
       zoomControl: false, // remove default zoom control
@@ -139,7 +140,7 @@ class Map {
           this.viewActions.setLoading(false)
           this.markerClusterGroup.clearLayers()
           markers.forEach(marker => {
-            const { name, location, group, startDate, slug } = marker
+            const { name, location, group, startDate, endDate, slug } = marker
             const latlng = {
               lat: location.coordinates[1],
               lng: location.coordinates[0]
@@ -152,7 +153,7 @@ class Map {
                 Organisateur: <a href='/group/${group.slug}'><i>${
               group.name
             }</i></a><br /><br />
-                <i>Le ${dateToStr(startDate)}</i><br /><br />
+                <i>${formatPlage({ startDate, endDate }, true)}</i><br /><br />
                 <code style="font-size:12px;">${gpsCoords(
                   latlng.lat,
                   latlng.lng

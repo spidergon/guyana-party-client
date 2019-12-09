@@ -44,6 +44,7 @@ export const updateEvent = (payload, next, fallback) => {
   const userId = Cookies.get('gp_userId')
   if (!userId) return fallback(MISSING_TOKEN_ERR)
 
+  // TODO
   if (userId !== payload.author) {
     return fallback('Vous ne pouvez pas éditer ce groupe')
   }
@@ -93,6 +94,7 @@ export const goPublic = (payload, next, fallback) => {
   const userId = Cookies.get('gp_userId')
   if (!userId) return fallback(MISSING_TOKEN_ERR)
 
+  // TODO
   if (userId !== payload.author) {
     return fallback('Vous ne pouvez pas éditer cet évènement')
   }
@@ -114,6 +116,7 @@ export const publish = (payload, next, fallback) => {
   const userId = Cookies.get('gp_userId')
   if (!userId) return fallback(MISSING_TOKEN_ERR)
 
+  // TODO
   if (userId !== payload.author) {
     return fallback('Vous ne pouvez pas éditer cet évènement')
   }
@@ -144,7 +147,8 @@ export const requestMarkers = (search, box, next, fallback) => {
       }
       // if (res.data.length === 0) return next([])
       next(res.data)
-    }
+    },
+    fallback
   )
 }
 
