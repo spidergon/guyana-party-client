@@ -119,7 +119,7 @@ export const useGroups = () => {
     if (!userId) return formatError(MISSING_TOKEN_ERR)
 
     axiosGet(
-      `${process.env.API}/groups?author=${userId}&status=online`,
+      `${process.env.API}/groups?uid=${userId}&status=online`,
       ({ data: res }) => {
         if (res.status !== 200 || !res.data) {
           return formatError('Une erreur interne est survenue')

@@ -69,24 +69,18 @@ const Wrapper = styled.div`
   }
 `
 
-function ListItem ({ item, selected }) {
-  return (
-    <Wrapper className={selected ? 'selected' : ''}>
-      <Link className='grid' to={`/event/${item.slug}`}>
-        <Image
-          alt={item.name}
-          className='cover'
-          src={item.photos ? item.photos : ''}
-        />
-        <div className='content'>
-          <h2 className='text-wrap'>{item.name}</h2>
-          <h3 className='text-wrap'>{item.group.name}</h3>
-          <p>{formatPlage(item)}</p>
-        </div>
-      </Link>
-    </Wrapper>
-  )
-}
+const ListItem = ({ item, selected }) => (
+  <Wrapper className={selected ? 'selected' : ''}>
+    <Link className='grid' to={`/event/${item.slug}`}>
+      <Image alt={item.name} className='cover' src={item.photo || ''} />
+      <div className='content'>
+        <h2 className='text-wrap'>{item.name}</h2>
+        <h3 className='text-wrap'>{item.group.name}</h3>
+        <p>{formatPlage(item)}</p>
+      </div>
+    </Link>
+  </Wrapper>
+)
 
 ListItem.propTypes = {
   item: PropTypes.object.isRequired,

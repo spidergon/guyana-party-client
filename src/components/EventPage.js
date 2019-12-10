@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { navigate } from 'gatsby'
 import styled from 'styled-components'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import Fab from '@material-ui/core/Fab'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
@@ -27,9 +26,6 @@ const Wrapper = styled.div`
   }
   #mobileMap {
     display: none;
-  }
-  .progress {
-    margin-top: 1rem;
   }
   #title {
     position: absolute;
@@ -173,17 +169,14 @@ function EventPage ({ slug }) {
 
   return (
     <Wrapper>
-      <SingleMap
-        coords={event && event.location.coordinates}
-        viewOffset={0.006}
-        zoom={16}
-      />
-      <Page>
-        {loading && !event && (
-          <center className='progress'>
-            <CircularProgress />
-          </center>
-        )}
+      {!loading && (
+        <SingleMap
+          coords={event && event.location.coordinates}
+          viewOffset={0.006}
+          zoom={16}
+        />
+      )}
+      <Page loading={loading && !event}>
         {event && (
           <>
             <Seo title={event.name} />

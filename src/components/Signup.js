@@ -41,34 +41,6 @@ const Wrapper = styled.div`
         margin: 0px 16px;
       }
     } */
-    form {
-      margin: 0;
-      font-size: 15px;
-      input {
-        position: relative;
-        width: 100%;
-        height: 50px;
-        background-color: transparent;
-        padding: 0 15px;
-        border: 1px solid rgb(206, 210, 217);
-        border-radius: 4px;
-        font-size: 16px;
-        margin-bottom: 1rem;
-      }
-      button {
-        margin-top: 1.5rem;
-      }
-      .error {
-        label {
-          color: rgb(248, 99, 73);
-          font-weight: 600;
-        }
-        input {
-          background-color: rgb(254, 245, 231);
-          border-color: rgb(248, 187, 73);
-        }
-      }
-    }
   }
   .signup-link {
     margin-bottom: 60px;

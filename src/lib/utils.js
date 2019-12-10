@@ -23,9 +23,7 @@ export const markToSafeHTML = markdown => {
 
 export const getBlob = photo => {
   const arrayBufferView = new Uint8Array(photo.data.data)
-  return new Blob([arrayBufferView], {
-    type: photo.contentType
-  })
+  return new Blob([arrayBufferView], { type: photo.contentType })
 }
 
 export const axiosGet = (url, next, fallback) => {

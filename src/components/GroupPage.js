@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import Fab from '@material-ui/core/Fab'
 import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
-import CircularProgress from '@material-ui/core/CircularProgress'
 import Button from '@material-ui/core/Button'
 import { showSnack } from './Snack'
 import { If, Page } from './addons'
@@ -33,9 +32,6 @@ const Wrapper = styled.div`
     font-size: 18px;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(151, 151, 151, 0.2);
-  }
-  .progress {
-    margin-top: 1rem;
   }
   #title {
     margin: 2rem 0;
@@ -138,13 +134,8 @@ function GroupPage ({ slug }) {
   }
 
   return (
-    <Page>
+    <Page loading={loading && !group}>
       <Wrapper>
-        {loading && !group && (
-          <center className='progress'>
-            <CircularProgress />
-          </center>
-        )}
         {group && (
           <>
             <section className='grid' id='title'>

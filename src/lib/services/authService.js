@@ -4,7 +4,7 @@ import axios from 'axios'
 import qs from 'qs'
 import Cookies from 'js-cookie'
 import { gravatar, MISSING_TOKEN_ERR, reload } from '../utils'
-import { navigate } from 'gatsby'
+import { navigate } from '@reach/router'
 
 const authContext = createContext()
 
@@ -116,11 +116,12 @@ function useProvideAuth () {
   }
 
   const signout = () => {
-    Cookies.remove('gp_jwt')
-    Cookies.remove('gp_userId')
-    setUser(null)
-    navigate('/')
-    reload()
+    navigate('/').then(() => {
+      Cookies.remove('gp_jwt')
+      Cookies.remove('gp_userId')
+      setUser(null)
+      reload()
+    })
   }
 
   return {

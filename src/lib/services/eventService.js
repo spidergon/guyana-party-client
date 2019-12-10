@@ -130,7 +130,13 @@ export const requestMarkers = (search, box, next, fallback) => {
       if (res.status !== 200 || !res.data) {
         return fallback('Une erreur interne est survenue')
       }
-      // if (res.data.length === 0) return next([])
+      res.data = res.data.map(d => {
+        if (d.photos.length > 0) {
+          d.photo = URL.createObjectURL(getBlob(d.photos[0]))
+          delete d.photos
+        }
+        return d
+      })
       next(res.data)
     },
     fallback
@@ -164,7 +170,6 @@ export const useEvent = ({ id, slug }) => {
         } else {
           res.data.photos = res.data.photos.map(parsePhoto)
         }
-        console.log(res)
         setEvent(res.data)
       },
       formatError
@@ -190,9 +195,8 @@ export const useEvents = (byGroup, group) => {
     if (byGroup && !group) return setLoading(false)
 
     const userId = Cookies.get('gp_userId')
-    // if (!userId) return formatError(MISSING_TOKEN_ERR)
 
-    let query = `author=${userId}&status=waiting&status=online`
+    let query = `${process.env.API}/search?&uid=${userId}`
     if (group && group._id) {
       query = `group=${group._id}`
       if (userId) {
@@ -204,14 +208,15 @@ export const useEvents = (byGroup, group) => {
             // We are not member: the event has to be public
             query += '&isPrivate=false'
           }
-        }
+        } else query += '&status=waiting&status=online'
       } else {
         query = `${query}&status=online&isPrivate=false`
       }
+      query = `${process.env.API}/events?${query}`
     }
 
     axiosGet(
-      `${process.env.API}/events?${query}`,
+      query,
       ({ data: res }) => {
         if (res.status !== 200 || !res.data) {
           return formatError('Une erreur interne est survenue')

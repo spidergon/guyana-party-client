@@ -1,8 +1,12 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 const Wrapper = styled.section`
+  .progress {
+    margin-top: 1rem;
+  }
   .container {
     position: relative;
     width: 100%;
@@ -22,17 +26,25 @@ const Wrapper = styled.section`
   }
 `
 
-const Page = ({ children, className }) => (
+const Page = ({ children, className, loading }) => (
   <Wrapper className={className}>
-    <div className='container'>
-      <div className='page-content'>{children}</div>
-    </div>
+    {loading && (
+      <center className='progress'>
+        <CircularProgress />
+      </center>
+    )}
+    {!loading && (
+      <div className='container'>
+        <div className='page-content'>{children}</div>
+      </div>
+    )}
   </Wrapper>
 )
 
 Page.propTypes = {
-  children: PropTypes.node.isRequired,
-  className: PropTypes.string
+  children: PropTypes.node,
+  className: PropTypes.string,
+  loading: PropTypes.bool
 }
 
 export default Page
