@@ -112,9 +112,7 @@ function Community ({ group }) {
             sort: false,
             customBodyRender: (roleId, tableMeta, updateValue) => {
               const [role, id] = roleId.split('__')
-              if (!admin || (role === 'admin' && adminNb === 1)) {
-                return null
-              }
+              if (!admin || (role === 'admin' && adminNb === 1)) return null
               const { action, action2 } = translate[role]
               return (
                 <>

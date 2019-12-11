@@ -52,7 +52,7 @@ const Wrapper = styled.div`
   }
 `
 
-function EditGroup({ id }) {
+function EditGroup ({ id }) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [photos, setPhotos] = useState([])
@@ -132,8 +132,8 @@ function EditGroup({ id }) {
           name ? `de ${name}` : "d'un groupe"
         }`}
       >
-        <div id="name">
-          <Grid alignItems="flex-end" container spacing={1}>
+        <div id='name'>
+          <Grid alignItems='flex-end' container spacing={1}>
             <Grid item>
               {loading || groupLoading ? <CircularProgress /> : <EditIcon />}
             </Grid>
@@ -143,7 +143,7 @@ function EditGroup({ id }) {
                 error={!!nameError}
                 fullWidth
                 helperText={nameError}
-                label="Nom de votre groupe"
+                label='Nom de votre groupe'
                 onChange={e => setName(e.target.value)}
                 value={name}
               />
@@ -153,7 +153,7 @@ function EditGroup({ id }) {
         <Description
           error={!!descError}
           label={descError || 'Description du groupe et de vos actions :'}
-          placeholder="Donnez envie !"
+          placeholder='Donnez envie !'
           readOnly={loading || groupLoading}
           setValue={setDescription}
           value={description}
@@ -165,11 +165,11 @@ function EditGroup({ id }) {
         />
         <If condition={id}>
           <Fab
-            aria-label="Archiver"
-            className="archive-btn"
-            color="secondary"
+            aria-label='Archiver'
+            className='archive-btn'
+            color='secondary'
             onClick={() => setDiagOpen(true)}
-            title="Archiver"
+            title='Archiver'
           >
             <DeleteIcon />
           </Fab>
@@ -177,17 +177,17 @@ function EditGroup({ id }) {
             action={() => archive()}
             close={() => setDiagOpen(false)}
             isOpen={diagOpen}
-            text="Ce groupe ne sera pas supprimé."
+            text='Ce groupe ne sera pas supprimé.'
             title={`Voulez-vous vraiment archiver "${name}" ?`}
           />
         </If>
-        <div className="save center">
+        <div className='save center'>
           <Button
-            aria-label="Enregistrer"
-            color="primary"
+            aria-label='Enregistrer'
+            color='primary'
             disabled={loading || groupLoading}
             onClick={save}
-            variant="contained"
+            variant='contained'
           >
             {loading || groupLoading ? 'Chargement...' : 'Enregistrer'}
           </Button>

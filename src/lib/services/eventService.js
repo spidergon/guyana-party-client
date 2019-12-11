@@ -196,7 +196,7 @@ export const useEvents = (byGroup, group) => {
 
     const userId = Cookies.get('gp_userId')
 
-    let query = `${process.env.API}/search?&uid=${userId}`
+    let query = `${process.env.API}/search?uid=${userId}&isapp=true`
     if (group && group._id) {
       query = `group=${group._id}`
       if (userId) {

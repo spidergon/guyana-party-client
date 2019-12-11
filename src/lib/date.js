@@ -63,6 +63,16 @@ export const formatPlage = ({ startDate, endDate }, showUTC = false) => {
   return `Du ${start[0]}/${start[1]} à ${start[2]} au ${end[0]}/${end[1]} à ${end[2]}${utc}`
 }
 
+export const days = [
+  { label: 'Lundi', value: 'mon' },
+  { label: 'Mardi', value: 'tue' },
+  { label: 'Mercredi', value: 'wed' },
+  { label: 'Jeudi', value: 'thu' },
+  { label: 'Vendredi', value: 'fri' },
+  { label: 'Samedi', value: 'sat' },
+  { label: 'Dimanche', value: 'sun' }
+]
+
 export const tzList = [
   {
     offset: '-11:00',

@@ -630,6 +630,12 @@ pre tt:after {
   background-image: url(../images/banner.jpeg);
 }
 
+h2,
+h3,
+h4 {
+  margin-top: 1rem;
+}
+
 button,
 input,
 optgroup,

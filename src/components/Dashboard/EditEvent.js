@@ -36,7 +36,7 @@ import {
   archiveEvent
 } from '../../lib/services/eventService'
 import { showSnack } from '../Snack'
-import { toUTCIsoDate, toZonedTime, tzList, userTZ } from '../../lib/date'
+import { toUTCIsoDate, toZonedTime, tzList, userTZ, days } from '../../lib/date'
 import { isAdmin } from '../../lib/services/communityService'
 import { scrollTo } from '../../lib/utils'
 
@@ -516,16 +516,6 @@ function NewEvent ({ id }) {
     </Wrapper>
   )
 }
-
-const days = [
-  { label: 'Lundi', value: 'mon' },
-  { label: 'Mardi', value: 'tue' },
-  { label: 'Mercredi', value: 'wed' },
-  { label: 'Jeudi', value: 'thu' },
-  { label: 'Vendredi', value: 'fri' },
-  { label: 'Samedi', value: 'sat' },
-  { label: 'Dimanche', value: 'sun' }
-]
 
 const initialOccurrence = {
   mon: false,

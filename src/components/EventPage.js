@@ -16,7 +16,7 @@ import {
 import { isAdmin } from '../lib/services/communityService'
 import SingleMap from './Dashboard/SingleMap'
 import { markToSafeHTML } from '../lib/utils'
-import { formatStart, formatPlage } from '../lib/date'
+import { formatStart, formatPlage, days } from '../lib/date'
 import PhotoList from './PhotoList'
 
 const Wrapper = styled.div`
@@ -29,11 +29,11 @@ const Wrapper = styled.div`
   }
   #title {
     position: absolute;
-    margin-top: -215px;
+    margin-top: -225px;
     max-width: 500px;
-    height: 150px;
+    height: 180px;
     background-color: rgb(250, 250, 250);
-    padding: 0.5rem;
+    padding: 0.5rem 0.5rem 0;
     z-index: 999;
     border: 1px solid ${props => props.theme.borderColor};
     h1 {
@@ -44,6 +44,7 @@ const Wrapper = styled.div`
       }
       a {
         color: #0078e7;
+        font-size: 25px;
       }
     }
     .red,
@@ -75,8 +76,14 @@ const Wrapper = styled.div`
       background-color: #fff;
       padding: 1rem 0.5rem;
     }
-    .info .info-date {
-      margin: 0.8rem 0;
+    .info {
+      margin-left: 1rem;
+      .info-date {
+        margin: 0.8rem 0;
+      }
+      .address {
+        margin-top: 0.8rem;
+      }
     }
   }
   #photos {
@@ -184,18 +191,18 @@ function EventPage ({ slug }) {
               <h1>
                 {event.name}{' '}
                 {event.group && (
-                  <>
-                    <span>par</span>{' '}
+                  <p>
+                    <span>par</span>&nbsp;
                     <Link
                       title='Voir le group'
                       to={`/group/${event.group.slug}`}
                     >
                       {event.group.name}
                     </Link>
-                  </>
+                  </p>
                 )}
               </h1>
-              <p>{event.location.address}</p>
+              <p className='text-wrap'>{event.location.address}</p>
               <If condition={admin}>
                 <p>
                   {event.status === 'archived' && (
@@ -257,6 +264,10 @@ function EventPage ({ slug }) {
                     Tous les <em>{occurrenceStr}</em>
                   </p>
                 )}
+                <p className='address'>
+                  Adresse :<br />
+                  {event.location.address}
+                </p>
               </div>
             </section>
             <SingleMap
@@ -280,16 +291,6 @@ function EventPage ({ slug }) {
     </Wrapper>
   )
 }
-
-const days = [
-  { label: 'Lundi', value: 'mon' },
-  { label: 'Mardi', value: 'tue' },
-  { label: 'Mercredi', value: 'wed' },
-  { label: 'Jeudi', value: 'thu' },
-  { label: 'Vendredi', value: 'fri' },
-  { label: 'Samedi', value: 'sat' },
-  { label: 'Dimanche', value: 'sun' }
-]
 
 EventPage.propTypes = { slug: PropTypes.string }
 

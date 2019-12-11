@@ -56,16 +56,16 @@ const Wrapper = styled.div`
       width: 100%;
       background-color: rgba(0, 0, 0, 0.5);
       padding: 5px;
-      .red {
-        color: rgb(248, 99, 73);
-      }
-      .green {
-        color: #43a047;
-      }
       a {
         color: #fff;
       }
     }
+  }
+  .red {
+    color: rgb(248, 99, 73);
+  }
+  .green {
+    color: #43a047;
   }
   &:hover {
     box-shadow: 0 15px 15px -15px gray;
@@ -138,7 +138,9 @@ function Card ({
             title={name}
             to={`/${isGroup ? 'group' : 'event'}/${slug}`}
           >
-            <strong>{name}</strong>
+            <strong className={status === 'waiting' ? 'red' : ''}>
+              {name}
+            </strong>
           </Link>
           {!isGroup && <p>{formatPlage({ startDate, endDate })}</p>}
         </div>
