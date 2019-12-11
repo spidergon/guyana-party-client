@@ -16,14 +16,16 @@ export const createGroup = (payload, next, fallback) => {
   formData.append('name', payload.name)
   formData.append('description', payload.description)
   formData.append('author', userId)
+  payload.photos = payload.photos || []
   payload.photos.forEach(photo => formData.append('files[]', photo))
 
   axiosPost(
     `${process.env.API}/groups`,
     formData,
     ({ data: res }) => {
-      if (res.status === 201 && res.data) next(res.data.slug)
-      else fallback('Une erreur interne est survenue')
+      if (res.status === 201 && res.data) {
+        next({ slug: res.data.slug, _id: res.data._id })
+      } else fallback('Une erreur interne est survenue')
     },
     fallback
   )
@@ -44,7 +46,7 @@ export const updateGroup = (payload, next, fallback) => {
     `${process.env.API}/groups/${payload.id}`,
     formData,
     ({ data: res }) => {
-      if (res.status === 200 && res.data) next()
+      if (res.status === 200 && res.data) next({})
       else fallback('Une erreur interne est survenue')
     },
     fallback
@@ -107,7 +109,7 @@ export const useGroup = ({ id, slug }) => {
   return { loading, error, group }
 }
 
-export const useGroups = () => {
+export const useGroups = (onlyAdmin = false) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [groups, setGroups] = useState([])
@@ -119,7 +121,9 @@ export const useGroups = () => {
     if (!userId) return formatError(MISSING_TOKEN_ERR)
 
     axiosGet(
-      `${process.env.API}/groups?uid=${userId}&status=online`,
+      `${process.env.API}/groups?uid=${userId}&status=online${
+        onlyAdmin ? '&admin=true' : ''
+      }`,
       ({ data: res }) => {
         if (res.status !== 200 || !res.data) {
           return formatError('Une erreur interne est survenue')
@@ -136,7 +140,7 @@ export const useGroups = () => {
       },
       formatError
     ).finally(formatError)
-  }, [groups])
+  }, [groups, onlyAdmin])
 
   const formatError = error => {
     if (error) setError(error)

@@ -181,7 +181,10 @@ function Card ({
               )}
             </>
           )}
-          {isGroup && admin && <p>Vous êtes administrateur</p>}
+          <p>
+            {isGroup &&
+              ((admin && 'Vous êtes administrateur') || 'Vous êtes membre')}
+          </p>
         </div>
       </div>
       <Dialog

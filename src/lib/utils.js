@@ -82,5 +82,9 @@ export const compress = (files, next) => {
   })
   compressor.compress(files).then(data => next(data))
 }
+export const scrollTo = selector => {
+  const target = document.querySelector(selector)
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'end' })
+}
 
 export const MISSING_TOKEN_ERR = 'Token de connexion requis'

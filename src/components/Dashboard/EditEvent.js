@@ -27,7 +27,7 @@ import Photos from './Photos'
 import SingleMap from './SingleMap'
 import Dialog from '../Dialog'
 import If from '../addons/If'
-import { useGroups } from '../../lib/services/groupService'
+import { useGroups, createGroup } from '../../lib/services/groupService'
 import {
   createEvent,
   getAddressFromCoords,
@@ -38,6 +38,7 @@ import {
 import { showSnack } from '../Snack'
 import { toUTCIsoDate, toZonedTime, tzList, userTZ } from '../../lib/date'
 import { isAdmin } from '../../lib/services/communityService'
+import { scrollTo } from '../../lib/utils'
 
 const Wrapper = styled.div`
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
@@ -123,29 +124,9 @@ const Wrapper = styled.div`
   }
 `
 
-const days = [
-  { label: 'Lundi', value: 'mon' },
-  { label: 'Mardi', value: 'tue' },
-  { label: 'Mercredi', value: 'wed' },
-  { label: 'Jeudi', value: 'thu' },
-  { label: 'Vendredi', value: 'fri' },
-  { label: 'Samedi', value: 'sat' },
-  { label: 'Dimanche', value: 'sun' }
-]
-
-const initialOccurrence = {
-  mon: false,
-  tue: false,
-  wed: false,
-  thu: false,
-  fri: false,
-  sat: false,
-  sun: false
-}
-
 function NewEvent ({ id }) {
   const [name, setName] = useState('')
-  const [group, setGroup] = useState('')
+  const [group, setGroup] = useState('new')
   const [newGroup, setNewGroup] = useState('')
   const [timezone, setTimezone] = useState('Europe/London')
   const [startDate, setStartDate] = useState(null)
@@ -166,7 +147,7 @@ function NewEvent ({ id }) {
 
   const { loading: eventLoading, error, event } = useEvent({ id })
 
-  const { loading: groupLoading, groups } = useGroups()
+  const { loading: groupLoading, groups } = useGroups(true)
 
   useEffect(() => {
     if (event && !isAdmin(event.group.community)) {
@@ -204,7 +185,6 @@ function NewEvent ({ id }) {
       ])
     } else {
       setName('')
-      // if (groups && groups.length > 0) setGroup(groups[0]._id)
       setTimezone(userTZ())
       setStartDate(new Date())
       setEndDate(new Date())
@@ -261,16 +241,24 @@ function NewEvent ({ id }) {
     setEndDateError('')
     setDescError('')
     setAddressError('')
-    if (!name) return setNameError('Veuillez saisir un nom')
+    if (!name) {
+      scrollTo('#name')
+      return setNameError('Veuillez saisir un nom')
+    }
     if (group === 'new' && !newGroup) {
+      scrollTo('#group')
       return setGroupError('Veuillez saisir le nom du groupe')
     }
     if (startDate.getTime() === endDate.getTime()) {
+      scrollTo('#dates')
       return setEndDateError(
         'La date de fin doit être différente de la date de début'
       )
     }
-    if (!description) return setDescError('Veuillez saisir une description :')
+    if (!description) {
+      scrollTo('.mde')
+      return setDescError('Veuillez saisir une description :')
+    }
     if (!address) {
       return setAddressError(
         "Veuillez cliquer sur la carte pour obtenir l'adresse"
@@ -291,9 +279,24 @@ function NewEvent ({ id }) {
     }
 
     if (group === 'new' && newGroup) {
-      // TODO: create group
-    }
+      createGroup(
+        { name: newGroup, description: 'Veuillez saisir une description.' },
+        ({ _id }) => {
+          payload.group = _id
+          processEvent(payload)
+        },
+        error => {
+          console.log(error)
+          showSnack(
+            'Une erreur est survenue lors de la création du groupe',
+            'error'
+          )
+        }
+      )
+    } else processEvent(payload)
+  }
 
+  const processEvent = payload => {
     const fallback = error => {
       console.log(error)
       showSnack(
@@ -302,10 +305,8 @@ function NewEvent ({ id }) {
       )
       setLoading(false)
     }
-
-    if (!id) {
-      createEvent(payload, slug => navigate(`/event/${slug}`), fallback)
-    } else {
+    if (!id) createEvent(payload, slug => navigate(`/event/${slug}`), fallback)
+    else {
       payload.id = id
       updateEvent(payload, () => navigate(`/event/${event.slug}`), fallback)
     }
@@ -362,9 +363,6 @@ function NewEvent ({ id }) {
             onChange={e => setGroup(e.target.value)}
             value={group}
           >
-            <MenuItem value=''>
-              <em>Aucun</em>
-            </MenuItem>
             <MenuItem value='new'>
               <em>Nouveau groupe</em>
             </MenuItem>
@@ -372,7 +370,7 @@ function NewEvent ({ id }) {
             {groups &&
               groups.map(g => (
                 <MenuItem key={g._id} value={g._id}>
-                  {g.name}
+                  {g.slug}
                 </MenuItem>
               ))}
           </Select>
@@ -517,6 +515,26 @@ function NewEvent ({ id }) {
       </Page>
     </Wrapper>
   )
+}
+
+const days = [
+  { label: 'Lundi', value: 'mon' },
+  { label: 'Mardi', value: 'tue' },
+  { label: 'Mercredi', value: 'wed' },
+  { label: 'Jeudi', value: 'thu' },
+  { label: 'Vendredi', value: 'fri' },
+  { label: 'Samedi', value: 'sat' },
+  { label: 'Dimanche', value: 'sun' }
+]
+
+const initialOccurrence = {
+  mon: false,
+  tue: false,
+  wed: false,
+  thu: false,
+  fri: false,
+  sat: false,
+  sun: false
 }
 
 class FrLocalizedUtils extends DateFnsUtils {
