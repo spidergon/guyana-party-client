@@ -27,6 +27,7 @@ const Wrapper = styled.div`
       padding: 5px;
       h2,
       h3 {
+        margin-top: inherit;
         margin-bottom: 0.3rem;
       }
       h2 {

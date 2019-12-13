@@ -31,7 +31,6 @@ const Wrapper = styled.div`
     position: absolute;
     margin-top: -225px;
     max-width: 500px;
-    height: 180px;
     background-color: rgb(250, 250, 250);
     padding: 0.5rem 0.5rem 0;
     z-index: 999;
@@ -47,15 +46,11 @@ const Wrapper = styled.div`
         font-size: 25px;
       }
     }
-    .red,
-    .green {
-      font-weight: bold;
+    p.addr {
+      margin: 1rem 0;
     }
-    .red {
-      color: rgb(248, 99, 73);
-    }
-    .green {
-      color: #43a047;
+    p.status {
+      margin-bottom: 0.5rem;
     }
     .controls {
       position: absolute;
@@ -202,9 +197,9 @@ function EventPage ({ slug }) {
                   </p>
                 )}
               </h1>
-              <p className='text-wrap'>{event.location.address}</p>
+              <p className='addr text-wrap'>{event.location.address}</p>
               <If condition={admin}>
-                <p>
+                <p className='status bold'>
                   {event.status === 'archived' && (
                     <span className='red'>Archivé</span>
                   )}

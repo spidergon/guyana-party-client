@@ -23,7 +23,6 @@ import {
 import { markToSafeHTML } from '../lib/utils'
 
 const Wrapper = styled.div`
-  /* height: calc(100vh - ${props => props.theme.headerHeight} - 2rem); */
   h1,
   h2 {
     text-transform: uppercase;
@@ -39,11 +38,11 @@ const Wrapper = styled.div`
       margin-bottom: 0.5rem;
     }
     .controls {
-    margin-bottom: 1rem;
-    button {
-      margin: 10px
+      margin-bottom: 1rem;
+      button {
+        margin: 10px;
+      }
     }
-  }
     .ok {
       color: green;
     }
@@ -54,9 +53,6 @@ const Wrapper = styled.div`
   #desc {
     max-width: 800px;
     margin: 0 auto 3rem;
-    p {
-      margin: 0.5rem 0;
-    }
     .desc-content {
       padding: 1rem 0.5rem;
       margin-bottom: 2rem;

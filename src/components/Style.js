@@ -27,52 +27,44 @@ export const Style = createGlobalStyle`
     text-decoration: none;
     color: ${props => props.theme.black};
   }
-  .grid {
-    display: -ms-grid;
-    display: grid;
-  }
-  .flex {
-    display: flex;
-  }
-  .center {
-    text-align: center;
-  }
-  img.cover {
-    object-fit: cover;
-    width: 100%;
-  }
-  .text-wrap {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
 
   form {
-      margin: 0;
-      font-size: 15px;
+    margin: 0;
+    font-size: 15px;
+    input {
+      position: relative;
+      width: 100%;
+      height: 50px;
+      background-color: transparent;
+      padding: 0 15px;
+      border: 1px solid rgb(206, 210, 217);
+      border-radius: 4px;
+      font-size: 16px;
+      margin-bottom: 1rem;
+    }
+    button {
+      margin-top: 1.5rem;
+    }
+    .error {
+      label {
+        color: rgb(248, 99, 73);
+        font-weight: 600;
+      }
       input {
-        position: relative;
-        width: 100%;
-        height: 50px;
-        background-color: transparent;
-        padding: 0 15px;
-        border: 1px solid rgb(206, 210, 217);
-        border-radius: 4px;
-        font-size: 16px;
-        margin-bottom: 1rem;
-      }
-      button {
-        margin-top: 1.5rem;
-      }
-      .error {
-        label {
-          color: rgb(248, 99, 73);
-          font-weight: 600;
-        }
-        input {
-          background-color: rgb(254, 245, 231);
-          border-color: rgb(248, 187, 73);
-        }
+        background-color: rgb(254, 245, 231);
+        border-color: rgb(248, 187, 73);
       }
     }
+  }
+
+  .desc-content {
+    h2,
+    h3,
+    h4 {
+      margin-top: 1rem;
+    }
+    p {
+      margin: 0.5rem 0;
+    }
+  }
 `

@@ -47,7 +47,7 @@ const Wrapper = styled.div`
     }
     #events {
       grid-gap: 0.5rem;
-      margin-top: 2.4rem;
+      margin-top: 2.5rem;
     }
     #add-btn {
       padding: 10px;

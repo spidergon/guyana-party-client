@@ -630,12 +630,6 @@ pre tt:after {
   background-image: url(../images/banner.jpeg);
 }
 
-h2,
-h3,
-h4 {
-  margin-top: 1rem;
-}
-
 button,
 input,
 optgroup,
@@ -644,4 +638,33 @@ textarea {
   font-family: inherit;
   font-size: 100%;
   line-height: 1.15;
+}
+
+.grid {
+  display: -ms-grid;
+  display: grid;
+}
+.flex {
+  display: flex;
+}
+.center {
+  text-align: center;
+}
+img.cover {
+  object-fit: cover;
+  width: 100%;
+}
+.text-wrap {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.red {
+  color: rgb(248, 99, 73);
+}
+.green {
+  color: #43a047;
+}
+.bold {
+  font-weight: bold;
 }
