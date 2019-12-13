@@ -125,7 +125,7 @@ export const requestMarkers = (search, box, next, fallback) => {
   uid = uid ? `&uid=${uid}` : ''
   const [[sw1, sw2], [ne1, ne2]] = box
   axiosGet(
-    `${process.env.API}/search?q=${search}${uid}&sw1=${sw1}&sw2=${sw2}&ne1=${ne1}&ne2=${ne2}`,
+    `${process.env.API}/search?q=${search}${uid}&sort=startDate endDate&sw1=${sw1}&sw2=${sw2}&ne1=${ne1}&ne2=${ne2}`,
     ({ data: res }) => {
       if (res.status !== 200 || !res.data) {
         return fallback('Une erreur interne est survenue')
