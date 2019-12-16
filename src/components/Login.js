@@ -59,9 +59,6 @@ const Wrapper = styled.div`
         border-radius: 4px;
         font-size: 16px;
       }
-      button {
-        margin-top: 46px;
-      }
       .error {
         label {
           color: rgb(248, 99, 73);
@@ -177,7 +174,7 @@ function Login () {
             fields='name,email,picture'
             render={({ onClick, disabled }) => (
               <Button
-                className='facebook'
+                className='facebook fb_bg'
                 disabled={loading || disabled}
                 onClick={onClick}
                 text='Connexion avec Facebook'
@@ -191,7 +188,7 @@ function Login () {
             onSuccess={loginGoogleHandle}
             render={({ onClick, disabled }) => (
               <Button
-                className='google'
+                className='google g_bg'
                 disabled={loading || disabled}
                 onClick={onClick}
                 text='Connexion avec Google'

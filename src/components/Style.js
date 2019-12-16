@@ -43,7 +43,7 @@ export const Style = createGlobalStyle`
       margin-bottom: 1rem;
     }
     button {
-      margin-top: 1.5rem;
+      margin-top: 1rem;
     }
     .error {
       label {

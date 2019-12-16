@@ -629,6 +629,12 @@ pre tt:after {
 .banner_bg {
   background-image: url(../images/banner.jpeg);
 }
+.fb_bg {
+  background-image: url(../images/facebook.svg);
+}
+.g_bg {
+  background-image: url(../images/google.svg);
+}
 
 button,
 input,

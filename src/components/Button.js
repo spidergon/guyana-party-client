@@ -30,6 +30,12 @@ const Wrapper = styled.button`
   &:focus {
     background-color: rgb(44, 114, 247);
   }
+  &.facebook,
+  &.google {
+    background-position: 2rem;
+    background-repeat: no-repeat;
+    background-size: 20px;
+  }
   &.facebook {
     background-color: rgb(59, 88, 151);
     &:hover,
