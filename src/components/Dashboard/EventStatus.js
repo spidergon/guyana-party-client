@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   }
 `
 
-function EventStatus ({
+function EventStatus({
   event: { _id: id, author, isPrivate, status },
   className
 }) {

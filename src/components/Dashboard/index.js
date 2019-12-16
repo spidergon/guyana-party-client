@@ -47,7 +47,7 @@ const Wrapper = styled.div`
   }
 `
 
-function Dashboard () {
+function Dashboard() {
   const { user } = useAuth()
   const { loading: eventLoading, events } = useEvents()
   const { loading: groupLoading, groups } = useGroups()

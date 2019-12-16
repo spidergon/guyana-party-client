@@ -1,11 +1,11 @@
-import React from 'react'
 import PropTypes from 'prop-types'
+import React from 'react'
 import { ThemeProvider } from 'styled-components'
-import { theme, Style } from './Style'
+import '../lib/cookieconsent'
 import Header from './Header'
 import Snack from './Snack'
-import '../assets/css/layout.css'
-import '../lib/cookieconsent'
+import './styles/layout.css'
+import { Style, theme } from './styles/Style'
 
 const Layout = ({ children, location: { pathname } }) => (
   <ThemeProvider theme={theme}>

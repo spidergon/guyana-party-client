@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { render } from 'enzyme'
 
 import { ThemeProvider } from 'styled-components'
-import { theme, Style } from '../components/Style'
+import { theme, Style } from '../components/styles/Style'
 
 const AllTheProviders = ({ children }) => (
   <ThemeProvider theme={theme}>

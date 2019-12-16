@@ -18,7 +18,7 @@ AuthProvider.propTypes = { children: PropTypes.node.isRequired }
 
 export const useAuth = () => useContext(authContext)
 
-function useProvideAuth () {
+function useProvideAuth() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [user, setUser] = useState(null)

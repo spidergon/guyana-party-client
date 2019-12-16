@@ -13,7 +13,7 @@ const POINTS = [
 ]
 
 class Map {
-  constructor (locate, id) {
+  constructor(locate, id) {
     this.mapId = id || 'map'
     this.map = null
     this.markerClusterGroup = new MarkerClusterGroup()

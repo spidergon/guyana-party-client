@@ -1,8 +1,8 @@
-import { createGlobalStyle } from 'styled-components'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
-import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import 'slick-carousel/slick/slick.css'
+import { createGlobalStyle } from 'styled-components'
 
 export const theme = {
   headerHeight: '44px',
@@ -26,35 +26,6 @@ export const Style = createGlobalStyle`
   a {
     text-decoration: none;
     color: ${props => props.theme.black};
-  }
-
-  form {
-    margin: 0;
-    font-size: 15px;
-    input {
-      position: relative;
-      width: 100%;
-      height: 50px;
-      background-color: transparent;
-      padding: 0 15px;
-      border: 1px solid rgb(206, 210, 217);
-      border-radius: 4px;
-      font-size: 16px;
-      margin-bottom: 1rem;
-    }
-    button {
-      margin-top: 1rem;
-    }
-    .error {
-      label {
-        color: rgb(248, 99, 73);
-        font-weight: 600;
-      }
-      input {
-        background-color: rgb(254, 245, 231);
-        border-color: rgb(248, 187, 73);
-      }
-    }
   }
 
   .desc-content {

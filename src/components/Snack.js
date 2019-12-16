@@ -44,7 +44,7 @@ const variantIcons = {
   info: <InfoIcon className='icon iconVariant' />
 }
 
-function Snack ({ msg, variant }) {
+function Snack({ msg, variant }) {
   const hideSnack = () => snackState.setState({ msg: '', variant: '' })
 
   return (

@@ -75,6 +75,7 @@
     "enzyme-adapter-react-16": "^1.15.1",
     "enzyme-to-json": "^3.4.3",
     "eslint": "^6.7.2",
+    "eslint-config-prettier": "^6.7.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-config-standard-jsx": "^8.1.0",
     "eslint-plugin-babel": "^5.3.0",
@@ -82,6 +83,7 @@
     "eslint-plugin-import": "^2.19.1",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.17.0",
     "eslint-plugin-react-hooks": "^2.3.0",
@@ -97,6 +99,7 @@
     "endOfLine": "lf",
     "semi": false,
     "singleQuote": true,
+    "jsxSingleQuote": true,
     "tabWidth": 2,
     "trailingComma": "none"
   },

@@ -61,7 +61,7 @@ const Wrapper = styled.header`
   }
 `
 
-function Header ({ pathname }) {
+function Header({ pathname }) {
   const [mainClass, setMainClass] = useState('')
   const [scrollDown, setScrollDown] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
@@ -122,7 +122,7 @@ function Header ({ pathname }) {
   )
 }
 
-function scrollEffect (pathname, setScrollDown) {
+function scrollEffect(pathname, setScrollDown) {
   if (pathname.match(/^\/+$/)) {
     let down = false
     window.addEventListener(
@@ -141,7 +141,7 @@ function scrollEffect (pathname, setScrollDown) {
   }
 }
 
-function opaqueEffect (pathname, scrollDown, setMainClass) {
+function opaqueEffect(pathname, scrollDown, setMainClass) {
   const opaque = !pathname.match(/^\/+$/) || scrollDown ? 'opaque' : ''
   const app = pathname.match('app') ? ' app' : ''
   setMainClass(opaque + app)

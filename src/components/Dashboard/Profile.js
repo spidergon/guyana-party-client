@@ -5,12 +5,11 @@ import { Image, Page } from '../addons'
 import { useAuth } from '../../lib/services/authService'
 import { useArchived as useArchivedEvents } from '../../lib/services/eventService'
 import { useArchived as useArchivedGroups } from '../../lib/services/groupService'
+import { FormWrapper } from '../styles/LoginStyled'
 
 const Wrapper = styled.section`
   max-width: 430px;
-  margin-top: 2rem;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 2rem auto 3rem;
   img {
     justify-self: center;
     height: 192px;
@@ -18,7 +17,7 @@ const Wrapper = styled.section`
   }
 `
 
-function Profile () {
+function Profile() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [nameError] = useState('')
@@ -39,7 +38,7 @@ function Profile () {
     <Page loading={loading && !user}>
       <Wrapper className='grid'>
         <Image alt='User avatar' className='cover' src={user && user.photo} />
-        <form autoComplete='off'>
+        <FormWrapper autoComplete='off'>
           <div className={nameError ? 'error' : ''}>
             <label htmlFor='name'>{nameError || 'Nom'}</label>
             <input
@@ -51,7 +50,7 @@ function Profile () {
               value={name}
             />
           </div>
-          <div className={emailError ? 'error' : ''}>
+          <div className={`email-section ${emailError ? 'error' : ''}`}>
             <label htmlFor='email'>{emailError || 'Email'}</label>
             <input
               disabled
@@ -62,7 +61,7 @@ function Profile () {
               value={email}
             />
           </div>
-        </form>
+        </FormWrapper>
       </Wrapper>
       <CardList
         data={events}

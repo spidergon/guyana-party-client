@@ -1,44 +1,44 @@
-import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
-import { navigate } from 'gatsby'
-import styled from 'styled-components'
-import Divider from '@material-ui/core/Divider'
-import Grid from '@material-ui/core/Grid'
-import EditIcon from '@material-ui/icons/Edit'
-import TextField from '@material-ui/core/TextField'
-import Button from '@material-ui/core/Button'
-import CircularProgress from '@material-ui/core/CircularProgress'
-import Select from '@material-ui/core/Select'
-import MenuItem from '@material-ui/core/MenuItem'
-import Checkbox from '@material-ui/core/Checkbox'
-import FormGroup from '@material-ui/core/FormGroup'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormControl from '@material-ui/core/FormControl'
-import InputLabel from '@material-ui/core/InputLabel'
-import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
-import DeleteIcon from '@material-ui/icons/Delete'
-import Fab from '@material-ui/core/Fab'
 import DateFnsUtils from '@date-io/date-fns'
+import Button from '@material-ui/core/Button'
+import Checkbox from '@material-ui/core/Checkbox'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import Divider from '@material-ui/core/Divider'
+import Fab from '@material-ui/core/Fab'
+import FormControl from '@material-ui/core/FormControl'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormGroup from '@material-ui/core/FormGroup'
+import Grid from '@material-ui/core/Grid'
+import InputLabel from '@material-ui/core/InputLabel'
+import MenuItem from '@material-ui/core/MenuItem'
+import Select from '@material-ui/core/Select'
+import TextField from '@material-ui/core/TextField'
+import DeleteIcon from '@material-ui/icons/Delete'
+import EditIcon from '@material-ui/icons/Edit'
+import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 import fr from 'date-fns/locale/fr'
-import Page from './Page'
-import EventsStatus from './EventStatus'
-import Description from './Mde'
-import Photos from './Photos'
-import SingleMap from './SingleMap'
-import Dialog from '../Dialog'
-import If from '../addons/If'
-import { useGroups, createGroup } from '../../lib/services/groupService'
+import { navigate } from 'gatsby'
+import PropTypes from 'prop-types'
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
+import { days, toUTCIsoDate, toZonedTime, tzList, userTZ } from '../../lib/date'
+import { isAdmin } from '../../lib/services/communityService'
 import {
+  archiveEvent,
   createEvent,
   getAddressFromCoords,
-  useEvent,
   updateEvent,
-  archiveEvent
+  useEvent
 } from '../../lib/services/eventService'
-import { showSnack } from '../Snack'
-import { toUTCIsoDate, toZonedTime, tzList, userTZ, days } from '../../lib/date'
-import { isAdmin } from '../../lib/services/communityService'
+import { createGroup, useGroups } from '../../lib/services/groupService'
 import { scrollTo } from '../../lib/utils'
+import If from '../addons/If'
+import Dialog from '../Dialog'
+import { showSnack } from '../Snack'
+import EventsStatus from './EventStatus'
+import Description from './Mde'
+import Page from './Page'
+import Photos from './Photos'
+import SingleMap from './SingleMap'
 
 const Wrapper = styled.div`
   font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
@@ -124,7 +124,7 @@ const Wrapper = styled.div`
   }
 `
 
-function NewEvent ({ id }) {
+function NewEvent({ id }) {
   const [name, setName] = useState('')
   const [group, setGroup] = useState('new')
   const [newGroup, setNewGroup] = useState('')
@@ -529,7 +529,7 @@ const initialOccurrence = {
 }
 
 class FrLocalizedUtils extends DateFnsUtils {
-  getDateTimePickerHeaderText (date) {
+  getDateTimePickerHeaderText(date) {
     return this.format(date, 'd MMM', { locale: this.locale })
   }
 }

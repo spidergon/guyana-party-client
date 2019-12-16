@@ -84,7 +84,7 @@ const Wrapper = styled.div`
   }
 `
 
-function GroupPage ({ slug }) {
+function GroupPage({ slug }) {
   const [description, setDescription] = useState(null)
   const [diagOpen, setDiagOpen] = useState(false)
   const [admin, setAdmin] = useState(false)
@@ -112,7 +112,7 @@ function GroupPage ({ slug }) {
   }, [group])
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       if (group) setDescription(await markToSafeHTML(group.description))
     })()
   }, [group])

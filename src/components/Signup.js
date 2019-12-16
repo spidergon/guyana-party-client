@@ -1,72 +1,13 @@
-import React, { useState, useEffect } from 'react'
 import { navigate } from 'gatsby'
-import styled from 'styled-components'
+import React, { useEffect, useState } from 'react'
 import isEmail from 'validator/lib/isEmail'
-import Button from './Button'
-import { Link } from './addons'
 import { useAuth } from '../lib/services/authService'
+import { Link } from './addons'
+import Button from './Button'
 import { showSnack } from './Snack'
+import { FormWrapper, LoginWrapper as Wrapper } from './styles/LoginStyled'
 
-const Wrapper = styled.div`
-  margin-top: 0.5rem;
-  font-family: Montserrat, Helvetica, sans-serif;
-  h1 {
-    text-transform: uppercase;
-  }
-  .content {
-    max-width: 390px;
-    padding: 30px;
-    border-radius: 5px;
-    width: 100%;
-    min-height: 260px;
-    margin: 15px auto;
-    background-color: #fff;
-    color: ${props => props.theme.black};
-    font-size: 15px;
-    /* button.facebook {
-      margin-bottom: 15px;
-    } */
-    /* .or-div {
-      display: flex;
-      -webkit-box-align: center;
-      align-items: center;
-      width: 100%;
-      margin: 25px 0px;
-      div {
-        background-color: rgb(235, 236, 239);
-        height: 1px;
-        flex: 1 1 0%;
-      }
-      span {
-        margin: 0px 16px;
-      }
-    } */
-  }
-  .signup-link {
-    margin-bottom: 60px;
-    a {
-      color: rgb(73, 134, 248);
-      text-decoration: none;
-      font-size: 15px;
-    }
-  }
-  .copy {
-    font-size: 15px;
-    height: 50px;
-    line-height: 50px;
-  }
-  @media (max-width: ${props => props.theme.sm}) {
-    .content {
-      max-width: inherit;
-      padding: 10px;
-    }
-    .signup-link {
-      margin-bottom: 40px;
-    }
-  }
-`
-
-function Signup () {
+function Signup() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -135,7 +76,7 @@ function Signup () {
     <Wrapper>
       <h1>Créer un compte</h1>
       <div className='content'>
-        <form autoComplete='off'>
+        <FormWrapper autoComplete='off'>
           <div className={nameError ? 'error' : ''}>
             <label htmlFor='name'>{nameError || 'Nom'}</label>
             <input
@@ -148,7 +89,7 @@ function Signup () {
               value={name}
             />
           </div>
-          <div className={emailError ? 'error' : ''}>
+          <div className={`email-section ${emailError ? 'error' : ''}`}>
             <label htmlFor='email'>{emailError || 'Email'}</label>
             <input
               disabled={loading}
@@ -175,7 +116,7 @@ function Signup () {
             onClick={validate}
             text={loading ? 'Chargement...' : 'Créer un nouveau compte'}
           />
-        </form>
+        </FormWrapper>
       </div>
       {!loading && (
         <p className='signup-link center'>

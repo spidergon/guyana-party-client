@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
 import Fab from '@material-ui/core/Fab'
-import EditIcon from '@material-ui/icons/Edit'
 import DeleteIcon from '@material-ui/icons/Delete'
-import Dialog from './Dialog'
-import { Image, Link } from './addons'
+import EditIcon from '@material-ui/icons/Edit'
+import PropTypes from 'prop-types'
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
 import { formatPlage } from '../lib/date'
-import { showSnack } from './Snack'
-import { archiveGroup, removeGroup } from '../lib/services/groupService'
-import { archiveEvent, removeEvent } from '../lib/services/eventService'
 import { isAdmin } from '../lib/services/communityService'
+import { archiveEvent, removeEvent } from '../lib/services/eventService'
+import { archiveGroup, removeGroup } from '../lib/services/groupService'
+import { Image, Link } from './addons'
+import Dialog from './Dialog'
+import { showSnack } from './Snack'
 
 const Wrapper = styled.div`
   position: relative;
@@ -75,7 +75,7 @@ const Wrapper = styled.div`
   }
 `
 
-function Card ({
+function Card({
   data: {
     author,
     name,

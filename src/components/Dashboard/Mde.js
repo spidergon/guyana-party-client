@@ -19,7 +19,7 @@ const Wrapper = styled.div`
   }
 `
 
-function Mde ({ label, placeholder, value, setValue, readOnly, error }) {
+function Mde({ label, placeholder, value, setValue, readOnly, error }) {
   const [selectedTab, setSelectedTab] = useState('write')
 
   return (

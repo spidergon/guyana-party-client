@@ -69,7 +69,7 @@ const limitSize = 5 // MB
 const maxSize = limitSize * 1048576 // maxSize * 1024 * 1024 (MB)
 const maxFiles = 3
 
-function Photos ({ photos, setPhotos, disabled }) {
+function Photos({ photos, setPhotos, disabled }) {
   const [loading, setLoading] = useState(false)
   const [dropError, setDropError] = useState('')
   // const [objectUrls, setObjectUrls] = useState([])

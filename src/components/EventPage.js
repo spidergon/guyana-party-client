@@ -111,7 +111,7 @@ const Wrapper = styled.div`
   }
 `
 
-function EventPage ({ slug }) {
+function EventPage({ slug }) {
   const [description, setDescription] = useState(null)
   const [diagOpen, setDiagOpen] = useState(false)
   const [admin, setAdmin] = useState(false)
@@ -129,7 +129,7 @@ function EventPage ({ slug }) {
   }, [event, loading, slug])
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       if (event) setDescription(await markToSafeHTML(event.description))
     })()
   }, [event])

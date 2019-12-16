@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
+import React, { useEffect, useState } from 'react'
 import { navigate } from 'gatsby'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import Grid from '@material-ui/core/Grid'
-import EditIcon from '@material-ui/icons/Edit'
-import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import DeleteIcon from '@material-ui/icons/Delete'
 import Fab from '@material-ui/core/Fab'
-import Page from './Page'
-import Description from './Mde'
-import Photos from './Photos'
+import Grid from '@material-ui/core/Grid'
+import TextField from '@material-ui/core/TextField'
+import DeleteIcon from '@material-ui/icons/Delete'
+import EditIcon from '@material-ui/icons/Edit'
+import { isAdmin } from '../../lib/services/communityService'
+import {
+  archiveGroup,
+  createGroup,
+  updateGroup,
+  useGroup
+} from '../../lib/services/groupService'
+import If from '../addons/If'
 import Dialog from '../Dialog'
 import { showSnack } from '../Snack'
-import If from '../addons/If'
-import {
-  createGroup,
-  useGroup,
-  updateGroup,
-  archiveGroup
-} from '../../lib/services/groupService'
-import { isAdmin } from '../../lib/services/communityService'
+import Description from './Mde'
+import Page from './Page'
+import Photos from './Photos'
 
 const Wrapper = styled.div`
   #name {
@@ -52,7 +52,7 @@ const Wrapper = styled.div`
   }
 `
 
-function EditGroup ({ id }) {
+function EditGroup({ id }) {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [photos, setPhotos] = useState([])

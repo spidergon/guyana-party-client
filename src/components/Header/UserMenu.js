@@ -5,7 +5,7 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import Divider from '@material-ui/core/Divider'
 
-function UserMenu ({ anchor, hide, isOpen, pathname, user, signout }) {
+function UserMenu({ anchor, hide, isOpen, pathname, user, signout }) {
   const goTo = to => {
     if (typeof hide === 'function') hide()
     navigate(to)

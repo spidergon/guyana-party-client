@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import MUIDataTable from 'mui-datatables'
 import Button from '@material-ui/core/Button'
+import MUIDataTable from 'mui-datatables'
+import PropTypes from 'prop-types'
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
 import {
+  acceptPendingRequest,
   confirmMember,
   countAdmins,
+  denyPendingRequest,
+  giveAdminRightRequest,
+  grantPendingRequest,
   isAdmin,
   isMember,
   quitRequest,
-  acceptPendingRequest,
-  denyPendingRequest,
-  grantPendingRequest,
-  giveAdminRightRequest,
   removeAdminRightRequest
 } from '../lib/services/communityService'
 
@@ -52,7 +52,7 @@ const translate = {
   }
 }
 
-function Community ({ group }) {
+function Community({ group }) {
   const [data, setData] = useState([])
   const [showList, setShowList] = useState(false)
   const [showQuitBtn, setShowQuitBtn] = useState(false)

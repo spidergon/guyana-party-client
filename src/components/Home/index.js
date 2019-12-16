@@ -77,7 +77,7 @@ const Wrapper = styled.div`
   }
 `
 
-function Home () {
+function Home() {
   const [markers, setMarkers] = useState([])
   const [loading, setLoading] = useState(false)
   const [current, setCurrent] = useState('')
