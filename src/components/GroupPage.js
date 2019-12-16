@@ -12,7 +12,7 @@ import Dialog from './Dialog'
 import CardList from './CardList'
 import PhotoList from './PhotoList'
 import Community from './Community'
-import { useEvents } from '../lib/services/eventService'
+import { useEventsByGroup } from '../lib/services/eventService'
 import { useGroup, archiveGroup } from '../lib/services/groupService'
 import {
   isAdmin,
@@ -93,7 +93,7 @@ function GroupPage ({ slug }) {
   const [denied, setDenied] = useState(false)
 
   const { loading, group } = useGroup({ slug })
-  const { loading: eventLoading, events } = useEvents(true, group)
+  const { loading: eventLoading, events } = useEventsByGroup(group)
 
   useEffect(() => {
     if ((!loading && !group) || (group && group.status !== 'online')) {

@@ -4,9 +4,12 @@ import {
   axiosGet,
   axiosPost,
   axiosPut,
-  getBlob,
+  // getBlob,
+  fetcher,
+  getUserId,
   MISSING_TOKEN_ERR
 } from '../utils'
+import useSWR from 'swr'
 
 export const createGroup = (payload, next, fallback) => {
   const userId = Cookies.get('gp_userId')
@@ -40,7 +43,10 @@ export const updateGroup = (payload, next, fallback) => {
   const formData = new FormData()
   formData.append('name', payload.name)
   formData.append('description', payload.description)
-  payload.photos.forEach(photo => formData.append('files[]', photo))
+  payload.photos.forEach(photo => {
+    if (!photo.size) formData.append('photos[]', photo.name)
+    else formData.append('files[]', photo)
+  })
 
   axiosPut(
     `${process.env.API}/groups/${payload.id}`,
@@ -82,12 +88,14 @@ export const useGroup = ({ id, slug }) => {
           return formatError('Une erreur interne est survenue')
         }
         const parsePhoto = p => {
-          const blob = getBlob(p)
-          Object.assign(blob, {
-            preview: URL.createObjectURL(blob),
-            id: p._id
-          })
-          return blob
+          // const blob = getBlob(p)
+          // Object.assign(blob, {
+          //   preview: URL.createObjectURL(blob),
+          //   id: p._id
+          // })
+          // return blob
+          // return `${process.env.STATIC}/${p}`
+          return { preview: `${process.env.STATIC}/${p}`, name: p }
         }
         if (slug) {
           res.data[0].photos = res.data[0].photos.map(parsePhoto)
@@ -110,42 +118,28 @@ export const useGroup = ({ id, slug }) => {
 }
 
 export const useGroups = (onlyAdmin = false) => {
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
   const [groups, setGroups] = useState([])
 
+  const { data, error, isValidating: loading } = useSWR(
+    `${process.env.API}/groups?uid=${getUserId()}&status=online${
+      onlyAdmin ? '&admin=true' : ''
+    }`,
+    fetcher
+  )
+
   useEffect(() => {
-    if (groups.length > 0) return setLoading(false)
-
-    const userId = Cookies.get('gp_userId')
-    if (!userId) return formatError(MISSING_TOKEN_ERR)
-
-    axiosGet(
-      `${process.env.API}/groups?uid=${userId}&status=online${
-        onlyAdmin ? '&admin=true' : ''
-      }`,
-      ({ data: res }) => {
-        if (res.status !== 200 || !res.data) {
-          return formatError('Une erreur interne est survenue')
+    if (!error && data && data.total > 0) {
+      const res = data.data.map(d => {
+        if (d.photos && d.photos.length > 0) {
+          // d.photo = URL.createObjectURL(getBlob(d.photos[0]))
+          // delete d.photos
+          d.photo = `${process.env.STATIC}/${d.photos[0]}`
         }
-        if (res.data.length === 0) return formatError()
-        res.data = res.data.map(d => {
-          if (d.photos.length > 0) {
-            d.photo = URL.createObjectURL(getBlob(d.photos[0]))
-            delete d.photos
-          }
-          return d
-        })
-        setGroups(res.data)
-      },
-      formatError
-    ).finally(formatError)
-  }, [groups, onlyAdmin])
+        return d
+      })
+      setGroups(res)
+    }
+  }, [data, error])
 
-  const formatError = error => {
-    if (error) setError(error)
-    setLoading(false)
-  }
-
-  return { loading, error, groups, setGroups }
+  return { loading, error, groups }
 }

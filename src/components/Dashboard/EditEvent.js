@@ -160,10 +160,12 @@ function NewEvent ({ id }) {
     if (groups && groups.length > 0) {
       const groupIdParam =
         typeof window !== 'undefined' && window.location.search.split('=')[1]
-      if (groupIdParam) return setGroup(groupIdParam)
-      setGroup(groups[0]._id)
+      if (groupIdParam) setGroup(groupIdParam)
+      else if (id && event) {
+        setGroup(event.group._id)
+      } else setGroup(groups[0]._id)
     }
-  }, [groups])
+  }, [event, groups, id])
 
   useEffect(() => {
     if (error) {
@@ -172,7 +174,6 @@ function NewEvent ({ id }) {
     }
     if (id && event) {
       setName(event.name)
-      if (groups && groups.length > 0) setGroup(event.group._id)
       setTimezone(event.timezone)
       setStartDate(toZonedTime(new Date(event.startDate), event.timezone))
       setEndDate(toZonedTime(new Date(event.endDate), event.timezone))
@@ -193,7 +194,7 @@ function NewEvent ({ id }) {
       setDescription('')
       setPhotos([])
     }
-  }, [error, event, groups, id])
+  }, [error, event, id])
 
   useEffect(() => {
     if (id) {

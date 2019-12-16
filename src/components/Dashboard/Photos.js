@@ -72,6 +72,7 @@ const maxFiles = 3
 function Photos ({ photos, setPhotos, disabled }) {
   const [loading, setLoading] = useState(false)
   const [dropError, setDropError] = useState('')
+  // const [objectUrls, setObjectUrls] = useState([])
 
   useEffect(
     () => () => photos.forEach(p => URL.revokeObjectURL(p.preview)), // Revoke the data uris to avoid memory leaks
@@ -95,23 +96,28 @@ function Photos ({ photos, setPhotos, disabled }) {
     setLoading(true)
 
     compress(acceptedFiles, data => {
+      // const objUrls = []
       const newPhotos = data.map(({ photo, info }, index) => {
         if (process.env.NODE_ENV !== 'production') {
           console.log(`Added "${photo.name}":`, info)
         }
+        // const preview = URL.createObjectURL(photo.data)
+        // objUrls.push(preview)
         return Object.assign(photo.data, {
-          preview: URL.createObjectURL(photo.data),
-          id: `${Date.now()}${photos.length}${index}`
+          preview: URL.createObjectURL(photo.data)
+          // id: `${Date.now()}${photos.length}${index}`
         })
       })
+      // setObjectUrls(objUrls)
       setPhotos([...photos, ...newPhotos])
       setLoading(false)
     })
   }
 
   const deletePhoto = photo => {
-    setPhotos(photos.filter(p => p.id !== photo.id))
-    URL.revokeObjectURL(photo.preview)
+    // setPhotos(photos.filter(p => p.id !== photo.id))
+    setPhotos(photos.filter(p => p.preview !== photo.preview))
+    // URL.revokeObjectURL(photo.preview)
   }
 
   const {

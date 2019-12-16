@@ -21,10 +21,14 @@ export const markToSafeHTML = markdown => {
   return purify(converter.makeHtml(markdown))
 }
 
-export const getBlob = photo => {
-  const arrayBufferView = new Uint8Array(photo.data.data)
-  return new Blob([arrayBufferView], { type: photo.contentType })
-}
+// export const getBlob = photo => {
+//   const arrayBufferView = new Uint8Array(photo.data.data)
+//   return new Blob([arrayBufferView], { type: photo.contentType })
+// }
+
+export const getUserId = () => Cookies.get('gp_userId')
+
+export const fetcher = url => axios.get(url).then(r => r.data)
 
 export const axiosGet = (url, next, fallback) => {
   return axios

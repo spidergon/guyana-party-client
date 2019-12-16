@@ -12,14 +12,14 @@ const PhotoList = ({ photos, className, conf }) => (
   <Wrapper className={className}>
     {photos && photos.length > 0 && (
       <Slider {...(conf || sliderConf)}>
-        {photos.map(({ preview, id }, index) => (
+        {photos.map((p, index) => (
           <Image
             alt='photo'
             className='cover'
             height='200'
-            key={id + index}
+            key={index}
             loading='lazy'
-            src={preview || ''}
+            src={p.preview || ''}
           />
         ))}
       </Slider>

@@ -98,10 +98,10 @@ function Card ({
     setAdmin(isAdmin(isGroup ? community : group.community))
   }, [community, group, isGroup])
 
-  useEffect(
-    () => () => photo && URL.revokeObjectURL(photo), // Revoke the data uris to avoid memory leaks
-    [photo]
-  )
+  // useEffect(
+  //   () => () => photo && URL.revokeObjectURL(photo), // Revoke the data uris to avoid memory leaks
+  //   [photo]
+  // )
 
   const archive = () => {
     if (!admin) {
