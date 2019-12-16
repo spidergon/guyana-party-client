@@ -4,6 +4,7 @@ import { navigate } from 'gatsby'
 import styled from 'styled-components'
 import Slider from 'react-slick'
 import Button from '@material-ui/core/Button'
+// import Grid from '@material-ui/core/Grid'
 import Card from './Card'
 import { If } from './addons'
 
@@ -42,7 +43,9 @@ const CardList = ({
   loading,
   className,
   groupId,
-  conf
+  conf,
+  noSlider,
+  isArchived
 }) => {
   return (
     <Wrapper className={className}>
@@ -65,11 +68,26 @@ const CardList = ({
           condition={data.length !== 0}
           otherwise={loadingMsg(loading, isGroup)}
         >
+          {/* {(noSlider && (
+            <Grid container spacing={1}>
+              {data.map((d, index) => (
+                <Grid item key={d.slug + index}>
+                  <Card data={d} isArchived={isArchived} isGroup={isGroup} />
+                </Grid>
+              ))}
+            </Grid>
+          )) || ( */}
           <Slider {...(conf || sliderConf)}>
             {data.map((d, index) => (
-              <Card data={d} isGroup={isGroup} key={d.slug + index} />
+              <Card
+                data={d}
+                isArchived={isArchived}
+                isGroup={isGroup}
+                key={d.slug + index}
+              />
             ))}
           </Slider>
+          {/* )} */}
         </If>
       </div>
     </Wrapper>
@@ -97,7 +115,9 @@ CardList.propTypes = {
   loading: PropTypes.bool,
   className: PropTypes.string,
   groupId: PropTypes.string,
-  conf: PropTypes.object
+  conf: PropTypes.object,
+  noSlider: PropTypes.bool,
+  isArchived: PropTypes.bool
 }
 
 export default CardList

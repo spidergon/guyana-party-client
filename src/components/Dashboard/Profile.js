@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+import CardList from '../CardList'
 import { Image, Page } from '../addons'
 import { useAuth } from '../../lib/services/authService'
+import { useArchived as useArchivedEvents } from '../../lib/services/eventService'
+import { useArchived as useArchivedGroups } from '../../lib/services/groupService'
 
 const Wrapper = styled.section`
   max-width: 430px;
@@ -22,6 +25,8 @@ function Profile () {
   const [emailError] = useState('')
 
   const { loading, user } = useAuth()
+  const { loading: eventLoading, events } = useArchivedEvents()
+  const { loading: groupLoading, groups } = useArchivedGroups()
 
   useEffect(() => {
     if (user) {
@@ -38,7 +43,7 @@ function Profile () {
           <div className={nameError ? 'error' : ''}>
             <label htmlFor='name'>{nameError || 'Nom'}</label>
             <input
-              disabled={loading}
+              disabled
               id='name'
               onChange={e => setName(e.target.value)}
               placeholder='Votre nom'
@@ -49,7 +54,7 @@ function Profile () {
           <div className={emailError ? 'error' : ''}>
             <label htmlFor='email'>{emailError || 'Email'}</label>
             <input
-              disabled={loading}
+              disabled
               id='email'
               onChange={e => setEmail(e.target.value)}
               placeholder='exemple@email.com'
@@ -59,6 +64,19 @@ function Profile () {
           </div>
         </form>
       </Wrapper>
+      <CardList
+        data={events}
+        isArchived
+        loading={eventLoading}
+        title='Mes évènements archivés'
+      />
+      <CardList
+        data={groups}
+        isArchived
+        isGroup
+        loading={groupLoading}
+        title='Mes groupes archivés'
+      />
     </Page>
   )
 }

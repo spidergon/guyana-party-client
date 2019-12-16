@@ -61,6 +61,18 @@ export const axiosPut = (url, data, next, fallback) => {
     .catch(fallback)
 }
 
+export const axiosDelete = (url, next, fallback) => {
+  const jwt = Cookies.get('gp_jwt')
+  if (!jwt) return fallback(MISSING_TOKEN_ERR)
+
+  const options = { headers: { authorization: `bearer ${jwt}` } }
+
+  return axios
+    .delete(url, options)
+    .then(next)
+    .catch(fallback)
+}
+
 /* Convert the coordinate (lat or lng) to DMS (degrees minutes seconds). */
 const toDMS = coord => {
   const absolute = Math.abs(coord)
@@ -92,3 +104,14 @@ export const scrollTo = selector => {
 }
 
 export const MISSING_TOKEN_ERR = 'Token de connexion requis'
+
+export const formatResult = res => {
+  return res.map(d => {
+    if (d.photos && d.photos.length > 0) {
+      // d.photo = URL.createObjectURL(getBlob(d.photos[0]))
+      // delete d.photos
+      d.photo = `${process.env.STATIC}/${d.photos[0]}`
+    }
+    return d
+  })
+}

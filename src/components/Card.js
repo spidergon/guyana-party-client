@@ -8,8 +8,8 @@ import Dialog from './Dialog'
 import { Image, Link } from './addons'
 import { formatPlage } from '../lib/date'
 import { showSnack } from './Snack'
-import { archiveGroup } from '../lib/services/groupService'
-import { archiveEvent } from '../lib/services/eventService'
+import { archiveGroup, removeGroup } from '../lib/services/groupService'
+import { archiveEvent, removeEvent } from '../lib/services/eventService'
 import { isAdmin } from '../lib/services/communityService'
 
 const Wrapper = styled.div`
@@ -89,9 +89,11 @@ function Card ({
     group,
     community
   },
-  isGroup
+  isGroup,
+  isArchived
 }) {
   const [diagOpen, setDiagOpen] = useState(false)
+  const [diagRemoveOpen, setDiagRemoveOpen] = useState(false)
   const [admin, setAdmin] = useState(false)
 
   useEffect(() => {
@@ -104,12 +106,12 @@ function Card ({
   // )
 
   const archive = () => {
-    if (!admin) {
-      return showSnack(
-        `Vous ne pouvez pas archiver ce${isGroup ? ' groupe' : 't évènement'}`,
-        'error'
-      )
-    }
+    // if (!admin) {
+    //   return showSnack(
+    //     `Vous ne pouvez pas archiver ce${isGroup ? ' groupe' : 't évènement'}`,
+    //     'error'
+    //   )
+    // }
     const next = () => {
       showSnack(`${isGroup ? 'Groupe' : 'Évènement'} archivé avec succès`)
       if (typeof window !== 'undefined') window.location.reload()
@@ -120,6 +122,19 @@ function Card ({
     }
     if (isGroup) return archiveGroup(_id, next, fallback)
     archiveEvent(_id, next, fallback)
+  }
+
+  const remove = () => {
+    const next = () => {
+      showSnack(`${isGroup ? 'Groupe' : 'Évènement'} supprimé avec succès`)
+      if (typeof window !== 'undefined') window.location.reload()
+    }
+    const fallback = error => {
+      showSnack('Une erreur est survenue', 'error')
+      console.log(error)
+    }
+    if (isGroup) return removeGroup(_id, next, fallback)
+    removeEvent(_id, next, fallback)
   }
 
   return (
@@ -153,15 +168,27 @@ function Card ({
                 <EditIcon />
               </Fab>
             </Link>
-            <Fab
-              aria-label='Archiver'
-              className='delete'
-              color='secondary'
-              onClick={() => setDiagOpen(true)}
-              title='Archiver'
-            >
-              <DeleteIcon />
-            </Fab>
+            {(!isArchived && (
+              <Fab
+                aria-label='Archiver'
+                className='delete'
+                color='secondary'
+                onClick={() => setDiagOpen(true)}
+                title='Archiver'
+              >
+                <DeleteIcon />
+              </Fab>
+            )) || (
+              <Fab
+                aria-label='Supprimer'
+                className='delete'
+                color='secondary'
+                onClick={() => setDiagRemoveOpen(true)}
+                title='Supprimer'
+              >
+                <DeleteIcon />
+              </Fab>
+            )}
           </>
         )}
         <div className='text'>
@@ -196,13 +223,23 @@ function Card ({
         text={`Ce${isGroup ? ' groupe' : 't évènement'} ne sera pas supprimé.`}
         title={`Voulez-vous vraiment archiver "${name}" ?`}
       />
+      <Dialog
+        action={remove}
+        close={() => setDiagRemoveOpen(false)}
+        isOpen={diagRemoveOpen}
+        text={`Ce${
+          isGroup ? ' groupe' : 't évènement'
+        } sera définitivement supprimé !`}
+        title={`Voulez-vous vraiment supprimer "${name}" ?`}
+      />
     </Wrapper>
   )
 }
 
 Card.propTypes = {
   data: PropTypes.object.isRequired,
-  isGroup: PropTypes.bool
+  isGroup: PropTypes.bool,
+  isArchived: PropTypes.bool
 }
 
 export default Card

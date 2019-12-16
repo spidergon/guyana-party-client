@@ -4,9 +4,10 @@ import {
   axiosGet,
   axiosPost,
   axiosPut,
-  // getBlob,
+  axiosDelete,
   fetcher,
   getUserId,
+  formatResult,
   MISSING_TOKEN_ERR
 } from '../utils'
 import useSWR from 'swr'
@@ -74,6 +75,20 @@ export const archiveGroup = (id, next, fallback) => {
   )
 }
 
+export const removeGroup = (id, next, fallback) => {
+  const userId = Cookies.get('gp_userId')
+  if (!userId) return fallback(MISSING_TOKEN_ERR)
+
+  axiosDelete(
+    `${process.env.API}/groups/${id}`,
+    ({ data: res }) => {
+      if (res.status === 200 && res.data) next()
+      else fallback('Une erreur interne est survenue')
+    },
+    fallback
+  )
+}
+
 export const useGroup = ({ id, slug }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -88,13 +103,6 @@ export const useGroup = ({ id, slug }) => {
           return formatError('Une erreur interne est survenue')
         }
         const parsePhoto = p => {
-          // const blob = getBlob(p)
-          // Object.assign(blob, {
-          //   preview: URL.createObjectURL(blob),
-          //   id: p._id
-          // })
-          // return blob
-          // return `${process.env.STATIC}/${p}`
           return { preview: `${process.env.STATIC}/${p}`, name: p }
         }
         if (slug) {
@@ -128,17 +136,22 @@ export const useGroups = (onlyAdmin = false) => {
   )
 
   useEffect(() => {
-    if (!error && data && data.total > 0) {
-      const res = data.data.map(d => {
-        if (d.photos && d.photos.length > 0) {
-          // d.photo = URL.createObjectURL(getBlob(d.photos[0]))
-          // delete d.photos
-          d.photo = `${process.env.STATIC}/${d.photos[0]}`
-        }
-        return d
-      })
-      setGroups(res)
-    }
+    if (!error && data && data.total > 0) setGroups(formatResult(data.data))
+  }, [data, error])
+
+  return { loading, error, groups }
+}
+
+export const useArchived = () => {
+  const [groups, setGroups] = useState([])
+
+  const { data, error, isValidating: loading } = useSWR(
+    `${process.env.API}/groups?author=${getUserId()}&status=archived`,
+    fetcher
+  )
+
+  useEffect(() => {
+    if (!error && data && data.total > 0) setGroups(formatResult(data.data))
   }, [data, error])
 
   return { loading, error, groups }

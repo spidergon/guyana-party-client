@@ -4,9 +4,10 @@ import {
   axiosGet,
   axiosPost,
   axiosPut,
-  // getBlob,
+  axiosDelete,
   fetcher,
   getUserId,
+  formatResult,
   MISSING_TOKEN_ERR
 } from '../utils'
 import { isAdmin, isMember } from './communityService'
@@ -58,7 +59,6 @@ export const updateEvent = (payload, next, fallback) => {
   formData.append('location.address', payload.location.address)
   formData.append('location.coordinates[0]', payload.location.coordinates[0])
   formData.append('location.coordinates[1]', payload.location.coordinates[1])
-  // payload.photos.forEach(photo => formData.append('files[]', photo))
   payload.photos.forEach(photo => {
     if (!photo.size) formData.append('photos[]', photo.name)
     else formData.append('files[]', photo)
@@ -82,6 +82,20 @@ export const archiveEvent = (id, next, fallback) => {
   axiosPut(
     `${process.env.API}/events/${id}`,
     { status: 'archived' },
+    ({ data: res }) => {
+      if (res.status === 200 && res.data) next()
+      else fallback('Une erreur interne est survenue')
+    },
+    fallback
+  )
+}
+
+export const removeEvent = (id, next, fallback) => {
+  const userId = Cookies.get('gp_userId')
+  if (!userId) return fallback(MISSING_TOKEN_ERR)
+
+  axiosDelete(
+    `${process.env.API}/events/${id}`,
     ({ data: res }) => {
       if (res.status === 200 && res.data) next()
       else fallback('Une erreur interne est survenue')
@@ -137,15 +151,7 @@ export const requestMarkers = (search, box, next, fallback) => {
       if (res.status !== 200 || !res.data) {
         return fallback('Une erreur interne est survenue')
       }
-      res.data = res.data.map(d => {
-        if (d.photos.length > 0) {
-          // d.photo = URL.createObjectURL(getBlob(d.photos[0]))
-          // delete d.photos
-          d.photo = `${process.env.STATIC}/${d.photos[0]}`
-        }
-        return d
-      })
-      next(res.data)
+      next(formatResult(res.data))
     },
     fallback
   )
@@ -203,17 +209,7 @@ export const useEvents = () => {
   )
 
   useEffect(() => {
-    if (!error && data && data.total > 0) {
-      const res = data.data.map(d => {
-        if (d.photos && d.photos.length > 0) {
-          // d.photo = URL.createObjectURL(getBlob(d.photos[0]))
-          // delete d.photos
-          d.photo = `${process.env.STATIC}/${d.photos[0]}`
-        }
-        return d
-      })
-      setEvents(res)
-    }
+    if (!error && data && data.total > 0) setEvents(formatResult(data.data))
   }, [data, error])
 
   return { loading, error, events }
@@ -247,17 +243,22 @@ export const useEventsByGroup = group => {
   const { data, error, isValidating: loading } = useSWR(getQuery(), fetcher)
 
   useEffect(() => {
-    if (!error && data && data.total > 0) {
-      const res = data.data.map(d => {
-        if (d.photos && d.photos.length > 0) {
-          // d.photo = URL.createObjectURL(getBlob(d.photos[0]))
-          // delete d.photos
-          d.photo = `${process.env.STATIC}/${d.photos[0]}`
-        }
-        return d
-      })
-      setEvents(res)
-    }
+    if (!error && data && data.total > 0) setEvents(formatResult(data.data))
+  }, [data, error])
+
+  return { loading, error, events }
+}
+
+export const useArchived = () => {
+  const [events, setEvents] = useState([])
+
+  const { data, error, isValidating: loading } = useSWR(
+    `${process.env.API}/events?author=${getUserId()}&status=archived`,
+    fetcher
+  )
+
+  useEffect(() => {
+    if (!error && data && data.total > 0) setEvents(formatResult(data.data))
   }, [data, error])
 
   return { loading, error, events }
