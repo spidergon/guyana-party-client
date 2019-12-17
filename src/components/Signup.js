@@ -39,9 +39,7 @@ function Signup() {
   const checkPassword = value => {
     if (!value) return setPasswordError('Le mot de passe est requis')
     if (value.length < 8) {
-      return setPasswordError(
-        'Le mot de passe doit comporter au moins 8 caractères'
-      )
+      return setPasswordError('Le mot de passe doit comporter au moins 8 caractères')
     }
     return true
   }
@@ -56,9 +54,7 @@ function Signup() {
     }
     setLoading(true)
     signEmail(
-      name,
-      email,
-      password,
+      { name, email, password },
       () => {
         showSnack('Votre compte est créé, veuillez vous connecter', 'success')
         navigate('/connexion')

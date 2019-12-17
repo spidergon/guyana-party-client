@@ -24,8 +24,7 @@ export const createGroup = (payload, next, fallback) => {
   payload.photos.forEach(photo => formData.append('files[]', photo))
 
   axiosPost(
-    `${process.env.API}/groups`,
-    formData,
+    { url: `${process.env.API}/groups`, data: formData },
     ({ data: res }) => {
       if (res.status === 201 && res.data) {
         next({ slug: res.data.slug, _id: res.data._id })
@@ -129,9 +128,7 @@ export const useGroups = (onlyAdmin = false) => {
   const [groups, setGroups] = useState([])
 
   const { data, error, isValidating: loading } = useSWR(
-    `${process.env.API}/groups?uid=${getUserId()}&status=online${
-      onlyAdmin ? '&admin=true' : ''
-    }`,
+    `${process.env.API}/groups?uid=${getUserId()}&status=online${onlyAdmin ? '&admin=true' : ''}`,
     fetcher
   )
 

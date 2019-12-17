@@ -8,11 +8,7 @@ import DeleteIcon from '@material-ui/icons/Delete'
 import Dialog from './Dialog'
 import { If, Page, Link, Seo } from './addons'
 import { showSnack } from './Snack'
-import {
-  useEvent,
-  archiveEvent,
-  allowedEvent
-} from '../lib/services/eventService'
+import { useEvent, archiveEvent, allowedEvent } from '../lib/services/eventService'
 import { isAdmin } from '../lib/services/communityService'
 import SingleMap from './Dashboard/SingleMap'
 import { markToSafeHTML } from '../lib/utils'
@@ -172,11 +168,7 @@ function EventPage({ slug }) {
   return (
     <Wrapper>
       {!loading && (
-        <SingleMap
-          coords={event && event.location.coordinates}
-          viewOffset={0.006}
-          zoom={16}
-        />
+        <SingleMap coords={event && event.location.coordinates} viewOffset={0.006} zoom={16} />
       )}
       <Page loading={loading && !event}>
         {event && (
@@ -188,10 +180,7 @@ function EventPage({ slug }) {
                 {event.group && (
                   <p>
                     <span>par</span>&nbsp;
-                    <Link
-                      title='Voir le group'
-                      to={`/group/${event.group.slug}`}
-                    >
+                    <Link title='Voir le group' to={`/group/${event.group.slug}`}>
                       {event.group.name}
                     </Link>
                   </p>
@@ -200,15 +189,9 @@ function EventPage({ slug }) {
               <p className='addr text-wrap'>{event.location.address}</p>
               <If condition={admin}>
                 <p className='status bold'>
-                  {event.status === 'archived' && (
-                    <span className='red'>Archivé</span>
-                  )}
-                  {event.status === 'waiting' && (
-                    <span className='red'>Hors ligne</span>
-                  )}
-                  {event.status === 'online' && (
-                    <span className='green'>En ligne</span>
-                  )}
+                  {event.status === 'archived' && <span className='red'>Archivé</span>}
+                  {event.status === 'waiting' && <span className='red'>Hors ligne</span>}
+                  {event.status === 'online' && <span className='green'>En ligne</span>}
                   {event.isPrivate && ' | Évènement privé'}
                 </p>
                 <div className='controls'>
@@ -265,17 +248,11 @@ function EventPage({ slug }) {
                 </p>
               </div>
             </section>
-            <SingleMap
-              coords={event && event.location.coordinates}
-              id='mobileMap'
-              zoom={16}
-            />
+            <SingleMap coords={event && event.location.coordinates} id='mobileMap' zoom={16} />
             <section id='photos'>
               <p>
                 {`${
-                  event.photos && event.photos.length
-                    ? `Photos (${event.photos.length}) :`
-                    : ''
+                  event.photos && event.photos.length ? `Photos (${event.photos.length}) :` : ''
                 }`}
               </p>
               <PhotoList className='photos' photos={event.photos} />

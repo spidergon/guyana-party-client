@@ -1,3 +1,4 @@
+/* eslint-disable no-invalid-this */
 import L from 'leaflet'
 import { MarkerClusterGroup } from 'leaflet.markercluster'
 import { gpsCoords } from '../lib/utils'
@@ -30,15 +31,14 @@ class Map {
     if (locate) this.locate(false)
   }
 
-  init = () => {
+  init() {
     this.map = L.map(this.mapId, {
       center: this.center,
       zoom: this.zoom,
       zoomControl: false, // remove default zoom control
       layers: [
         L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-          attribution:
-            '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
+          attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
           minZoom: 3,
           maxZoom: 19
         })
@@ -65,9 +65,7 @@ class Map {
         this.random()
       })
 
-    L.control
-      .zoom({ zoomInTitle: 'Zoom +', zoomOutTitle: 'Zoom -' })
-      .addTo(this.map)
+    L.control.zoom({ zoomInTitle: 'Zoom +', zoomOutTitle: 'Zoom -' }).addTo(this.map)
   }
 
   locate = (noRandom = true) => {
@@ -108,30 +106,21 @@ class Map {
     }
   }
 
-  initMarkers = (requestMarkers, setMarkers, onClickFn, setLoading) => {
-    this.viewActions = { requestMarkers, setMarkers, onClickFn, setLoading }
-
+  initMarkers = actions => {
+    this.viewActions = actions
     const searchInput = document.querySelector('.search_bg')
     if (searchInput) {
-      // searchInput.addEventListener('keydown', ({ target, key, keyCode }) => {
-      //   this.search = target.value
-      //   if (key === 'Enter' || keyCode === 13) {
-      //     this.showMarkers(target.value)
-      //   }
-      // })
       searchInput.addEventListener('search', ({ target: { value } }) => {
         this.search = value
         this.showMarkers(value)
       })
     }
-    // this.showMarkers()
   }
 
   showMarkers = (search = this.search) => {
     this.viewActions.setLoading(true)
     this.viewActions.requestMarkers(
-      search,
-      this.getBox(),
+      { search, box: this.box },
       markers => {
         try {
           this.viewActions.setMarkers(markers)
@@ -148,18 +137,13 @@ class Map {
             }).bindPopup(`
               <p>
                 <a href='/event/${slug}'><strong>${name}</strong></a><br /><br />
-                Organisateur: <a href='/group/${group.slug}'><i>${
-              group.name
-            }</i></a><br /><br />
+                Organisateur: <a href='/group/${group.slug}'><i>${group.name}</i></a><br /><br />
                 <i>${formatPlage({ startDate, endDate }, true)}</i><br /><br />
-                <code style="font-size:12px;">${gpsCoords(
-                  latlng.lat,
-                  latlng.lng
-                )}</code>
+                <code style="font-size:12px;">${gpsCoords(latlng.lat, latlng.lng)}</code>
               </p>
             `)
             newMarker.on('click', () => {
-              this.viewActions.onClickFn(marker)
+              this.viewActions.onMarkerClick(marker)
             })
             this.markerClusterGroup.addLayer(newMarker)
           })
@@ -176,7 +160,7 @@ class Map {
     )
   }
 
-  getBox = () => {
+  get box() {
     const {
       _southWest: { lng: x1, lat: y1 },
       _northEast: { lng: x2, lat: y2 }
@@ -187,11 +171,13 @@ class Map {
     ]
   }
 
-  getActions = () => ({
-    locate: this.locate,
-    random: this.random,
-    isDenied: () => this.islocateDenied
-  })
+  get actions() {
+    return {
+      locate: this.locate,
+      random: this.random,
+      isDenied: () => this.islocateDenied
+    }
+  }
 }
 
 export default Map

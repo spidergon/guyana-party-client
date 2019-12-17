@@ -7,11 +7,7 @@ import { useAuth } from '../lib/services/authService'
 import { If, Link } from './addons'
 import Button from './Button'
 import { showSnack } from './Snack'
-import {
-  FormWrapper,
-  LoginWrapper as Wrapper,
-  OrDivWrapper
-} from './styles/LoginStyled'
+import { FormWrapper, LoginWrapper as Wrapper, OrDivWrapper } from './styles/LoginStyled'
 
 function Login() {
   const [email, setEmail] = useState('spidergon@gmail.com')
@@ -21,13 +17,7 @@ function Login() {
   const [passwordError, setPasswordError] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const {
-    loading: initializing,
-    user,
-    loginFacebook,
-    loginGoogle,
-    loginEmail
-  } = useAuth()
+  const { loading: initializing, user, loginFacebook, loginGoogle, loginEmail } = useAuth()
 
   const loginGoogleHandle = response => {
     setLoading(true)
@@ -58,12 +48,9 @@ function Login() {
       if (passwordError) setPasswordError('')
       setLoading(true)
       loginEmail(
-        email,
-        password,
+        { email, password },
         () => {
-          const redirect =
-            typeof window !== 'undefined' &&
-            window.location.search.split('=')[1]
+          const redirect = typeof window !== 'undefined' && window.location.search.split('=')[1]
           if (redirect) return navigate(redirect)
           navigate('/app')
         },
@@ -133,9 +120,7 @@ function Login() {
             </div>
             <If condition={emailOk}>
               <div className={`pass-section ${passwordError ? 'error' : ''}`}>
-                <label htmlFor='password'>
-                  {passwordError || 'Mot de passe'}
-                </label>
+                <label htmlFor='password'>{passwordError || 'Mot de passe'}</label>
                 <input
                   disabled={loading}
                   id='password'
@@ -148,13 +133,7 @@ function Login() {
             <Button
               disabled={loading}
               onClick={validate}
-              text={
-                emailOk
-                  ? loading
-                    ? 'Connexion...'
-                    : 'Se connecter'
-                  : 'Suivant'
-              }
+              text={emailOk ? (loading ? 'Connexion...' : 'Se connecter') : 'Suivant'}
             />
           </FormWrapper>
         </div>

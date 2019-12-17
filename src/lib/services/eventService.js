@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import Cookies from 'js-cookie'
+import useSWR from 'swr'
+import { isAdmin, isMember } from './communityService'
 import {
   axiosGet,
   axiosPost,
@@ -10,8 +12,6 @@ import {
   formatResult,
   MISSING_TOKEN_ERR
 } from '../utils'
-import { isAdmin, isMember } from './communityService'
-import useSWR from 'swr'
 
 export const createEvent = (payload, next, fallback) => {
   const userId = Cookies.get('gp_userId')
@@ -32,8 +32,7 @@ export const createEvent = (payload, next, fallback) => {
   payload.photos.forEach(photo => formData.append('files[]', photo))
 
   axiosPost(
-    `${process.env.API}/events`,
-    formData,
+    { url: `${process.env.API}/events`, data: formData },
     ({ data: res }) => {
       if (res.status === 201 && res.data) next(res.data.slug)
       else fallback('Une erreur interne est survenue')
@@ -141,7 +140,7 @@ export const publish = (payload, next, fallback) => {
   )
 }
 
-export const requestMarkers = (search, box, next, fallback) => {
+export const requestMarkers = ({ search, box }, next, fallback) => {
   let uid = Cookies.get('gp_userId')
   uid = uid ? `&uid=${uid}` : ''
   const [[sw1, sw2], [ne1, ne2]] = box

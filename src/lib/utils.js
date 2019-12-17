@@ -5,8 +5,7 @@ export const reload = () => {
   if (typeof window !== 'undefined') window.location.reload()
 }
 
-export const gravatar = email =>
-  `https://www.gravatar.com/avatar/${require('md5')(email)}?d=mp`
+export const gravatar = email => `https://www.gravatar.com/avatar/${require('md5')(email)}?d=mp`
 
 export const purify = async dirty => require('dompurify').sanitize(dirty)
 
@@ -37,7 +36,7 @@ export const axiosGet = (url, next, fallback) => {
     .catch(fallback)
 }
 
-export const axiosPost = (url, data, next, fallback) => {
+export const axiosPost = ({ url, data }, next, fallback) => {
   const jwt = Cookies.get('gp_jwt')
   if (!jwt) return fallback(MISSING_TOKEN_ERR)
 
@@ -49,7 +48,7 @@ export const axiosPost = (url, data, next, fallback) => {
     .catch(fallback)
 }
 
-export const axiosPut = (url, data, next, fallback) => {
+export const axiosPut = ({ url, data }, next, fallback) => {
   const jwt = Cookies.get('gp_jwt')
   if (!jwt) return fallback(MISSING_TOKEN_ERR)
 

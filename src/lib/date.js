@@ -17,26 +17,13 @@ export const userTZ = () => {
   }
 }
 
-export const toUTCIsoDate = (date, timeZone) => {
-  return zonedTimeToUtc(date, timeZone).toISOString()
-}
+export const toUTCIsoDate = (date, timeZone) => zonedTimeToUtc(date, timeZone).toISOString()
 
-export const toZonedTime = (date, timeZone) => {
-  return utcToZonedTime(date, timeZone)
-}
+export const toZonedTime = (date, timeZone) => utcToZonedTime(date, timeZone)
 
-export const dateToStr = (
-  date,
-  timeZone,
-  formatStr = 'd MMM yyyy à HH:mm (zzz)',
-  locale = fr
-) => {
-  if (timeZone) {
-    return format(utcToZonedTime(date, timeZone), formatStr, {
-      locale,
-      timeZone
-    })
-  }
+export const dateToStr = (date, timeZone, formatStr = 'd MMM yyyy à HH:mm (zzz)') => {
+  const locale = fr
+  if (timeZone) return format(utcToZonedTime(date, timeZone), formatStr, { locale, timeZone })
   return format(new Date(date), formatStr, { locale })
 }
 

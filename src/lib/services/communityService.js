@@ -7,10 +7,7 @@ export const confirmMember = (community, role) => {
   const userId = Cookies.get('gp_userId')
   if (!userId || !community) return false
   if (role) {
-    return (
-      undefined !==
-      community.find(o => o.user._id === userId && o.role === role)
-    )
+    return undefined !== community.find(o => o.user._id === userId && o.role === role)
   } else return undefined !== community.find(o => o.user._id === userId)
 }
 
@@ -25,10 +22,7 @@ export const countAdmins = community => {
 const getUserId = slug => {
   const userId = Cookies.get('gp_userId')
   if (!userId) {
-    showSnack(
-      "Veuillez vous connecter pour faire votre demande d'adhésion",
-      'info'
-    )
+    showSnack("Veuillez vous connecter pour faire votre demande d'adhésion", 'info')
     navigate(`/connexion?redirect=/group/${slug}`)
   }
   return userId
@@ -67,7 +61,7 @@ export const quitRequest = group => {
   pendingRequestMember(group, '$pull')
 }
 
-const pendingRequestAdmin = (group, userId, roleIn, newRole) => {
+const pendingRequestAdmin = ({ group, userId }, roleIn, newRole) => {
   const query = {
     filter: {
       _id: group._id,
@@ -104,26 +98,21 @@ const pendingRequestAdmin = (group, userId, roleIn, newRole) => {
 }
 
 export const acceptPendingRequest = (group, userId) => {
-  pendingRequestAdmin(group, userId, ['pending_request'], 'member')
+  pendingRequestAdmin({ group, userId }, ['pending_request'], 'member')
 }
 
 export const denyPendingRequest = (group, userId) => {
-  pendingRequestAdmin(
-    group,
-    userId,
-    ['pending_request', 'member', 'admin'],
-    'denied'
-  )
+  pendingRequestAdmin({ group, userId }, ['pending_request', 'member', 'admin'], 'denied')
 }
 
 export const grantPendingRequest = (group, userId) => {
-  pendingRequestAdmin(group, userId, ['denied'], 'pending_request')
+  pendingRequestAdmin({ group, userId }, ['denied'], 'pending_request')
 }
 
 export const giveAdminRightRequest = (group, userId) => {
-  pendingRequestAdmin(group, userId, ['member'], 'admin')
+  pendingRequestAdmin({ group, userId }, ['member'], 'admin')
 }
 
 export const removeAdminRightRequest = (group, userId) => {
-  pendingRequestAdmin(group, userId, ['admin'], 'member')
+  pendingRequestAdmin({ group, userId }, ['admin'], 'member')
 }

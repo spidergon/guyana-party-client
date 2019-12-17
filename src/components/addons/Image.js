@@ -3,7 +3,13 @@ import React from 'react'
 import defaultImg from '../../images/default.jpeg'
 
 const Image = ({ alt, fallback, ...rest }) => (
-  <img {...rest} alt={alt} onError={e => (e.target.src = fallback)} />
+  <img
+    {...rest}
+    alt={alt}
+    onError={e => {
+      e.target.src = fallback
+    }}
+  />
 )
 
 Image.propTypes = {

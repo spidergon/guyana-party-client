@@ -76,19 +76,7 @@ const Wrapper = styled.div`
 `
 
 function Card({
-  data: {
-    author,
-    name,
-    photo,
-    slug,
-    _id,
-    startDate,
-    endDate,
-    isPrivate,
-    status,
-    group,
-    community
-  },
+  data: { author, name, photo, slug, _id, startDate, endDate, isPrivate, status, group, community },
   isGroup,
   isArchived
 }) {
@@ -139,23 +127,11 @@ function Card({
 
   return (
     <Wrapper>
-      <Image
-        alt={name}
-        className='cover'
-        height='200'
-        loading='lazy'
-        src={photo || ''}
-      />
+      <Image alt={name} className='cover' height='200' loading='lazy' src={photo || ''} />
       <div className='caption'>
         <div className='title text-wrap center'>
-          <Link
-            aria-label={name}
-            title={name}
-            to={`/${isGroup ? 'group' : 'event'}/${slug}`}
-          >
-            <strong className={status === 'waiting' ? 'red' : ''}>
-              {name}
-            </strong>
+          <Link aria-label={name} title={name} to={`/${isGroup ? 'group' : 'event'}/${slug}`}>
+            <strong className={status === 'waiting' ? 'red' : ''}>{name}</strong>
           </Link>
           {!isGroup && <p>{formatPlage({ startDate, endDate })}</p>}
         </div>
@@ -199,21 +175,14 @@ function Card({
               </Link>
               {admin && (
                 <p>
-                  {status === 'waiting' && (
-                    <span className='red'>Hors ligne</span>
-                  )}
-                  {status === 'online' && (
-                    <span className='green'>En ligne</span>
-                  )}
+                  {status === 'waiting' && <span className='red'>Hors ligne</span>}
+                  {status === 'online' && <span className='green'>En ligne</span>}
                   {isPrivate && ' | Évènement privé'}
                 </p>
               )}
             </>
           )}
-          <p>
-            {isGroup &&
-              ((admin && 'Vous êtes administrateur') || 'Vous êtes membre')}
-          </p>
+          <p>{isGroup && ((admin && 'Vous êtes administrateur') || 'Vous êtes membre')}</p>
         </div>
       </div>
       <Dialog
@@ -227,9 +196,7 @@ function Card({
         action={remove}
         close={() => setDiagRemoveOpen(false)}
         isOpen={diagRemoveOpen}
-        text={`Ce${
-          isGroup ? ' groupe' : 't évènement'
-        } sera définitivement supprimé !`}
+        text={`Ce${isGroup ? ' groupe' : 't évènement'} sera définitivement supprimé !`}
         title={`Voulez-vous vraiment supprimer "${name}" ?`}
       />
     </Wrapper>

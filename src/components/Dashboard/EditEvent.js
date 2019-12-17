@@ -158,8 +158,7 @@ function NewEvent({ id }) {
 
   useEffect(() => {
     if (groups && groups.length > 0) {
-      const groupIdParam =
-        typeof window !== 'undefined' && window.location.search.split('=')[1]
+      const groupIdParam = typeof window !== 'undefined' && window.location.search.split('=')[1]
       if (groupIdParam) setGroup(groupIdParam)
       else if (id && event) {
         setGroup(event.group._id)
@@ -180,10 +179,7 @@ function NewEvent({ id }) {
       setOccurrence(JSON.parse(event.occurrence))
       setDescription(event.description)
       setPhotos(event.photos)
-      setCoordinates([
-        event.location.coordinates[0],
-        event.location.coordinates[1]
-      ])
+      setCoordinates([event.location.coordinates[0], event.location.coordinates[1]])
     } else {
       setName('')
       setTimezone(userTZ())
@@ -199,10 +195,12 @@ function NewEvent({ id }) {
   useEffect(() => {
     if (id) {
       for (const d in days) {
-        const { value } = days[d]
-        if (occurrence[value]) {
-          setShowDays(true)
-          break
+        if ({}.hasOwnProperty.call(days, d)) {
+          const { value } = days[d]
+          if (occurrence[value]) {
+            setShowDays(true)
+            break
+          }
         }
       }
     }
@@ -252,18 +250,14 @@ function NewEvent({ id }) {
     }
     if (startDate.getTime() === endDate.getTime()) {
       scrollTo('#dates')
-      return setEndDateError(
-        'La date de fin doit être différente de la date de début'
-      )
+      return setEndDateError('La date de fin doit être différente de la date de début')
     }
     if (!description) {
       scrollTo('.mde')
       return setDescError('Veuillez saisir une description :')
     }
     if (!address) {
-      return setAddressError(
-        "Veuillez cliquer sur la carte pour obtenir l'adresse"
-      )
+      return setAddressError("Veuillez cliquer sur la carte pour obtenir l'adresse")
     }
     setLoading(true)
 
@@ -288,10 +282,7 @@ function NewEvent({ id }) {
         },
         error => {
           console.log(error)
-          showSnack(
-            'Une erreur est survenue lors de la création du groupe',
-            'error'
-          )
+          showSnack('Une erreur est survenue lors de la création du groupe', 'error')
         }
       )
     } else processEvent(payload)
@@ -300,10 +291,7 @@ function NewEvent({ id }) {
   const processEvent = payload => {
     const fallback = error => {
       console.log(error)
-      showSnack(
-        `${id ? "L'édition" : 'La création'} de l'évènement a échoué !`,
-        'error'
-      )
+      showSnack(`${id ? "L'édition" : 'La création'} de l'évènement a échoué !`, 'error')
       setLoading(false)
     }
     if (!id) createEvent(payload, slug => navigate(`/event/${slug}`), fallback)
@@ -330,17 +318,13 @@ function NewEvent({ id }) {
 
   return (
     <Wrapper>
-      <Page
-        title={`${id ? 'Edition' : 'Création'} ${
-          name ? `de ${name}` : "d'un évènement"
-        }`}
-      >
-        {id && event && <EventsStatus className='switch' event={event} />}
+      <Page title={`${id ? 'Edition' : 'Création'} ${name ? `de ${name}` : "d'un évènement"}`}>
+        <If condition={id && event}>
+          <EventsStatus className='switch' event={event} />
+        </If>
         <div id='name'>
           <Grid alignItems='flex-end' container spacing={1}>
-            <Grid item>
-              {loading || eventLoading ? <CircularProgress /> : <EditIcon />}
-            </Grid>
+            <Grid item>{loading || eventLoading ? <CircularProgress /> : <EditIcon />}</Grid>
             <Grid item>
               <TextField
                 disabled={loading || eventLoading}
@@ -355,9 +339,7 @@ function NewEvent({ id }) {
           </Grid>
         </div>
         <div id='group'>
-          <label htmlFor='group-select'>
-            Groupe créateur de l&rsquo;évènement :
-          </label>
+          <label htmlFor='group-select'>Groupe créateur de l&rsquo;évènement :</label>
           <Select
             displayEmpty
             id='group-select'
@@ -375,7 +357,7 @@ function NewEvent({ id }) {
                 </MenuItem>
               ))}
           </Select>
-          {!groupLoading && group === 'new' && (
+          <If condition={!groupLoading && group === 'new'}>
             <TextField
               className='new-group'
               disabled={loading || eventLoading}
@@ -385,7 +367,7 @@ function NewEvent({ id }) {
               placeholder='Nom'
               value={newGroup}
             />
-          )}
+          </If>
         </div>
         <div className='grid' id='dates'>
           <FormControl className='tz-control'>
@@ -418,17 +400,14 @@ function NewEvent({ id }) {
             setDate={validateEndDate}
           />
         </div>
-        {endDateError && <p className='date-error error'>{endDateError}</p>}
+        <If condition={endDateError}>
+          <p className='date-error error'>{endDateError}</p>
+        </If>
         <div id='occurrence'>
           <FormControl component='fieldset'>
             <FormGroup row>
               <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={showDays}
-                    onChange={handleShowDaysChange}
-                  />
-                }
+                control={<Checkbox checked={showDays} onChange={handleShowDaysChange} />}
                 label="Répétition de l'évènement"
               />
             </FormGroup>
@@ -461,15 +440,11 @@ function NewEvent({ id }) {
           setValue={setDescription}
           value={description}
         />
-        <Photos
-          disabled={loading || eventLoading}
-          photos={photos}
-          setPhotos={setPhotos}
-        />
+        <Photos disabled={loading || eventLoading} photos={photos} setPhotos={setPhotos} />
         <div className='map-section'>
-          {(addressError && <p className='error'>{addressError}&nbsp;:</p>) || (
-            <p>Lieu de l&rsquo;évènement&nbsp;:</p>
-          )}
+          <If condition={addressError} otherwise={<p>Lieu de l&rsquo;évènement&nbsp;:</p>}>
+            <p className='error'>{addressError}&nbsp;:</p>
+          </If>
           <If condition={typeof window !== 'undefined'}>
             <SingleMap
               coords={coordinates}

@@ -1,17 +1,15 @@
 import React, { useEffect, useState, useContext, createContext } from 'react'
 import PropTypes from 'prop-types'
+import { navigate } from '@reach/router'
 import axios from 'axios'
 import qs from 'qs'
 import Cookies from 'js-cookie'
 import { gravatar, MISSING_TOKEN_ERR, reload } from '../utils'
-import { navigate } from '@reach/router'
 
 const authContext = createContext()
 
 export const AuthProvider = ({ children }) => (
-  <authContext.Provider value={useProvideAuth()}>
-    {children}
-  </authContext.Provider>
+  <authContext.Provider value={useProvideAuth()}>{children}</authContext.Provider>
 )
 
 AuthProvider.propTypes = { children: PropTypes.node.isRequired }
@@ -82,7 +80,7 @@ function useProvideAuth() {
       .finally(() => setLoading(false))
   }
 
-  const loginEmail = (email, password, next, fallback) => {
+  const loginEmail = ({ email, password }, next, fallback) => {
     axios({
       method: 'POST',
       data: qs.stringify({ email, password }),
@@ -99,7 +97,7 @@ function useProvideAuth() {
       .finally(() => setLoading(false))
   }
 
-  const signEmail = (name, email, password, next, fallback) => {
+  const signEmail = ({ name, email, password }, next, fallback) => {
     axios({
       method: 'POST',
       data: qs.stringify({ name, email, password }),

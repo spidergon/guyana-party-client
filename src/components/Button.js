@@ -55,12 +55,7 @@ const Wrapper = styled.button`
 `
 
 const Button = ({ className, text, onClick, disabled }) => (
-  <Wrapper
-    aria-label={text}
-    className={className || ''}
-    disabled={disabled}
-    onClick={onClick}
-  >
+  <Wrapper aria-label={text} className={className || ''} disabled={disabled} onClick={onClick}>
     <span>{text}</span>
   </Wrapper>
 )
