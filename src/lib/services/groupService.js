@@ -49,8 +49,7 @@ export const updateGroup = (payload, next, fallback) => {
   })
 
   axiosPut(
-    `${process.env.API}/groups/${payload.id}`,
-    formData,
+    { url: `${process.env.API}/groups/${payload.id}`, data: formData },
     ({ data: res }) => {
       if (res.status === 200 && res.data) next({})
       else fallback('Une erreur interne est survenue')
@@ -64,8 +63,7 @@ export const archiveGroup = (id, next, fallback) => {
   if (!userId) return fallback(MISSING_TOKEN_ERR)
 
   axiosPut(
-    `${process.env.API}/groups/${id}`,
-    { status: 'archived' },
+    { url: `${process.env.API}/groups/${id}`, data: { status: 'archived' } },
     ({ data: res }) => {
       if (res.status === 200 && res.data) next()
       else fallback('Une erreur interne est survenue')

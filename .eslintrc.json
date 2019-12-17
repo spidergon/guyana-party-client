@@ -41,8 +41,9 @@
       }
     ],
     "indent": 0,
-    "babel/new-cap": 1,
+    "no-invalid-this": 0, // for arrow functions
     "babel/no-invalid-this": 1,
+    "babel/new-cap": 1,
     "babel/no-unused-expressions": 1,
     "babel/valid-typeof": 1,
     "jsx-a11y/click-events-have-key-events": 0,

@@ -1,4 +1,3 @@
-/* eslint-disable no-invalid-this */
 import L from 'leaflet'
 import { MarkerClusterGroup } from 'leaflet.markercluster'
 import { gpsCoords } from '../lib/utils'

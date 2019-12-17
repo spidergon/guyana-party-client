@@ -34,7 +34,7 @@ export const createEvent = (payload, next, fallback) => {
   axiosPost(
     { url: `${process.env.API}/events`, data: formData },
     ({ data: res }) => {
-      if (res.status === 201 && res.data) next(res.data.slug)
+      if (res && res.status === 201 && res.data) next(res.data.slug)
       else fallback('Une erreur interne est survenue')
     },
     fallback
@@ -64,10 +64,9 @@ export const updateEvent = (payload, next, fallback) => {
   })
 
   axiosPut(
-    `${process.env.API}/events/${payload.id}`,
-    formData,
+    { url: `${process.env.API}/events/${payload.id}`, data: formData },
     ({ data: res }) => {
-      if (res.status === 200 && res.data) next()
+      if (res && res.status === 200 && res.data) next()
       else fallback('Une erreur interne est survenue')
     },
     fallback
@@ -79,10 +78,9 @@ export const archiveEvent = (id, next, fallback) => {
   if (!userId) return fallback(MISSING_TOKEN_ERR)
 
   axiosPut(
-    `${process.env.API}/events/${id}`,
-    { status: 'archived' },
+    { url: `${process.env.API}/events/${id}`, data: { status: 'archived' } },
     ({ data: res }) => {
-      if (res.status === 200 && res.data) next()
+      if (res && res.status === 200 && res.data) next()
       else fallback('Une erreur interne est survenue')
     },
     fallback
@@ -96,7 +94,7 @@ export const removeEvent = (id, next, fallback) => {
   axiosDelete(
     `${process.env.API}/events/${id}`,
     ({ data: res }) => {
-      if (res.status === 200 && res.data) next()
+      if (res && res.status === 200 && res.data) next()
       else fallback('Une erreur interne est survenue')
     },
     fallback
@@ -110,10 +108,9 @@ export const goPublic = (payload, next, fallback) => {
   if (!userId) return fallback(MISSING_TOKEN_ERR)
 
   axiosPut(
-    `${process.env.API}/events/${payload.id}`,
-    { isPrivate: payload.cancel },
+    { url: `${process.env.API}/events/${payload.id}`, data: { isPrivate: payload.cancel } },
     ({ data: res }) => {
-      if (res.status === 200 && res.data) next()
+      if (res && res.status === 200 && res.data) next()
       else fallback('Une erreur interne est survenue')
     },
     fallback
@@ -130,10 +127,9 @@ export const publish = (payload, next, fallback) => {
   if (!payload.cancel) data.published = { date: Date.now(), user: userId }
 
   axiosPut(
-    `${process.env.API}/events/${payload.id}`,
-    data,
+    { url: `${process.env.API}/events/${payload.id}`, data },
     ({ data: res }) => {
-      if (res.status === 200 && res.data) next()
+      if (res && res.status === 200 && res.data) next()
       else fallback('Une erreur interne est survenue')
     },
     fallback
@@ -147,7 +143,7 @@ export const requestMarkers = ({ search, box }, next, fallback) => {
   axiosGet(
     `${process.env.API}/search?q=${search}${uid}&sort=startDate endDate&sw1=${sw1}&sw2=${sw2}&ne1=${ne1}&ne2=${ne2}`,
     ({ data: res }) => {
-      if (res.status !== 200 || !res.data) {
+      if (!res || res.status !== 200 || !res.data) {
         return fallback('Une erreur interne est survenue')
       }
       next(formatResult(res.data))
@@ -166,7 +162,7 @@ export const useEvent = ({ id, slug }) => {
     axiosGet(
       `${process.env.API}/events${slug ? `?slug=${slug}` : `/${id}`}`,
       ({ data: res }) => {
-        if (res.status !== 200 || !res.data) {
+        if (!res || res.status !== 200 || !res.data) {
           return formatError('Une erreur interne est survenue')
         }
         const parsePhoto = p => {
