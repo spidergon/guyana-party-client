@@ -198,8 +198,11 @@ export const useEvent = ({ id, slug }) => {
 export const useEvents = () => {
   const [events, setEvents] = useState([])
 
+  let uid = getUserId()
+  uid = uid ? `&uid=${uid}` : ''
+
   const { data, error, isValidating: loading } = useSWR(
-    `${process.env.API}/search?uid=${getUserId()}&isapp=true`,
+    `${process.env.API}/search?isapp=true${uid}`,
     fetcher
   )
 

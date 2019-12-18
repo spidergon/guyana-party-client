@@ -125,8 +125,11 @@ export const useGroup = ({ id, slug }) => {
 export const useGroups = (onlyAdmin = false) => {
   const [groups, setGroups] = useState([])
 
+  let uid = getUserId()
+  uid = uid ? `&uid=${uid}` : ''
+
   const { data, error, isValidating: loading } = useSWR(
-    `${process.env.API}/groups?uid=${getUserId()}&status=online${onlyAdmin ? '&admin=true' : ''}`,
+    `${process.env.API}/groups?status=online${onlyAdmin ? '&admin=true' : ''}${uid}`,
     fetcher
   )
 
