@@ -57,8 +57,28 @@ function useProvideAuth() {
     setUser(newUser)
   }
 
-  const loginFacebook = obj => {
-    console.log(obj)
+  const loginFacebook = (res, next, fallback) => {
+    const {
+      name,
+      email,
+      picture: {
+        data: { url: photo }
+      }
+    } = res
+    axios({
+      method: 'POST',
+      data: qs.stringify({ name, email, photo, provider: 'facebook' }),
+      url: `${process.env.API}/auth/login`
+    })
+      .then(({ data }) => {
+        if (data.status !== 200 || !data.token || !data.user._id) {
+          return fallback('Une erreur interne est survenue')
+        }
+        setNewUser(data.user, data.token)
+        next()
+      })
+      .catch(fallback)
+      .finally(() => setLoading(false))
   }
 
   const loginGoogle = ({ tokenId }, next, fallback) => {
@@ -67,7 +87,7 @@ function useProvideAuth() {
     axios({
       method: 'POST',
       data: qs.stringify({ tokenId, provider: 'google' }),
-      url: `${process.env.API}/auth/tokensignin`
+      url: `${process.env.API}/auth/login`
     })
       .then(({ data }) => {
         if (data.status !== 200 || !data.token || !data.user._id) {

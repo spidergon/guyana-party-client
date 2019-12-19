@@ -10,8 +10,8 @@ import { showSnack } from './Snack'
 import { FormWrapper, LoginWrapper as Wrapper, OrDivWrapper } from './styles/LoginStyled'
 
 function Login() {
-  const [email, setEmail] = useState('spidergon@gmail.com')
-  const [password, setPassword] = useState('azer1234')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [emailOk, setEmailOk] = useState(false)
   const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
@@ -19,23 +19,49 @@ function Login() {
 
   const { loading: initializing, user, loginFacebook, loginGoogle, loginEmail } = useAuth()
 
-  const loginGoogleHandle = response => {
+  const fbHandle = res => {
     setLoading(true)
-    loginGoogle(
-      response,
+    loginFacebook(
+      res,
       () => navigate('/app'),
       error => {
         setLoading(false)
         showSnack('La connexion a echoué !', 'error')
-        console.log(error)
+        console.error(error)
+      }
+    )
+  }
+
+  const googleHandle = res => {
+    if (res.error) {
+      console.error(res)
+      return showSnack('Une erreur interner est survenue !', 'error')
+    }
+    setLoading(true)
+    loginGoogle(
+      res,
+      () => navigate('/app'),
+      error => {
+        setLoading(false)
+        showSnack('La connexion a echoué !', 'error')
+        console.error(error)
       }
     )
   }
 
   const checkEmail = value => {
+    setEmailError('')
     if (!value) return setEmailError('Veuillez entrer votre adresse email')
     if (!isEmail(value)) return setEmailError("L'email est invalide")
-    if (emailError) setEmailError('')
+  }
+
+  const checkPassword = value => {
+    setPasswordError('')
+    if (!value) return setPasswordError('Le mot de passe est requis')
+    if (value.length < 8) {
+      return setPasswordError('Le mot de passe doit comporter au moins 8 caractères')
+    }
+    return true
   }
 
   const validate = e => {
@@ -44,8 +70,8 @@ function Login() {
     if (!emailOk && email && !emailError) {
       setEmailOk(true)
     } else if (emailOk) {
-      if (!password) return setPasswordError('Le mot de passe est requis')
-      if (passwordError) setPasswordError('')
+      setPasswordError('')
+      if (!checkPassword(password)) return
       setLoading(true)
       loginEmail(
         { email, password },
@@ -74,8 +100,7 @@ function Login() {
         <div className='content'>
           <FacebookLogin
             appId={process.env.FACEBOOK_APP_ID}
-            autoLoad
-            callback={loginFacebook}
+            callback={fbHandle}
             fields='name,email,picture'
             render={({ onClick, disabled }) => (
               <Button
@@ -89,8 +114,8 @@ function Login() {
           <GoogleLogin
             clientId={process.env.GOOGLE_APP_ID}
             cookiePolicy='single_host_origin'
-            onFailure={loginGoogleHandle}
-            onSuccess={loginGoogleHandle}
+            onFailure={googleHandle}
+            onSuccess={googleHandle}
             render={({ onClick, disabled }) => (
               <Button
                 className='google g_bg'
@@ -105,7 +130,7 @@ function Login() {
             <span>ou</span>
             <div />
           </OrDivWrapper>
-          <FormWrapper autoComplete='off'>
+          <FormWrapper>
             <div className={`email-section ${emailError ? 'error' : ''}`}>
               <label htmlFor='email'>{emailError || 'Email'}</label>
               <input
@@ -124,6 +149,7 @@ function Login() {
                 <input
                   disabled={loading}
                   id='password'
+                  onBlur={e => checkPassword(e.target.value)}
                   onChange={e => setPassword(e.target.value)}
                   type='password'
                   value={password}

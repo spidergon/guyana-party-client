@@ -23,6 +23,7 @@ function Signup() {
   }, [initializing, user])
 
   const checkName = value => {
+    setNameError('')
     if (!value) return setNameError('Veuillez entrer votre nom')
     if (value.length < 5) {
       return setNameError('Le nom doit comporter au moins 5 caractères')
@@ -31,12 +32,14 @@ function Signup() {
   }
 
   const checkEmail = value => {
+    setEmailError('')
     if (!value) return setEmailError('Veuillez entrer votre adresse email')
     if (!isEmail(value)) return setEmailError("L'email est invalide")
     return true
   }
 
   const checkPassword = value => {
+    setPasswordError('')
     if (!value) return setPasswordError('Le mot de passe est requis')
     if (value.length < 8) {
       return setPasswordError('Le mot de passe doit comporter au moins 8 caractères')
@@ -72,7 +75,7 @@ function Signup() {
     <Wrapper>
       <h1>Créer un compte</h1>
       <div className='content'>
-        <FormWrapper autoComplete='off'>
+        <FormWrapper>
           <div className={nameError ? 'error' : ''}>
             <label htmlFor='name'>{nameError || 'Nom'}</label>
             <input

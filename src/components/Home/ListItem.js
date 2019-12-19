@@ -42,8 +42,7 @@ const Wrapper = styled.div`
       }
     }
   }
-  @media (min-width: ${props => props.theme.md}) and (max-width: ${props =>
-      props.theme.lg}),
+  @media (min-width: ${props => props.theme.md}) and (max-width: ${props => props.theme.lg}),
     (max-height: ${props => props.theme.sm}) {
     a.grid {
       height: 75px;
@@ -76,7 +75,7 @@ const ListItem = ({ item, selected }) => (
       <Image alt={item.name} className='cover' src={item.photo || ''} />
       <div className='content'>
         <h2 className='text-wrap'>{item.name}</h2>
-        <h3 className='text-wrap'>{item.group.name}</h3>
+        <h3 className='text-wrap'>{item.group && item.group.name}</h3>
         <p>{formatPlage(item)}</p>
       </div>
     </Link>
