@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import Cookies from 'js-cookie'
 import useSWR from 'swr'
 import { isAdmin, isMember } from './communityService'
 import {
@@ -8,13 +7,13 @@ import {
   axiosPut,
   axiosDelete,
   fetcher,
-  getUserId,
+  getUID,
   formatResult,
   MISSING_TOKEN_ERR
 } from '../utils'
 
 export const createEvent = (payload, next, fallback) => {
-  const userId = Cookies.get('gp_userId')
+  const userId = getUID()
   if (!userId) return fallback(MISSING_TOKEN_ERR)
 
   const formData = new FormData()
@@ -43,9 +42,7 @@ export const createEvent = (payload, next, fallback) => {
 
 export const updateEvent = (payload, next, fallback) => {
   if (!payload.id) fallback()
-
-  const userId = Cookies.get('gp_userId')
-  if (!userId) return fallback(MISSING_TOKEN_ERR)
+  if (!getUID()) return fallback(MISSING_TOKEN_ERR)
 
   const formData = new FormData()
   formData.append('name', payload.name)
@@ -74,8 +71,7 @@ export const updateEvent = (payload, next, fallback) => {
 }
 
 export const archiveEvent = (id, next, fallback) => {
-  const userId = Cookies.get('gp_userId')
-  if (!userId) return fallback(MISSING_TOKEN_ERR)
+  if (!getUID()) return fallback(MISSING_TOKEN_ERR)
 
   axiosPut(
     { url: `${process.env.API}/events/${id}`, data: { status: 'archived' } },
@@ -88,8 +84,7 @@ export const archiveEvent = (id, next, fallback) => {
 }
 
 export const removeEvent = (id, next, fallback) => {
-  const userId = Cookies.get('gp_userId')
-  if (!userId) return fallback(MISSING_TOKEN_ERR)
+  if (!getUID()) return fallback(MISSING_TOKEN_ERR)
 
   axiosDelete(
     `${process.env.API}/events/${id}`,
@@ -103,9 +98,7 @@ export const removeEvent = (id, next, fallback) => {
 
 export const goPublic = (payload, next, fallback) => {
   if (!payload.id) fallback()
-
-  const userId = Cookies.get('gp_userId')
-  if (!userId) return fallback(MISSING_TOKEN_ERR)
+  if (!getUID()) return fallback(MISSING_TOKEN_ERR)
 
   axiosPut(
     { url: `${process.env.API}/events/${payload.id}`, data: { isPrivate: payload.cancel } },
@@ -120,11 +113,11 @@ export const goPublic = (payload, next, fallback) => {
 export const publish = (payload, next, fallback) => {
   if (!payload.id) fallback()
 
-  const userId = Cookies.get('gp_userId')
-  if (!userId) return fallback(MISSING_TOKEN_ERR)
+  const uid = getUID()
+  if (!uid) return fallback(MISSING_TOKEN_ERR)
 
   const data = { status: payload.cancel ? 'waiting' : 'online' }
-  if (!payload.cancel) data.published = { date: Date.now(), user: userId }
+  if (!payload.cancel) data.published = { date: Date.now(), user: uid }
 
   axiosPut(
     { url: `${process.env.API}/events/${payload.id}`, data },
@@ -137,7 +130,7 @@ export const publish = (payload, next, fallback) => {
 }
 
 export const requestMarkers = ({ search, box }, next, fallback) => {
-  let uid = Cookies.get('gp_userId')
+  let uid = getUID()
   uid = uid ? `&uid=${uid}` : ''
   const [[sw1, sw2], [ne1, ne2]] = box
   axiosGet(
@@ -198,7 +191,7 @@ export const useEvent = ({ id, slug }) => {
 export const useEvents = () => {
   const [events, setEvents] = useState([])
 
-  let uid = getUserId()
+  let uid = getUID()
   uid = uid ? `&uid=${uid}` : ''
 
   const { data, error, isValidating: loading } = useSWR(
@@ -220,7 +213,7 @@ export const useEventsByGroup = group => {
     let query = ''
     if (group && group._id) {
       query = `group=${group._id}`
-      if (getUserId()) {
+      if (getUID()) {
         // We are connected, we check that we are admin
         if (!isAdmin(group.community)) {
           // We are not admin (perhaps member): we see only online
@@ -251,7 +244,7 @@ export const useArchived = () => {
   const [events, setEvents] = useState([])
 
   const { data, error, isValidating: loading } = useSWR(
-    `${process.env.API}/events?author=${getUserId()}&status=archived`,
+    `${process.env.API}/events?author=${getUID()}&status=archived`,
     fetcher
   )
 

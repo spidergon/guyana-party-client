@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 const Wrapper = styled.section`
+  margin-top: 1rem;
   .progress {
     margin-top: 1rem;
   }

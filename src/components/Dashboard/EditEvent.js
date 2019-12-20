@@ -400,7 +400,7 @@ function NewEvent({ id }) {
             setDate={validateEndDate}
           />
         </div>
-        <If condition={endDateError}>
+        <If condition={!!endDateError}>
           <p className='date-error error'>{endDateError}</p>
         </If>
         <div id='occurrence'>
@@ -442,7 +442,7 @@ function NewEvent({ id }) {
         />
         <Photos disabled={loading || eventLoading} photos={photos} setPhotos={setPhotos} />
         <div className='map-section'>
-          <If condition={addressError} otherwise={<p>Lieu de l&rsquo;évènement&nbsp;:</p>}>
+          <If condition={!!addressError} otherwise={<p>Lieu de l&rsquo;évènement&nbsp;:</p>}>
             <p className='error'>{addressError}&nbsp;:</p>
           </If>
           <If condition={typeof window !== 'undefined'}>

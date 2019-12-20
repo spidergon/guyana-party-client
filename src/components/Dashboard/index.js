@@ -23,7 +23,9 @@ const Wrapper = styled.div`
     border-right: 1px solid ${props => props.theme.borderColor};
     box-shadow: 10px 0 10px -10px ${props => props.theme.borderColor};
     img.avatar {
-      width: 100px;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
       border-radius: 50%;
       margin-bottom: 1rem;
     }
@@ -67,22 +69,13 @@ function Dashboard() {
           <AddIcon />
           Créer un évènement
         </Fab>
-        <Button
-          aria-label='Mon compte'
-          className='compte'
-          onClick={() => navigate('/app/profile')}
-        >
+        <Button aria-label='Mon compte' className='compte' onClick={() => navigate('/app/profile')}>
           Mon compte
         </Button>
       </section>
       <section className='content'>
         <CardList data={events} loading={eventLoading} title='Mes Évènements' />
-        <CardList
-          data={groups}
-          isGroup
-          loading={groupLoading}
-          title='Mes Groupes'
-        />
+        <CardList data={groups} isGroup loading={groupLoading} title='Mes Groupes' />
       </section>
     </Wrapper>
   )

@@ -5,7 +5,7 @@ export const reload = () => {
   if (typeof window !== 'undefined') window.location.reload()
 }
 
-export const gravatar = email => `https://www.gravatar.com/avatar/${require('md5')(email)}?d=mp`
+export const gravatar = email => `https://www.gravatar.com/avatar/${require('md5')(email)}?d=retro`
 
 export const purify = async dirty => require('dompurify').sanitize(dirty)
 
@@ -25,7 +25,8 @@ export const markToSafeHTML = markdown => {
 //   return new Blob([arrayBufferView], { type: photo.contentType })
 // }
 
-export const getUserId = () => Cookies.get('gp_userId')
+export const getUID = () => Cookies.get('gp_uid')
+export const getToken = () => ({ jwt: Cookies.get('gp_jwt'), uid: getUID() })
 
 export const fetcher = url => axios.get(url).then(r => r.data)
 

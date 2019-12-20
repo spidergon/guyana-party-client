@@ -70,10 +70,7 @@ function Header({ pathname }) {
 
   useEffect(() => scrollEffect(pathname, setScrollDown), [pathname])
 
-  useEffect(() => opaqueEffect(pathname, scrollDown, setMainClass), [
-    pathname,
-    scrollDown
-  ])
+  useEffect(() => opaqueEffect(pathname, scrollDown, setMainClass), [pathname, scrollDown])
 
   return (
     <Wrapper className={`grid ${mainClass}`}>
@@ -83,7 +80,7 @@ function Header({ pathname }) {
         </Link>
       </nav>
       <nav className='navs'>
-        <If condition={pathname.match(/^\/+$/)}>
+        <If condition={!!pathname.match(/^\/+$/)}>
           <input
             aria-label='filtrer'
             className='bg search_bg'
@@ -99,16 +96,9 @@ function Header({ pathname }) {
         {loading && !user && <CircularProgress size={36} />}
         {user && (
           <>
-            <Image
-              alt='Profile'
-              onClick={() => setUserMenuOpen(!userMenuOpen)}
-              src={user.photo}
-            />
+            <Image alt='Profile' onClick={() => setUserMenuOpen(!userMenuOpen)} src={user.photo} />
             <UserMenu
-              anchor={
-                typeof document !== 'undefined' &&
-                document.querySelector('.profile img')
-              }
+              anchor={typeof document !== 'undefined' && document.querySelector('.profile img')}
               hide={() => setUserMenuOpen(false)}
               isOpen={userMenuOpen}
               pathname={pathname}

@@ -2,7 +2,7 @@
   "root": true,
   "extends": [
     // "eslint:recommended",
-    // "plugin:react/recommended",
+    "plugin:react/recommended",
     "plugin:jsx-a11y/recommended",
     "alloy",
     "alloy/react"
@@ -51,6 +51,7 @@
     "jsx-a11y/no-noninteractive-element-interactions": 0,
     "jsx-a11y/accessible-emoji": 1,
     "react/display-name": 0,
+    "react/prop-types": "error",
     "react/prefer-stateless-function": 0,
     "react/forbid-prop-types": 0,
     "react/require-default-props": 0,

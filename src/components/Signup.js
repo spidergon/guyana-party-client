@@ -5,7 +5,7 @@ import { useAuth } from '../lib/services/authService'
 import { Link } from './addons'
 import Button from './Button'
 import { showSnack } from './Snack'
-import { FormWrapper, LoginWrapper as Wrapper } from './styles/LoginStyled'
+import { FormWrapper, LoginWrapper as Wrapper } from './styles/LoginStyles'
 
 function Signup() {
   const [name, setName] = useState('')
@@ -52,9 +52,7 @@ function Signup() {
     setNameError('')
     setEmailError('')
     setPasswordError('')
-    if (!checkName(name) || !checkEmail(email) || !checkPassword(password)) {
-      return
-    }
+    if (!checkName(name) || !checkEmail(email) || !checkPassword(password)) return
     setLoading(true)
     signEmail(
       { name, email, password },

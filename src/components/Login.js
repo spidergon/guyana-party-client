@@ -7,7 +7,7 @@ import { useAuth } from '../lib/services/authService'
 import { If, Link } from './addons'
 import Button from './Button'
 import { showSnack } from './Snack'
-import { FormWrapper, LoginWrapper as Wrapper, OrDivWrapper } from './styles/LoginStyled'
+import { FormWrapper, LoginWrapper as Wrapper, OrDivWrapper } from './styles/LoginStyles'
 
 function Login() {
   const [email, setEmail] = useState('')
@@ -101,7 +101,7 @@ function Login() {
           <FacebookLogin
             appId={process.env.FACEBOOK_APP_ID}
             callback={fbHandle}
-            fields='name,email,picture'
+            fields='name,email'
             render={({ onClick, disabled }) => (
               <Button
                 className='facebook fb_bg'

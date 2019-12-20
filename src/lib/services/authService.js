@@ -4,7 +4,7 @@ import { navigate } from '@reach/router'
 import axios from 'axios'
 import qs from 'qs'
 import Cookies from 'js-cookie'
-import { gravatar, MISSING_TOKEN_ERR, reload } from '../utils'
+import { gravatar, MISSING_TOKEN_ERR, reload, getUID, getToken, axiosPut } from '../utils'
 
 const authContext = createContext()
 
@@ -24,20 +24,21 @@ function useProvideAuth() {
   useEffect(() => {
     if (user) return setLoading(false)
 
-    const jwt = Cookies.get('gp_jwt')
-    const userId = Cookies.get('gp_userId')
-    if (!jwt || !userId) return formatError(MISSING_TOKEN_ERR)
+    const { jwt, uid } = getToken()
+    if (!jwt || !uid) return formatError(MISSING_TOKEN_ERR)
 
     axios({
       method: 'GET',
       headers: { authorization: `bearer ${jwt}` },
-      url: `${process.env.API}/users/${userId}`
+      url: `${process.env.API}/users/${uid}`
     })
       .then(({ data: res }) => {
         if (res.status !== 200 || !res.data) {
           return formatError('Une erreur interne est survenue')
         }
-        res.data.photo = res.data.photo || gravatar(res.data.email)
+        res.data.photo = res.data.photo
+          ? `${process.env.STATIC}/${res.data.photo}`
+          : gravatar(res.data.email)
         setUser(res.data)
       })
       .catch(error => formatError(error))
@@ -52,22 +53,39 @@ function useProvideAuth() {
   const setNewUser = (newUser, token) => {
     const config = { secure: process.env.NODE_ENV === 'production' }
     Cookies.set('gp_jwt', token, config)
-    Cookies.set('gp_userId', newUser._id, config)
-    newUser.photo = newUser.photo || gravatar(newUser.email)
+    Cookies.set('gp_uid', newUser._id, config)
+    newUser.photo = newUser.photo
+      ? `${process.env.STATIC}/${newUser.photo}`
+      : gravatar(newUser.email)
     setUser(newUser)
   }
 
+  const updateUser = (payload, next, fallback) => {
+    const uid = getUID()
+    if (!uid) return fallback(MISSING_TOKEN_ERR)
+    const { name, email, photo } = payload
+    const formData = new FormData()
+    formData.append('name', name)
+    if (email) formData.append('email', email)
+    formData.append('files[]', photo)
+
+    return axiosPut(
+      { url: `${process.env.API}/users/${uid}`, data: formData },
+      ({ data: res }) => {
+        if (res && res.status === 200 && res.data) next()
+        else fallback('Une erreur interne est survenue')
+      },
+      fallback
+    )
+  }
+
+  const deleteUser = (id, next, fallback) => {}
+
   const loginFacebook = (res, next, fallback) => {
-    const {
-      name,
-      email,
-      picture: {
-        data: { url: photo }
-      }
-    } = res
+    const { name, email } = res
     axios({
       method: 'POST',
-      data: qs.stringify({ name, email, photo, provider: 'facebook' }),
+      data: qs.stringify({ name, email, provider: 'facebook' }),
       url: `${process.env.API}/auth/login`
     })
       .then(({ data }) => {
@@ -146,6 +164,8 @@ function useProvideAuth() {
     loading,
     error,
     user,
+    updateUser,
+    deleteUser,
     loginFacebook,
     loginGoogle,
     loginEmail,

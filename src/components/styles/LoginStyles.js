@@ -1,7 +1,6 @@
 import styled from 'styled-components'
 
 export const LoginWrapper = styled.div`
-  margin-top: 0.5rem;
   font-family: Montserrat, Helvetica, sans-serif;
   h1 {
     text-transform: uppercase;

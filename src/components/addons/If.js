@@ -3,16 +3,10 @@ import Proptypes from 'prop-types'
 
 const If = props => (props.condition ? props.children : props.otherwise)
 
-If.propsTypes = {
+If.propTypes = {
   condition: Proptypes.bool,
-  otherwise: Proptypes.oneOfType([
-    Proptypes.arrayOf(Proptypes.node),
-    Proptypes.node
-  ]),
-  children: Proptypes.oneOfType([
-    Proptypes.arrayOf(Proptypes.node),
-    Proptypes.node
-  ])
+  otherwise: Proptypes.oneOfType([Proptypes.arrayOf(Proptypes.node), Proptypes.node]),
+  children: Proptypes.oneOfType([Proptypes.arrayOf(Proptypes.node), Proptypes.node])
 }
 
 If.defaultProps = {

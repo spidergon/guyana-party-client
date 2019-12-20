@@ -1,25 +1,24 @@
 import { useEffect, useState } from 'react'
-import Cookies from 'js-cookie'
 import {
   axiosGet,
   axiosPost,
   axiosPut,
   axiosDelete,
   fetcher,
-  getUserId,
+  getUID,
   formatResult,
   MISSING_TOKEN_ERR
 } from '../utils'
 import useSWR from 'swr'
 
 export const createGroup = (payload, next, fallback) => {
-  const userId = Cookies.get('gp_userId')
-  if (!userId) return fallback(MISSING_TOKEN_ERR)
+  const uid = getUID()
+  if (!uid) return fallback(MISSING_TOKEN_ERR)
 
   const formData = new FormData()
   formData.append('name', payload.name)
   formData.append('description', payload.description)
-  formData.append('author', userId)
+  formData.append('author', uid)
   payload.photos = payload.photos || []
   payload.photos.forEach(photo => formData.append('files[]', photo))
 
@@ -36,9 +35,7 @@ export const createGroup = (payload, next, fallback) => {
 
 export const updateGroup = (payload, next, fallback) => {
   if (!payload.id) fallback()
-
-  const userId = Cookies.get('gp_userId')
-  if (!userId) return fallback(MISSING_TOKEN_ERR)
+  if (!getUID()) return fallback(MISSING_TOKEN_ERR)
 
   const formData = new FormData()
   formData.append('name', payload.name)
@@ -59,8 +56,7 @@ export const updateGroup = (payload, next, fallback) => {
 }
 
 export const archiveGroup = (id, next, fallback) => {
-  const userId = Cookies.get('gp_userId')
-  if (!userId) return fallback(MISSING_TOKEN_ERR)
+  if (!getUID()) return fallback(MISSING_TOKEN_ERR)
 
   axiosPut(
     { url: `${process.env.API}/groups/${id}`, data: { status: 'archived' } },
@@ -73,8 +69,7 @@ export const archiveGroup = (id, next, fallback) => {
 }
 
 export const removeGroup = (id, next, fallback) => {
-  const userId = Cookies.get('gp_userId')
-  if (!userId) return fallback(MISSING_TOKEN_ERR)
+  if (!getUID()) return fallback(MISSING_TOKEN_ERR)
 
   axiosDelete(
     `${process.env.API}/groups/${id}`,
@@ -125,7 +120,7 @@ export const useGroup = ({ id, slug }) => {
 export const useGroups = (onlyAdmin = false) => {
   const [groups, setGroups] = useState([])
 
-  let uid = getUserId()
+  let uid = getUID()
   uid = uid ? `&uid=${uid}` : ''
 
   const { data, error, isValidating: loading } = useSWR(
@@ -144,7 +139,7 @@ export const useArchived = () => {
   const [groups, setGroups] = useState([])
 
   const { data, error, isValidating: loading } = useSWR(
-    `${process.env.API}/groups?author=${getUserId()}&status=archived`,
+    `${process.env.API}/groups?author=${getUID()}&status=archived`,
     fetcher
   )
 
