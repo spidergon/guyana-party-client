@@ -42,6 +42,9 @@ You need to have [Node.js](https://nodejs.org/) and [yarn](https://yarnpkg.com/l
 
 4. **When you're ready for production, go ahead and build the project:**
 
+   - Copy `.env_sample` to `.env.production` and fill it properly.
+   - Then start the build process:
+
    ```shell
    yarn build
    ```
