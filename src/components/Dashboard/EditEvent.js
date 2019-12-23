@@ -319,7 +319,7 @@ function NewEvent({ id }) {
   return (
     <Wrapper>
       <Page title={`${id ? 'Edition' : 'Création'} ${name ? `de ${name}` : "d'un évènement"}`}>
-        <If condition={id && event}>
+        <If condition={!!(id && event)}>
           <EventsStatus className='switch' event={event} />
         </If>
         <div id='name'>
@@ -459,7 +459,7 @@ function NewEvent({ id }) {
             />
           </If>
         </div>
-        <If condition={id}>
+        <If condition={!!id}>
           <Fab
             aria-label='Archiver'
             className='archive-btn'

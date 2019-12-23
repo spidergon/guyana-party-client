@@ -89,11 +89,9 @@ Snack.propTypes = {
   variant: PropTypes.string
 }
 
-export default subscribe(
-  Snack,
-  [snackState],
-  ({ snackState: { msg, variant } }) => ({ msg, variant })
-)
+export default subscribe(Snack, [snackState], ({ snackState: { msg, variant } }) => ({
+  msg,
+  variant
+}))
 
-export const showSnack = (msg, variant = 'success') =>
-  snackState.setState({ msg, variant })
+export const showSnack = (msg, variant = 'success') => snackState.setState({ msg, variant })

@@ -37,10 +37,10 @@ module.exports = {
         display: 'standalone',
         icon: 'src/images/favicon.png' // This path is relative to the root of the site.
       }
-    },
+    }
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // or https://www.gatsbyjs.org/docs/add-offline-support-with-a-service-worker/
-    'gatsby-plugin-offline'
+    // 'gatsby-plugin-offline'
   ]
 }

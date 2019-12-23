@@ -10,12 +10,7 @@ import TextField from '@material-ui/core/TextField'
 import DeleteIcon from '@material-ui/icons/Delete'
 import EditIcon from '@material-ui/icons/Edit'
 import { isAdmin } from '../../lib/services/communityService'
-import {
-  archiveGroup,
-  createGroup,
-  updateGroup,
-  useGroup
-} from '../../lib/services/groupService'
+import { archiveGroup, createGroup, updateGroup, useGroup } from '../../lib/services/groupService'
 import If from '../addons/If'
 import Dialog from '../Dialog'
 import { showSnack } from '../Snack'
@@ -96,10 +91,7 @@ function EditGroup({ id }) {
     const next = ({ slug }) => navigate(`/group/${slug || group.slug}`)
     const fallback = error => {
       console.log(error)
-      showSnack(
-        `${id ? "L'édition" : 'La création'} du groupe a échoué !`,
-        'error'
-      )
+      showSnack(`${id ? "L'édition" : 'La création'} du groupe a échoué !`, 'error')
       setLoading(false)
     }
 
@@ -127,16 +119,10 @@ function EditGroup({ id }) {
 
   return (
     <Wrapper>
-      <Page
-        title={`${id ? 'Edition' : 'Création'} ${
-          name ? `de ${name}` : "d'un groupe"
-        }`}
-      >
+      <Page title={`${id ? 'Edition' : 'Création'} ${name ? `de ${name}` : "d'un groupe"}`}>
         <div id='name'>
           <Grid alignItems='flex-end' container spacing={1}>
-            <Grid item>
-              {loading || groupLoading ? <CircularProgress /> : <EditIcon />}
-            </Grid>
+            <Grid item>{loading || groupLoading ? <CircularProgress /> : <EditIcon />}</Grid>
             <Grid item>
               <TextField
                 disabled={loading || groupLoading}
@@ -158,12 +144,8 @@ function EditGroup({ id }) {
           setValue={setDescription}
           value={description}
         />
-        <Photos
-          disabled={loading || groupLoading}
-          photos={photos}
-          setPhotos={setPhotos}
-        />
-        <If condition={id}>
+        <Photos disabled={loading || groupLoading} photos={photos} setPhotos={setPhotos} />
+        <If condition={!!id}>
           <Fab
             aria-label='Archiver'
             className='archive-btn'

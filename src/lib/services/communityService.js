@@ -1,14 +1,13 @@
-import Cookies from 'js-cookie'
 import { navigate } from 'gatsby'
 import { showSnack } from '../../components/Snack'
-import { axiosPut, reload } from '../utils'
+import { axiosPut, reload, getUID } from '../utils'
 
 export const confirmMember = (community, role) => {
-  const userId = Cookies.get('gp_userId')
-  if (!userId || !community) return false
+  const uid = getUID()
+  if (!uid || !community) return false
   if (role) {
-    return undefined !== community.find(o => o.user._id === userId && o.role === role)
-  } else return undefined !== community.find(o => o.user._id === userId)
+    return undefined !== community.find(o => o.user._id === uid && o.role === role)
+  } else return undefined !== community.find(o => o.user._id === uid)
 }
 
 export const isAdmin = community => confirmMember(community, 'admin')
@@ -20,12 +19,12 @@ export const countAdmins = community => {
 }
 
 const getUserId = slug => {
-  const userId = Cookies.get('gp_userId')
-  if (!userId) {
+  const uid = getUID()
+  if (!uid) {
     showSnack("Veuillez vous connecter pour faire votre demande d'adhésion", 'info')
     navigate(`/connexion?redirect=/group/${slug}`)
   }
-  return userId
+  return uid
 }
 
 const pendingRequestMember = (group, action, role) => {

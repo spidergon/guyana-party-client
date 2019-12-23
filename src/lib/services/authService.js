@@ -51,7 +51,7 @@ function useProvideAuth() {
   }
 
   const setNewUser = (newUser, token) => {
-    const config = { secure: process.env.NODE_ENV === 'production' }
+    const config = { secure: process.env.NODE_ENV === 'production' } // https required in prod
     Cookies.set('gp_jwt', token, config)
     Cookies.set('gp_uid', newUser._id, config)
     newUser.photo = newUser.photo
@@ -154,7 +154,7 @@ function useProvideAuth() {
   const signout = () => {
     navigate('/').then(() => {
       Cookies.remove('gp_jwt')
-      Cookies.remove('gp_userId')
+      Cookies.remove('gp_uid')
       setUser(null)
       reload()
     })
