@@ -56,7 +56,7 @@
     "slick-carousel": "^1.8.1",
     "styled-components": "^4.4.1",
     "swr": "^0.1.15",
-    "validator": "^12.1.0",
+    "validator": "^13.7.0",
     "waait": "^1.0.5"
   },
   "peerDependencies": {},
